@@ -1,6 +1,6 @@
-import 'package:doctors_app/screens/ui/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../patient/home.dart';
 
 class LoginPage extends StatefulWidget {
   @override
