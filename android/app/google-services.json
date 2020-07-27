@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "291297000501",
+    "firebase_url": "https://doctors-app-13c2a.firebaseio.com",
+    "project_id": "doctors-app-13c2a",
+    "storage_bucket": "doctors-app-13c2a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291297000501:android:a6ad8c6be0c938b2e0057c",
+        "android_client_info": {
+          "package_name": "com.divingDeep.doctors_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291297000501-kjlislvk5kvs5o8f1s7kks6eei8k2ao9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNkPa57HH0kMKC6x3p2Hjitdumnwg_AJ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291297000501-kjlislvk5kvs5o8f1s7kks6eei8k2ao9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
