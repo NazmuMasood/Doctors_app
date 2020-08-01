@@ -1,5 +1,8 @@
-import 'package:doctors_app/screens/auth/login.dart';
+import 'package:doctors_app/screens/login.dart';
+import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/material.dart';
+import 'package:doctors_app/screens/welcome.dart';
+import 'package:doctors_app/screens/SignupPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,12 +15,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => MainPage(),
+        '/': (context) => Welcomepage(),
         '/login': (context) => LoginPage(),
+        '/Signup': (context)=> SignupPage(),
+        
       },
       debugShowCheckedModeBanner: false,
       title: 'Doctors App',
       theme: ThemeData(
+        fontFamily: 'avenir',
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -26,7 +32,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
+/*class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -67,5 +73,5 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
+*/
 
