@@ -129,11 +129,14 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
+                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
-                              return 'Please provide a email';
+                              return 'Please provide a password';
                             }
-                            return null;
+                            if (input.length < 6) {
+                              return 'Your password needs to be at-least 6 characters';
+                            }
                           },
                           onSaved: (input) => signupmodel.password = input,
                           decoration: InputDecoration(
@@ -153,8 +156,8 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             if (input.isEmpty) {
                               return 'Please provide a password';
                             }
-                            if (input.length < 6) {
-                              return 'Your password needs to be at-least 6 characters';
+                            if (input != signupmodel.password) {
+                              return 'Your passwords don\'t match';
                             }
                           },
                           onSaved: (input) =>
