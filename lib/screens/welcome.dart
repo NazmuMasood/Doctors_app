@@ -1,12 +1,12 @@
-import 'login.dart';
+import 'auth/login.dart';
 import 'package:flutter/material.dart';
-import '../colorScheme.dart';
+import '../styles/colorScheme.dart';
 
-class Welcomepage extends StatefulWidget {
+class WelcomePage extends StatefulWidget {
   @override
-  _WelcomepageState createState() => _WelcomepageState();
+  _WelcomePageState createState() => _WelcomePageState();
 }
-class _WelcomepageState extends State<Welcomepage> {
+class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +19,7 @@ class _WelcomepageState extends State<Welcomepage> {
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: CustomPaint(
-                  painter: pathPainter(),
+                  painter: PathPainter(),
                 ),
               ),
               Container(
@@ -75,7 +75,9 @@ class _WelcomepageState extends State<Welcomepage> {
                       ),
                     ),
                   ),
-                  onTap: openHomePage,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
                 ),
               )
             ],
@@ -84,12 +86,9 @@ class _WelcomepageState extends State<Welcomepage> {
       ),
     );
   }
-  void openHomePage()
-  {
-    Navigator.pushNamed(context, '/login');
-  }
 }
-class pathPainter extends CustomPainter{
+
+class PathPainter extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();

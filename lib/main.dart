@@ -1,8 +1,7 @@
-import 'package:doctors_app/screens/login.dart';
+import 'file:///C:/Users/ASUS/AndroidStudioProjects/doctors_app/lib/screens/auth/login.dart';
 import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/material.dart';
-import 'package:doctors_app/screens/welcome.dart';
-import 'package:doctors_app/screens/SignupPage.dart';
+import 'file:///C:/Users/ASUS/AndroidStudioProjects/doctors_app/lib/screens/auth/signup.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,10 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => Welcomepage(),
+        '/': (context) => WelcomePage(),
         '/login': (context) => LoginPage(),
-        '/Signup': (context)=> SignupPage(),
-        
+        '/signup': (context)=> SignupPage(),
       },
       debugShowCheckedModeBanner: false,
       title: 'Doctors App',
