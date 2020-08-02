@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/auth/logindoc.dart';
+import 'package:flutter/rendering.dart';
 
 class SignupDocScreen extends StatefulWidget {
   @override
@@ -35,24 +37,43 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(130.0, 50.0, 0.0, 0.0),
+                padding: EdgeInsets.fromLTRB(0.0, 30.0, 6.0, 0.0),
+                alignment: Alignment.centerRight,
                 child: ToggleButtons(
-                  children: <Widget>[Text('Patient'), Text('Doctor')],
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Text(
+                        'Patient',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Text(
+                        'Doctor',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ],
                   borderColor: Colors.green,
                   color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                  borderWidth: 2,
+                  borderRadius: BorderRadius.circular(5),
+                  borderWidth: 1,
                   highlightColor: Colors.redAccent,
+                  selectedBorderColor: Colors.green,
+                  selectedColor: Colors.white,
+                  fillColor: Colors.green,
                   onPressed: (int index) {
                     setState(() {
-                      for (int buttonIndex = 0;
-                          buttonIndex < isSelected.length;
-                          buttonIndex++) {
-                        if (buttonIndex == index) {
-                          isSelected[buttonIndex] = true;
-                          Navigator.of(context).pushNamed('/signup');
-                        } else {
-                          isSelected[buttonIndex] = false;
+                      if (!isSelected[index]) {
+                        for (int i = 0; i < isSelected.length; i++) {
+                          if (i == index) {
+                            isSelected[i] = true;
+                            Navigator.of(context).pushNamed('/signup');
+                          } else {
+                            isSelected[i] = false;
+                          }
                         }
                       }
                     });
@@ -66,13 +87,13 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                     Container(
                       padding: EdgeInsets.fromLTRB(15.0, 20.0, 0.0, 0.0),
                       child: Text(
-                        'Doctor',
+                        'Signup',
                         style: TextStyle(
                             fontSize: 80.0, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(260.0, 23.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(260.0, 35.0, 0.0, 0.0),
                       child: Text(
                         '.',
                         style: TextStyle(
@@ -186,7 +207,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                                 onTap: save,
                                 child: Center(
                                   child: Text(
-                                    'SIGNUP',
+                                    'SIGN UP',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
