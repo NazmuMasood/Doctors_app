@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(width: 5.0),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/Signup');
+                    Navigator.of(context).pushNamed('/signup');
                   },
                   child: Text(
                     'SIGNUP',

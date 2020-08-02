@@ -168,7 +168,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                 SizedBox(width: 5.0),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/Signupdoc');
+                    Navigator.of(context).pushNamed('/signupdoc');
                   },
                   child: Text(
                     'SIGN-UP',

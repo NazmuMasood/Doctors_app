@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/auth/login.dart';
+import 'package:doctors_app/screens/auth/signupdoc.dart';
 import 'package:doctors_app/screens/patient/categories_screen.dart';
 import 'package:doctors_app/screens/patient/doctor_screen.dart';
 import 'package:doctors_app/screens/welcome.dart';
@@ -16,10 +17,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginScreen(),
+        '/': (context) => WelcomeScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
         '/home': (context) => CategoriesScreen(),
+        '/logindoc': (context) => LoginScreen(),
+        '/signupdoc': (context) => SignupDocScreen(),
         DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },
       debugShowCheckedModeBanner: false,
