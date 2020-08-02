@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/auth/login.dart';
+import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:doctors_app/screens/auth/signupdoc.dart';
 import 'package:doctors_app/screens/patient/categories_screen.dart';
 import 'package:doctors_app/screens/patient/doctor_screen.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
         '/home': (context) => CategoriesScreen(),
-        '/logindoc': (context) => LoginScreen(),
+        '/logindoc': (context) => LoginDocScreen(),
         '/signupdoc': (context) => SignupDocScreen(),
         DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },

@@ -105,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.grey),
                               focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green))),
+                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
                               return 'Please provide a password';
