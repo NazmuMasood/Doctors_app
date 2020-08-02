@@ -11,7 +11,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
   Signupmodel signupmodel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  List<bool> isSelected = [true, false];
+  List<bool> isSelected = [false, true];
 
   save() {
     //form saving
@@ -50,7 +50,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                           buttonIndex++) {
                         if (buttonIndex == index) {
                           isSelected[buttonIndex] = true;
-                          Navigator.of(context).pushNamed('/logindoc');
+                          Navigator.of(context).pushNamed('/signup');
                         } else {
                           isSelected[buttonIndex] = false;
                         }
@@ -64,7 +64,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                 child: Stack(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 20.0, 0.0, 0.0),
                       child: Text(
                         'Doctor',
                         style: TextStyle(
@@ -72,7 +72,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(260.0, 23.0, 0.0, 0.0),
                       child: Text(
                         '.',
                         style: TextStyle(
@@ -85,7 +85,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 15.0, left: 30.0, right: 30.0),
+                padding: EdgeInsets.only(top: 0.0, left: 30.0, right: 30.0),
                 child: Form(
                     key: _formKey, //therjke
                     child: Column(
@@ -171,7 +171,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                                   borderSide: BorderSide(color: Colors.green))),
                           obscureText: true,
                         ),
-                        SizedBox(height: 10.0),
+                        SizedBox(height: 20.0),
                         Container(
                             height: 40.0,
                             child: Material(
@@ -211,7 +211,8 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                                     color: Colors.green,
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline),
+                                    //decoration: TextDecoration.underline
+                                ),
                               ),
                             )
                           ],

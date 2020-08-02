@@ -11,6 +11,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Signupmodel signupmodel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  List<bool> isSelected = [true, false];
 
   save() {
     //form saving
@@ -34,10 +35,36 @@ class _SignupScreenState extends State<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
+                padding: EdgeInsets.fromLTRB(130.0, 50.0, 0.0, 0.0),
+                child: ToggleButtons(
+                  children: <Widget>[Text('Patient'), Text('Doctor')],
+                  borderColor: Colors.green,
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                  borderWidth: 2,
+                  highlightColor: Colors.redAccent,
+                  onPressed: (int index) {
+                    setState(() {
+                      if (!isSelected[index]) {
+                        for (int i = 0; i < isSelected.length; i++) {
+                          if (i == index) {
+                            isSelected[i] = true;
+                            Navigator.of(context).pushNamed('/signupdoc');
+                          } else {
+                            isSelected[i] = false;
+                          }
+                        }
+                      }
+                    });
+                  },
+                  isSelected: isSelected,
+                ),
+              ),
+              Container(
                 child: Stack(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 20.0, 0.0, 0.0),
                       child: Text(
                         'Signup',
                         style: TextStyle(
@@ -45,7 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(260.0, 125.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(260.0, 35.0, 0.0, 0.0),
                       child: Text(
                         '.',
                         style: TextStyle(
@@ -58,9 +85,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 15.0, left: 30.0, right: 30.0),
+                padding: EdgeInsets.only(top: 0.0, left: 30.0, right: 30.0),
                 child: Form(
-                    key: _formKey, //therjke
+                    key: _formKey,
                     child: Column(
                       children: <Widget>[
                         TextFormField(
@@ -144,7 +171,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   borderSide: BorderSide(color: Colors.green))),
                           obscureText: true,
                         ),
-                        SizedBox(height: 10.0),
+                        SizedBox(height: 20.0),
                         Container(
                             height: 40.0,
                             child: Material(
@@ -208,7 +235,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     color: Colors.green,
                                     fontFamily: 'Montserrat',
                                     fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline),
+                                    //decoration: TextDecoration.underline
+                                ),
                               ),
                             )
                           ],
