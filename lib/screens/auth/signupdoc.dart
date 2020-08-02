@@ -33,9 +33,11 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
         resizeToAvoidBottomPadding: true,
-        body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
               Container(
                 padding: EdgeInsets.fromLTRB(0.0, 30.0, 6.0, 0.0),
                 alignment: Alignment.centerRight,
@@ -232,10 +234,10 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                               child: Text(
                                 'LOGIN',
                                 style: TextStyle(
-                                    color: Colors.green,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.bold,
-                                    //decoration: TextDecoration.underline
+                                  color: Colors.green,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  //decoration: TextDecoration.underline
                                 ),
                               ),
                             )
@@ -244,7 +246,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                       ],
                     )),
               )
-            ]));
+            ])));
   }
 }
 

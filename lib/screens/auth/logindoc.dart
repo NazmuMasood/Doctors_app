@@ -15,8 +15,10 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: Column(
+        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
@@ -144,10 +146,10 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                             child: Text(
                               'Forgot Password?',
                               style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Montserrat',
-                                  //decoration: TextDecoration.underline
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat',
+                                //decoration: TextDecoration.underline
                               ),
                             ),
                           ),
@@ -193,17 +195,17 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                   child: Text(
                     'SIGN UP',
                     style: TextStyle(
-                        color: Colors.green,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.bold,
-                        //decoration: TextDecoration.underline
+                      color: Colors.green,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      //decoration: TextDecoration.underline
                     ),
                   ),
                 )
               ],
             )
           ],
-        ));
+        )));
   }
 
   Future<void> login() async {

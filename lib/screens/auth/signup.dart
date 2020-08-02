@@ -31,9 +31,11 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
         resizeToAvoidBottomPadding: true,
-        body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
               Container(
                 padding: EdgeInsets.fromLTRB(0.0, 30.0, 6.0, 0.0),
                 alignment: Alignment.centerRight,
@@ -215,7 +217,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             )),
                         SizedBox(height: 20.0),
-                       /* Container(
+                        /* Container(
                           height: 40.0,
                           color: Colors.transparent,
                           child: Container(
@@ -254,10 +256,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               child: Text(
                                 'LOGIN',
                                 style: TextStyle(
-                                    color: Colors.green,
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.bold,
-                                    //decoration: TextDecoration.underline
+                                  color: Colors.green,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  //decoration: TextDecoration.underline
                                 ),
                               ),
                             )
@@ -266,7 +268,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ],
                     )),
               )
-            ]));
+            ])));
   }
 }
 
