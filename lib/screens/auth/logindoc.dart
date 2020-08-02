@@ -9,7 +9,7 @@ class LoginDocScreen extends StatefulWidget {
 
 class _LoginDocScreenState extends State<LoginDocScreen> {
   String _email, _password;
-  List<bool> isSelected = [true, false];
+  List<bool> isSelected = [false, true];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -25,7 +25,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                   Container(
                     padding: EdgeInsets.fromLTRB(130.0, 50.0, 0.0, 0.0),
                     child: ToggleButtons(
-                      children: <Widget>[Text('Doctor'), Text('Patient')],
+                      children: <Widget>[Text('Patient'),Text('Doctor')],
                       borderColor: Colors.green,
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(10),
@@ -34,14 +34,14 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                       selectedColor: Colors.green,
                       onPressed: (int index) {
                         setState(() {
-                          for (int buttonIndex = 0;
-                              buttonIndex < isSelected.length;
-                              buttonIndex++) {
-                            if (buttonIndex == index) {
-                              isSelected[buttonIndex] = true;
-                              Navigator.of(context).pushNamed('/login');
-                            } else {
-                              isSelected[buttonIndex] = false;
+                          if (!isSelected[index]) {
+                            for (int i = 0; i < isSelected.length; i++) {
+                              if (i == index) {
+                                isSelected[i] = true;
+                                Navigator.of(context).pushNamed('/login');
+                              } else {
+                                isSelected[i] = false;
+                              }
                             }
                           }
                         });
@@ -124,12 +124,13 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                           padding: EdgeInsets.only(top: 15.0, left: 20.0),
                           child: InkWell(
                             child: Text(
-                              'Forgot Password',
+                              'Forgot Password?',
                               style: TextStyle(
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Montserrat',
-                                  decoration: TextDecoration.underline),
+                                  //decoration: TextDecoration.underline
+                              ),
                             ),
                           ),
                         ),
@@ -177,7 +178,8 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                         color: Colors.green,
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline),
+                        //decoration: TextDecoration.underline
+                    ),
                   ),
                 )
               ],

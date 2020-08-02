@@ -148,6 +148,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
+                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
                               return 'Please provide a password';
@@ -192,30 +193,29 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                               ),
                             )),
                         SizedBox(height: 20.0),
-                        Container(
-                          height: 40.0,
-                          color: Colors.transparent,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.black,
-                                    style: BorderStyle.solid,
-                                    width: 1.0),
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(20.0)),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Center(
-                                child: Text('Go Back',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Montserrat')),
-                              ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Already a member?',
+                              style: TextStyle(fontFamily: 'Montserrat'),
                             ),
-                          ),
-                        ),
+                            SizedBox(width: 5.0),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).pushNamed('/logindoc');
+                              },
+                              child: Text(
+                                'LOGIN',
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline),
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     )),
               )

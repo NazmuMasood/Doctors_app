@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       highlightColor: Colors.redAccent,
                       onPressed: (int index) {
                         setState(() {
-                          for (int buttonIndex = 0;
+                          /*for (int buttonIndex = 0;
                               buttonIndex < isSelected.length;
                               buttonIndex++) {
                             if (buttonIndex == index) {
@@ -41,6 +41,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.of(context).pushNamed('/logindoc');
                             } else {
                               isSelected[buttonIndex] = false;
+                            }
+                          }*/
+                          if (!isSelected[index]) {
+                            for (int i = 0; i < isSelected.length; i++) {
+                              if (i == index) {
+                                isSelected[i] = true;
+                                Navigator.of(context).pushNamed('/logindoc');
+                              } else {
+                                isSelected[i] = false;
+                              }
                             }
                           }
                         });
@@ -118,21 +128,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: true,
                         ),
                         SizedBox(height: 5.0),
-                        /*     Container(
-                      alignment: Alignment(1.0, 0.0),
-                      padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                      child: InkWell(
-                        child: Text(
-                          'Forgot Password',
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Montserrat',
-                              decoration: TextDecoration.underline),
+                        Container(
+                          alignment: Alignment(1.0, 0.0),
+                          padding: EdgeInsets.only(top: 15.0, left: 20.0),
+                          child: InkWell(
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat',
+                                //decoration: TextDecoration.underline
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-*/
                         SizedBox(height: 40.0),
                         Container(
                           height: 40.0,
@@ -174,10 +184,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'SIGNUP',
                     style: TextStyle(
-                        color: Colors.green,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline),
+                      color: Colors.green,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      //decoration: TextDecoration.underline
+                    ),
                   ),
                 )
               ],

@@ -121,6 +121,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
+                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
                               return 'Please provide a password';
@@ -165,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             )),
                         SizedBox(height: 20.0),
-                        Container(
+                       /* Container(
                           height: 40.0,
                           color: Colors.transparent,
                           child: Container(
@@ -188,7 +189,30 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ),
-                        ),
+                        ),*/
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Already a member?',
+                              style: TextStyle(fontFamily: 'Montserrat'),
+                            ),
+                            SizedBox(width: 5.0),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).pushNamed('/login');
+                              },
+                              child: Text(
+                                'LOGIN',
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline),
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     )),
               )
