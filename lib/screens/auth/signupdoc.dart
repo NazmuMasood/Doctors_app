@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctors_app/screens/auth/login.dart';
+import 'package:doctors_app/screens/auth/logindoc.dart';
 
-class SignupScreen extends StatefulWidget {
+class SignupDocScreen extends StatefulWidget {
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  _SignupDocScreenState createState() => _SignupDocScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupDocScreenState extends State<SignupDocScreen> {
   Signupmodel signupmodel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  List<bool> isSelected = [true, false];
 
   save() {
     //form saving
@@ -22,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
           password: signupmodel.confirmPassword);
       print(signupmodel.name);
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+          context, MaterialPageRoute(builder: (context) => LoginDocScreen()));
     }
   }
 
@@ -34,12 +35,38 @@ class _SignupScreenState extends State<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
+                padding: EdgeInsets.fromLTRB(130.0, 50.0, 0.0, 0.0),
+                child: ToggleButtons(
+                  children: <Widget>[Text('Patient'), Text('Doctor')],
+                  borderColor: Colors.green,
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                  borderWidth: 2,
+                  highlightColor: Colors.redAccent,
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int buttonIndex = 0;
+                          buttonIndex < isSelected.length;
+                          buttonIndex++) {
+                        if (buttonIndex == index) {
+                          isSelected[buttonIndex] = true;
+                          Navigator.of(context).pushNamed('/logindoc');
+                        } else {
+                          isSelected[buttonIndex] = false;
+                        }
+                      }
+                    });
+                  },
+                  isSelected: isSelected,
+                ),
+              ),
+              Container(
                 child: Stack(
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
                       child: Text(
-                        'Signup',
+                        'Doctor',
                         style: TextStyle(
                             fontSize: 80.0, fontWeight: FontWeight.bold),
                       ),

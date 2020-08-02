@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/patient/home.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginDocScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginDocScreenState createState() => _LoginDocScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginDocScreenState extends State<LoginDocScreen> {
   String _email, _password;
   List<bool> isSelected = [true, false];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -25,12 +25,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     padding: EdgeInsets.fromLTRB(130.0, 50.0, 0.0, 0.0),
                     child: ToggleButtons(
-                      children: <Widget>[Text('Patient'), Text('Doctor')],
+                      children: <Widget>[Text('Doctor'), Text('Patient')],
                       borderColor: Colors.green,
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(10),
                       borderWidth: 2,
                       highlightColor: Colors.redAccent,
+                      selectedColor: Colors.green,
                       onPressed: (int index) {
                         setState(() {
                           for (int buttonIndex = 0;
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               buttonIndex++) {
                             if (buttonIndex == index) {
                               isSelected[buttonIndex] = true;
-                              Navigator.of(context).pushNamed('/logindoc');
+                              Navigator.of(context).pushNamed('/login');
                             } else {
                               isSelected[buttonIndex] = false;
                             }
@@ -56,12 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(16.0, 175.0, 0.0, 0.0),
-                    child: Text('There',
+                    child: Text('Doctor',
                         style: TextStyle(
                             fontSize: 80.0, fontWeight: FontWeight.bold)),
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(220.0, 175.0, 0.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(270.0, 175.0, 0.0, 0.0),
                     child: Text('.',
                         style: TextStyle(
                             fontSize: 80.0,
@@ -117,28 +118,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: true,
                         ),
                         SizedBox(height: 5.0),
-                        /*     Container(
-                      alignment: Alignment(1.0, 0.0),
-                      padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                      child: InkWell(
-                        child: Text(
-                          'Forgot Password',
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Montserrat',
-                              decoration: TextDecoration.underline),
+                        Container(
+                          alignment: Alignment(1.0, 0.0),
+                          padding: EdgeInsets.only(top: 15.0, left: 20.0),
+                          child: InkWell(
+                            child: Text(
+                              'Forgot Password',
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Montserrat',
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-*/
                         SizedBox(height: 40.0),
                         Container(
                           height: 40.0,
                           child: Material(
                             borderRadius: BorderRadius.circular(35.0),
-                            shadowColor: Colors.deepPurpleAccent,
-                            color: Colors.deepPurpleAccent,
+                            shadowColor: Colors.amberAccent,
+                            color: Colors.orangeAccent,
                             elevation: 9.0,
                             child: GestureDetector(
                               onTap: login,
@@ -162,16 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Are you new?',
+                  'NEW?',
                   style: TextStyle(fontFamily: 'Montserrat'),
                 ),
                 SizedBox(width: 5.0),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/Signup');
+                    Navigator.of(context).pushNamed('/Signupdoc');
                   },
                   child: Text(
-                    'SIGNUP',
+                    'SIGN-UP',
                     style: TextStyle(
                         color: Colors.green,
                         fontFamily: 'Montserrat',

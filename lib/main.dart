@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => CategoriesScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
-        '/category': (context) => CategoriesScreen(),
+        '/home': (context) => CategoriesScreen(),
         DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },
       debugShowCheckedModeBanner: false,
