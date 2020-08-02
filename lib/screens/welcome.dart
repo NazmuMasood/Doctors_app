@@ -1,12 +1,12 @@
-import 'auth/login.dart';
+import 'package:doctors_app/screens/auth/login.dart';
 import 'package:flutter/material.dart';
 import '../styles/colorScheme.dart';
 
-class WelcomePage extends StatefulWidget {
+class WelcomeScreen extends StatefulWidget {
   @override
-  _WelcomePageState createState() => _WelcomePageState();
+  _WelcomeScreenState createState() => _WelcomeScreenState();
 }
-class _WelcomePageState extends State<WelcomePage> {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

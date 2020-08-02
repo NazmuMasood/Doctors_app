@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'file:///C:/Users/ASUS/AndroidStudioProjects/doctors_app/lib/screens/auth/login.dart';
+import 'package:doctors_app/screens/auth/login.dart';
 
-class SignupPage extends StatefulWidget {
+class SignupScreen extends StatefulWidget {
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _SignupScreenState extends State<SignupScreen> {
   SignupModel signupmodel = SignupModel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -22,7 +22,7 @@ class _SignupPageState extends State<SignupPage> {
           password: signupmodel.confirmPassword);
       print(signupmodel.name);
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
     }
   }
 

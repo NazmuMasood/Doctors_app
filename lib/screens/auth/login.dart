@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../patient/home.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginScreen> {
   String _email, _password;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -167,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Home(user: user)));
+            context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
       } catch (e) {
         print(e.message);
       }
