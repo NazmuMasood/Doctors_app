@@ -315,7 +315,8 @@ class _SignupScreenState extends State<SignupScreen> {
         print(signupmodel.name);
        
          database.push().set({
-          'name' : signupmodel.name
+          'name' : signupmodel.name,
+          'email': signupmodel.email
           });
 
         Fluttertoast.showToast(
