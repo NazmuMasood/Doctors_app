@@ -12,20 +12,9 @@ class _SignupScreenState extends State<SignupScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<bool> isSelected = [true, false];
-
-  save() {
-    //form saving
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      _firebaseAuth.createUserWithEmailAndPassword(
-          //firebase auth using email & password
-          email: signupmodel.email,
-          password: signupmodel.confirmPassword);
-      print(signupmodel.name);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
-    }
-  }
+  String _name, _email, _password, _confirmPassword;
+  bool _passwordVisible = false, _confirmPasswordVisible = false;
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -152,15 +141,31 @@ class _SignupScreenState extends State<SignupScreen> {
                         TextFormField(
                           //ignore: missing_return
                           validator: (input) {
-                            if (input.isEmpty) {
+                            if (input.trim().isEmpty) {
                               return 'Please provide a password';
                             }
-                            if (input.length < 6) {
+                            if (input.trim().length < 6) {
                               return 'Your password needs to be at-least 6 characters';
                             }
                           },
-                          onSaved: (input) => signupmodel.password = input,
+                          onSaved: (input) => _password = input.trim(),
+                          obscureText: !_passwordVisible,//This will obscure text dynamically
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  // Based on passwordVisible state choose the icon
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                                onPressed: () {
+                                  // Update the state i.e. toogle the state of passwordVisible variable
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
                               labelText: 'PASSWORD ',
                               labelStyle: TextStyle(
                                   fontFamily: 'Montserrat',
@@ -168,7 +173,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                   color: Colors.grey),
                               focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green))),
-                          obscureText: true,
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
@@ -177,45 +181,64 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (input.isEmpty) {
                               return 'Please provide a password';
                             }
-                            if (input != signupmodel.password) {
+                            /*if (input.trim() != _password) {
                               return 'Your passwords don\'t match';
-                            }
+                            }*/
+                            return null;
                           },
                           onSaved: (input) =>
-                              signupmodel.confirmPassword = input,
+                              _confirmPassword = input.trim(),
+                          obscureText: !_confirmPasswordVisible,//This will obscure text dynamically
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  // Based on passwordVisible state choose the icon
+                                  _confirmPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                                onPressed: () {
+                                  // Update the state i.e. toogle the state of passwordVisible variable
+                                  setState(() {
+                                    _confirmPasswordVisible = !_confirmPasswordVisible;
+                                  });
+                                },
+                              ),
                               labelText: 'CONFIRM PASSWORD',
                               labelStyle: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey),
-                              // hintText: 'EMAIL',
-                              // hintStyle: ,
                               focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green))),
-                          obscureText: true,
                         ),
                         SizedBox(height: 20.0),
-                        Container(
-                            height: 40.0,
-                            child: Material(
-                              borderRadius: BorderRadius.circular(20.0),
-                              shadowColor: Colors.greenAccent,
-                              color: Colors.green,
-                              elevation: 7.0,
-                              child: GestureDetector(
-                                onTap: save,
-                                child: Center(
-                                  child: Text(
-                                    'SIGN UP',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Montserrat'),
-                                  ),
-                                ),
+                        !_loading
+                            ? Container(
+                          height: 40.0,
+                          child: RaisedButton(
+                            onPressed: _signup,
+                            color: Colors.deepPurpleAccent,
+                            splashColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+                            child: Center(
+                              child: Text(
+                                'SIGN UP',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Montserrat'),
                               ),
-                            )),
+                            ),
+                          ),
+                        )
+                            : Center(
+                          child: CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                                Colors.blue),
+                          ),
+                        ),
                         SizedBox(height: 20.0),
                         /* Container(
                           height: 40.0,
@@ -270,6 +293,30 @@ class _SignupScreenState extends State<SignupScreen> {
                     )),
               )
             ])));
+  }
+
+  Future<void> _signup() async{
+    //form saving
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      try {
+        setState(() { _loading = true; });
+        FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
+            email: _email,
+            password: _password)).user;
+        print(_name);
+        setState(() {  _loading = false; });
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      }catch(e){print(e.message);}
+    }
+  }
+
+  @override
+  void initState() {
+    _passwordVisible = false;
+    _confirmPasswordVisible = false;
+    _loading = false;
   }
 }
 
