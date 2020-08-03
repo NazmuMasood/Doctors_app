@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:doctors_app/dummy/dummy_doctors.dart';
+import 'appointment_slot_radio_button.dart';
 
 class CreateAppointmentWidget extends StatefulWidget {
   final String categoryId;
@@ -53,7 +54,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
             height: 2,
           ),
           Container(
-            height: 80,
+            height: 90,
             decoration: BoxDecoration(
               border: Border.all(
                 width: .5,
@@ -130,14 +131,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                   ],
                 ),
               ),
-              /*Row(
-                children: <Widget>[Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                  ],
-                ),],
-              ),
-              RadioButton(),*/
+              AppointmentRadioButton(),
             ],
           ),
         ],
