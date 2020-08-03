@@ -22,45 +22,51 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: true,
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(
-        title: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+              child: Text(
+                widget.user.email,
+                style: TextStyle(
+                    color: Colors.teal,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 15),
+              ),
+            ),
+            Row(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.location_on,
-                      size: 13,
-                      color: Colors.teal,
-                    ),
-                    Text(
-                      widget.user.email,
-                      style: TextStyle(
-                          color: Colors.teal,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 13),
-                    ),
-                  ],
+                Icon(
+                  Icons.location_on,
+                  size: 13,
+                  color: Colors.teal,
                 ),
                 Text(
                   '329 Momin Road',
                   style: TextStyle(
                       color: Colors.teal,
-                      fontSize: 15,
+                      fontSize: 11,
                       fontWeight: FontWeight.w400),
-                )
+                ),
               ],
             )
-            //Text('Icon',style: TextStyle(color: Colors.teal,fontWeight: FontWeight.bold),),
-            ),
+          ],
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         actions: <Widget>[
           Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
               child: Row(children: <Widget>[
-                RaisedButton(onPressed: _logout, child: Text('Logout')),
+                ButtonTheme(
+                  height: 28,
+               minWidth: 50,
+               child: RaisedButton(onPressed: _logout,child: Text('Logout',style: TextStyle(color: Colors.redAccent),),color: Colors.white,elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)
+                ),),),
                 IconButton(
                     icon: Icon(
                       Icons.notifications_none,
