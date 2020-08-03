@@ -86,7 +86,7 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Container(
-                          height: 145,
+                          height: 146,
                           padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                           child: Column(
                             children: <Widget>[
@@ -147,7 +147,7 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                                 children: <Widget>[
                                   Padding(
                                     padding:
-                                    const EdgeInsets.fromLTRB(10, 4, 10, 2),
+                                    const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child: Row(
                                       mainAxisAlignment:
                                       MainAxisAlignment.start,

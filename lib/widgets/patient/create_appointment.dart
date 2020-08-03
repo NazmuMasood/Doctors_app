@@ -1,8 +1,10 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:doctors_app/dummy/dummy_doctors.dart';
 import 'appointment_slot_radio_button.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateAppointmentWidget extends StatefulWidget {
   final String categoryId;
@@ -51,7 +53,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
             ),
           ),
           SizedBox(
-            height: 2,
+            height: 0,
           ),
           Container(
             height: 90,
@@ -104,6 +106,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
             ),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -131,7 +134,40 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(34, 8, 0, 0),
+                child: Text('Pick a time slot',style: TextStyle(fontWeight: FontWeight.w700,fontSize: 17),),
+              ),
               AppointmentRadioButton(),
+            ],
+          ),
+          SizedBox(
+            height: 180,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 25,5),
+                child: Container(
+                  height: 75,
+                  width: 65,
+                  child: FloatingActionButton(
+                    onPressed: (){
+                      Fluttertoast.showToast(
+                          msg: 'Appointment Successful',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.teal,
+                          textColor: Colors.white,
+                          fontSize: 14.0
+                      );
+                    },
+                    child: Icon(Icons.check,size: 32,),
+                  ),
+                ),
+              ),
             ],
           ),
         ],

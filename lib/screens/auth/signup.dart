@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/auth/login.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -107,7 +108,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.name = input,
+                          onSaved: (input) => _name = input,
                           decoration: InputDecoration(
                               labelText: 'NAME',
                               labelStyle: TextStyle(
@@ -127,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.email = input,
+                          onSaved: (input) => _email = input,
                           decoration: InputDecoration(
                               labelText: 'EMAIL ',
                               labelStyle: TextStyle(
@@ -141,15 +142,16 @@ class _SignupScreenState extends State<SignupScreen> {
                         TextFormField(
                           //ignore: missing_return
                           validator: (input) {
-                            if (input.trim().isEmpty) {
-                              return 'Please provide a password';
+                            if (input.isEmpty) {
+                              return 'Pleate provide a password';
                             }
-                            if (input.trim().length < 6) {
+                            if (input.length < 6) {
                               return 'Your password needs to be at-least 6 characters';
                             }
                           },
-                          onSaved: (input) => _password = input.trim(),
-                          obscureText: !_passwordVisible,//This will obscure text dynamically
+                          onSaved: (input) => _password = input,
+                          obscureText:
+                              !_passwordVisible, //This will obscure text dynamically
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -181,14 +183,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (input.isEmpty) {
                               return 'Please provide a password';
                             }
-                            /*if (input.trim() != _password) {
-                              return 'Your passwords don\'t match';
-                            }*/
+//                            if (input.trim() != _password) {
+//                              return 'Your passwords don\'t match';
+//                            }
                             return null;
                           },
-                          onSaved: (input) =>
-                              _confirmPassword = input.trim(),
-                          obscureText: !_confirmPasswordVisible,//This will obscure text dynamically
+                          onSaved: (input) => _confirmPassword = input,
+                          obscureText:
+                              !_confirmPasswordVisible, //This will obscure text dynamically
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -201,7 +203,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                 onPressed: () {
                                   // Update the state i.e. toogle the state of passwordVisible variable
                                   setState(() {
-                                    _confirmPasswordVisible = !_confirmPasswordVisible;
+                                    _confirmPasswordVisible =
+                                        !_confirmPasswordVisible;
                                   });
                                 },
                               ),
@@ -216,29 +219,30 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(height: 20.0),
                         !_loading
                             ? Container(
-                          height: 40.0,
-                          child: RaisedButton(
-                            onPressed: _signup,
-                            color: Colors.deepPurpleAccent,
-                            splashColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
-                            child: Center(
-                              child: Text(
-                                'SIGN UP',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Montserrat'),
-                              ),
-                            ),
-                          ),
-                        )
+                                height: 40.0,
+                                child: RaisedButton(
+                                  onPressed: _signup,
+                                  color: Colors.teal,
+                                  splashColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(35)),
+                                  child: Center(
+                                    child: Text(
+                                      'SIGN UP',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat'),
+                                    ),
+                                  ),
+                                ),
+                              )
                             : Center(
-                          child: CircularProgressIndicator(
-                            valueColor: new AlwaysStoppedAnimation<Color>(
-                                Colors.blue),
-                          ),
-                        ),
+                                child: CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.blue),
+                                ),
+                              ),
                         SizedBox(height: 20.0),
                         /* Container(
                           height: 40.0,
@@ -295,20 +299,39 @@ class _SignupScreenState extends State<SignupScreen> {
             ])));
   }
 
-  Future<void> _signup() async{
+  Future<void> _signup() async {
     //form saving
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       try {
-        setState(() { _loading = true; });
-        FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
-            email: _email,
-            password: _password)).user;
+        setState(() {
+          _loading = true;
+        });
+      final FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
+                email: _email, password: _password))
+           .user;
+
         print(_name);
-        setState(() {  _loading = false; });
+        Fluttertoast.showToast(
+            msg: 'Signup Successful',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0
+        );
+        setState(() {
+          _loading = false;
+        });
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => LoginScreen()));
-      }catch(e){print(e.message);}
+      } catch(e) {
+        print(e.message);
+        setState(() {
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -320,7 +343,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 }
 
-class Signupmodel {
+class Signupmodel{
   String name;
   String email;
   String password;
