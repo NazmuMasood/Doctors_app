@@ -1,8 +1,11 @@
 import 'package:doctors_app/screens/doctor/home.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/auth/logindoc.dart';
+import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase/firebase.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -16,6 +19,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<bool> isSelected = [false, true];
+  final DatabaseReference database = FirebaseDatabase.instance.reference().child('users').child('doctors');
   bool _passwordVisible = false, _confirmPasswordVisible = false;
   bool _loading = false;
 
@@ -120,6 +124,78 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                                   color: Colors.grey),
                               // hintText: 'EMAIL',
                               // hintStyle: ,
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green))),
+                        ),
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Please type your degree';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => signupmodel.degree = input,
+                          decoration: InputDecoration(
+                              labelText: 'DEGREES ',
+                              labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green))),
+                        ),
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Please type category';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => signupmodel.category = input,
+                          decoration: InputDecoration(
+                              labelText: 'CATAGORIES ',
+                              labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green))),
+                        ),
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Please type your speciality';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => signupmodel.speciality = input,
+                          decoration: InputDecoration(
+                              labelText: 'SPECIALITY',
+                              labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green))),
+                        ),
+                        SizedBox(height: 10.0),
+                        TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Please type address';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => signupmodel.address= input,
+                          decoration: InputDecoration(
+                              labelText: 'ADDRESS ',
+                              labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
                               focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green))),
                         ),
@@ -289,6 +365,15 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                 password: signupmodel.password))
                 .user;
         print(signupmodel.name);
+        database.push().set({
+          'name' : signupmodel.name,
+          'email': signupmodel.email,
+          "degrees": signupmodel.degree,
+				  "category": signupmodel.category,
+				  "specialities": signupmodel.speciality,
+				  "address": signupmodel.address
+        });
+        print(signupmodel.address);
         Fluttertoast.showToast(
             msg: 'Signup Successful',
             toastLength: Toast.LENGTH_SHORT,
@@ -339,6 +424,10 @@ class Signupmodel {
   String email;
   String password;
   String confirmPassword;
+  String degree;
+  String category;
+  String speciality;
+  String address;
 
-  Signupmodel({this.name, this.email, this.password, this.confirmPassword});
+  Signupmodel({this.name, this.email, this.password, this.confirmPassword, this.degree,this.category,this.address,this.speciality});
 }
