@@ -1,16 +1,19 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:doctors_app/dummy/dummy_doctors.dart';
 import 'package:doctors_app/widgets/patient/create_appointment.dart';
 
-class DoctorInfoCardviewWidget extends StatelessWidget {
-  void bookAppointment(BuildContext ctx){
-    Navigator.of(ctx).push(MaterialPageRoute(builder: (_){
-      return CreateAppointmentWidget();
-    },));
-  }
-  var _searchedDoc;
+class DoctorInfoCardviewWidget extends StatefulWidget {
+  @override
+  _DoctorInfoCardviewWidgetState createState() => _DoctorInfoCardviewWidgetState();
+}
+
+class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
+  final _searchedDocController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -38,17 +41,18 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.grey[700],
-                            size: 25,
-                          ),
+//                          child: Icon(
+//                            Icons.search,
+//                            color: Colors.grey[700],
+//                            size: 25,
+//                          ),
                         ),
                         Expanded(
                           child: TextField(
-                            onSubmitted: (str) {
-                              _searchedDoc = str;
-                            },
+                            controller: _searchedDocController,
+                            /*    onSubmitted: (str) {
+
+                            },*/
                             decoration: InputDecoration(
                                 hintText: 'Search for Doctors',
                                 border: InputBorder.none,
@@ -62,11 +66,16 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: 50,
-                  width: 60,
-                  child: Card(
-                    color: Colors.grey[200],
-                    child: Icon(Icons.format_list_bulleted),
+                  height: 43,
+                  width: 55,
+                  child: RaisedButton(
+                    color: Colors.teal[300],
+                    elevation: 2,
+                    shape:  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    onPressed: ()=>print(_searchedDocController.text.trim()), ///TODO: Controller.text
+                    child: Icon(Icons.search,color: Colors.white,size: 27,),
                   ),
                 ),
               ],
@@ -181,8 +190,8 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                                           EdgeInsets.fromLTRB(3, 0, 0, 5),
                                           child: RaisedButton(
                                             onPressed: () => bookAppointment(context),
-                                            color:
-                                            Color.fromRGBO(28, 222, 187, 1),
+                                            color: Colors.teal[400],
+                                            //Color.fromRGBO(28, 222, 187, 1),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                               BorderRadius.circular(6),
@@ -212,5 +221,18 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void bookAppointment(BuildContext ctx){
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_){
+      return CreateAppointmentWidget();
+    },));
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _searchedDocController.dispose();
+    super.dispose();
   }
 }
