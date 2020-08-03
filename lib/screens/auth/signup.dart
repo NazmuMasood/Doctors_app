@@ -1,3 +1,4 @@
+import 'package:doctors_app/screens/patient/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/auth/login.dart';
@@ -150,8 +151,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                           },
                           onSaved: (input) => _password = input,
-                          obscureText:
-                              !_passwordVisible, //This will obscure text dynamically
+                          obscureText: !_passwordVisible,
+                          //This will obscure text dynamically
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -189,8 +190,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             return null;
                           },
                           onSaved: (input) => _confirmPassword = input,
-                          obscureText:
-                              !_confirmPasswordVisible, //This will obscure text dynamically
+                          obscureText: !_confirmPasswordVisible,
+                          //This will obscure text dynamically
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -222,7 +223,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 height: 40.0,
                                 child: RaisedButton(
                                   onPressed: _signup,
-                                  color: Colors.teal,
+                                  color: Colors.green,
                                   splashColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(35)),
@@ -278,7 +279,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             SizedBox(width: 5.0),
                             InkWell(
                               onTap: () {
-                                Navigator.of(context).pushNamed('/login');
+                                Navigator.of(context).pushReplacementNamed('/login');
                               },
                               child: Text(
                                 'LOGIN',
@@ -304,13 +305,11 @@ class _SignupScreenState extends State<SignupScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       try {
-        setState(() {
-          _loading = true;
-        });
-      final FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
-                email: _email, password: _password))
-           .user;
-
+        _showProgress();
+        final FirebaseUser user =
+            (await _firebaseAuth.createUserWithEmailAndPassword(
+                    email: _email, password: _password))
+                .user;
         print(_name);
         Fluttertoast.showToast(
             msg: 'Signup Successful',
@@ -319,20 +318,34 @@ class _SignupScreenState extends State<SignupScreen> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.teal,
             textColor: Colors.white,
-            fontSize: 14.0
-        );
-        setState(() {
-          _loading = false;
-        });
+            fontSize: 14.0);
+        _hideProgress();
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginScreen()));
-      } catch(e) {
-        print(e.message);
-        setState(() {
-          _loading = false;
-        });
+            context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+      } catch (e) {
+        print(e.message); _hideProgress();
+        Fluttertoast.showToast(
+            msg: 'Signup Error',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
       }
     }
+  }
+
+  void _showProgress() {
+    setState(() {
+      _loading = true;
+    });
+  }
+
+  void _hideProgress() {
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -343,7 +356,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 }
 
-class Signupmodel{
+class Signupmodel {
   String name;
   String email;
   String password;

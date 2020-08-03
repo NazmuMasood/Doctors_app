@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/patient/home.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,12 +14,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
   bool _loading = false;
-
-  void _onLoading() {
-    setState(() {
-      _loading = true;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,24 +179,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: 40.0),
                         !_loading
                             ? Container(
-                          height: 40.0,
-                            child: RaisedButton(
-                              onPressed: _login,
-                              color: Colors.deepPurpleAccent,
-                              splashColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
-                              child: Center(
-                                child: Text(
-                                  'LOGIN',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Montserrat'),
+                                height: 40.0,
+                                child: RaisedButton(
+                                  onPressed: _login,
+                                  color: Colors.green,
+                                  splashColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(35)),
+                                  child: Center(
+                                    child: Text(
+                                      'LOGIN',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat'),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                        )
-                        : Center(
+                              )
+                            : Center(
                                 child: CircularProgressIndicator(
                                   valueColor: new AlwaysStoppedAnimation<Color>(
                                       Colors.blue),
@@ -221,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(width: 5.0),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/signup');
+                    Navigator.of(context).pushReplacementNamed('/signup');
                   },
                   child: Text(
                     'SIGN UP',
@@ -246,17 +242,38 @@ class _LoginScreenState extends State<LoginScreen> {
     if (formState.validate()) {
       formState.save();
       try {
-        _onLoading();
+        _showProgress();
         FirebaseUser user = (await FirebaseAuth.instance
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
-        setState(() { _loading = false; });
+        _hideProgress();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
       } catch (e) {
-        print(e.message);
+        print(e.message); _hideProgress();
+        Fluttertoast.showToast(
+            msg: 'Login Error',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0
+        );
       }
     }
+  }
+
+  void _showProgress() {
+    setState(() {
+      _loading = true;
+    });
+  }
+
+  void _hideProgress() {
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
