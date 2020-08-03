@@ -1,5 +1,4 @@
-
-
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +18,8 @@ class CreateAppointmentWidget extends StatefulWidget {
 
 class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
   DateTime selectedDate = DateTime.now();
+  CreateAppointmentModel appointment = CreateAppointmentModel();
+  final DatabaseReference database = FirebaseDatabase.instance.reference().child('users').child('appointment');
 
   void presentDatePicker(){
     showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(new Duration(days: 10),
@@ -126,12 +127,14 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                       onPressed: (){
                         setState(() {
                           selectedDate = selectedDate.add(Duration(days: 1));
-                        });
+                          appointment.date= selectedDate.toString();          });
                       },
                       icon:Icon(Icons.arrow_forward),
                     ),
                   ],
+                 
                 ),
+              
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(34, 8, 0, 0),
@@ -153,6 +156,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                   width: 65,
                   child: FloatingActionButton(
                     onPressed: (){
+                      _pushOn();
                       Fluttertoast.showToast(
                           msg: 'Appointment Successful',
                           toastLength: Toast.LENGTH_SHORT,
@@ -173,4 +177,24 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
       ),
     );
   }
+  
+  Future<void> _pushOn() async {
+  database.push().set({
+          'name' : appointment.patientname,
+          'doctor': appointment.doctorname,
+          'date' :appointment.date,
+          'time':appointment.time
+          });
+}
+}
+
+
+
+class CreateAppointmentModel {
+  String patientname;
+  String doctorname;
+  String date;
+  String time;
+
+  CreateAppointmentModel({this.patientname, this.doctorname,  this.time ,this.date});
 }
