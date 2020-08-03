@@ -7,13 +7,12 @@ import 'appointment_slot_radio_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateAppointmentWidget extends StatefulWidget {
-  final String categoryId;
-  final String categoryTitle;
-  final String categoryImageUrl;
-  final String categoryAddress;
-  final String categorySpecialities;
-  CreateAppointmentWidget({this.categoryId,this.categoryTitle,this.categoryAddress,this.categoryImageUrl,this.categorySpecialities});
-
+ String categoryId;
+ String categoryTitle;
+   String categoryImageUrl;
+   String categoryAddress;
+   String categorySpecialities;
+  CreateAppointmentWidget({@required this.categoryId,this.categoryTitle,this.categoryAddress,this.categoryImageUrl,this.categorySpecialities});
   @override
   _CreateAppointmentWidgetState createState() => _CreateAppointmentWidgetState();
 }
@@ -72,7 +71,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                   child: CircleAvatar(
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Text('Image\n here'),
+                      child: Text(widget.categoryId),
                     ),
                   ),
                 ),
@@ -122,7 +121,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                       },
                       icon: Icon(Icons.arrow_back),
                     ),
-                    FlatButton.icon(onPressed: presentDatePicker, icon: Icon(Icons.date_range), label:Text(DateFormat('E,ddMMMM').format(selectedDate),style: TextStyle(fontWeight:FontWeight.bold,fontSize: 17),),),
+                    FlatButton.icon(onPressed: presentDatePicker, icon: Icon(Icons.date_range), label:Text(DateFormat('E, dd MMMM').format(selectedDate),style: TextStyle(fontWeight:FontWeight.bold,fontSize: 17),),),
                     IconButton(
                       onPressed: (){
                         setState(() {

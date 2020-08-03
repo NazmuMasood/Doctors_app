@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +189,9 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                           padding:
                                           EdgeInsets.fromLTRB(3, 0, 0, 5),
                                           child: RaisedButton(
-                                            onPressed: () => bookAppointment(context),
+                                            onPressed: () { bookAppointment(context,tx.id);
+                                            print(tx.id);
+                                            },
                                             color: Colors.teal[400],
                                             //Color.fromRGBO(28, 222, 187, 1),
                                             shape: RoundedRectangleBorder(
@@ -223,9 +225,9 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     );
   }
 
-  void bookAppointment(BuildContext ctx){
+  void bookAppointment(BuildContext ctx,id){
     Navigator.of(ctx).push(MaterialPageRoute(builder: (_){
-      return CreateAppointmentWidget();
+      return CreateAppointmentWidget(categoryId: id);
     },));
   }
 
