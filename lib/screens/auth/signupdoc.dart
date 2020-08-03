@@ -101,7 +101,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
               Container(
                 padding: EdgeInsets.only(top: 0.0, left: 30.0, right: 30.0),
                 child: Form(
-                    key: _formKey, //therjke
+                    key: _formKey,
                     child: Column(
                       children: <Widget>[
                         TextFormField(
