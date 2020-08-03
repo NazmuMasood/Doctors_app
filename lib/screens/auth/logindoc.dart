@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctors_app/screens/patient/home.dart';
+import 'package:doctors_app/screens/doctor/home.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginDocScreen extends StatefulWidget {
   @override
@@ -11,6 +12,8 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
   String _email, _password;
   List<bool> isSelected = [false, true];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _passwordVisible = false;
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,8 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                             for (int i = 0; i < isSelected.length; i++) {
                               if (i == index) {
                                 isSelected[i] = true;
-                                Navigator.of(context).pushNamed('/login');
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    '/login', (Route<dynamic> route) => false);
                               } else {
                                 isSelected[i] = false;
                               }
@@ -119,6 +123,21 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                         SizedBox(height: 20.0),
                         TextFormField(
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  // Based on passwordVisible state choose the icon
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                                onPressed: () {
+                                  // Update the state i.e. toogle the state of passwordVisible variable
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
                               labelText: 'PASSWORD',
                               labelStyle: TextStyle(
                                   fontFamily: 'Montserrat',
@@ -136,7 +155,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                             }
                           },
                           onSaved: (input) => _password = input,
-                          obscureText: true,
+                          obscureText: !_passwordVisible,
                         ),
                         SizedBox(height: 5.0),
                         Container(
@@ -155,27 +174,32 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                           ),
                         ),
                         SizedBox(height: 40.0),
-                        Container(
-                          height: 40.0,
-                          child: Material(
-                            borderRadius: BorderRadius.circular(35.0),
-                            shadowColor: Colors.amberAccent,
-                            color: Colors.orangeAccent,
-                            elevation: 9.0,
-                            child: GestureDetector(
-                              onTap: login,
-                              child: Center(
-                                child: Text(
-                                  'LOGIN',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Montserrat'),
+                        !_loading
+                            ? Container(
+                                height: 40.0,
+                                child: RaisedButton(
+                                  onPressed: _logindoc,
+                                  color: Colors.green,
+                                  splashColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(35)),
+                                  child: Center(
+                                    child: Text(
+                                      'LOGIN',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat'),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.blue),
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 20.0),
                       ],
                     ))),
@@ -208,19 +232,50 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
         )));
   }
 
-  Future<void> login() async {
+  Future<void> _logindoc() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
       try {
+        _showProgress();
         FirebaseUser user = (await FirebaseAuth.instance
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+        _hideProgress();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+            (Route<dynamic> route) => false);
       } catch (e) {
         print(e.message);
+        _hideProgress();
+        Fluttertoast.showToast(
+            msg: 'Login Error',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
       }
     }
+  }
+
+  void _showProgress() {
+    setState(() {
+      _loading = true;
+    });
+  }
+
+  void _hideProgress() {
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    _passwordVisible = false;
+    _loading = false;
   }
 }

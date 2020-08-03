@@ -17,7 +17,7 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
       child: Column(
         children: <Widget>[
           SizedBox(
-            height: 80,
+            height: 40,
           ),
           Padding(
             padding: const EdgeInsets.all(0.0),
@@ -27,7 +27,8 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                   width: 302,
                   height: 50,
                   //padding: EdgeInsets.all(7),
-                  margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
+                  //margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
@@ -37,7 +38,8 @@ class DoctorInfoCardviewWidget extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
+                          //padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           child: Icon(
                             Icons.search,
                             color: Colors.grey[700],

@@ -61,7 +61,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         for (int i = 0; i < isSelected.length; i++) {
                           if (i == index) {
                             isSelected[i] = true;
-                            Navigator.of(context).pushNamed('/signupdoc');
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                '/signupdoc', (Route<dynamic> route) => false);
                           } else {
                             isSelected[i] = false;
                           }

@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => AuthenticatorScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
-        //'/home': (context) => CategoriesScreen(),
         '/logindoc': (context) => LoginDocScreen(),
         '/signupdoc': (context) => SignupDocScreen(),
         DoctorScreen.routeName:(ctx) => DoctorScreen(),
