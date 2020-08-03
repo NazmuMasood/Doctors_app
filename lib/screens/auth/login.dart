@@ -122,9 +122,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (input.isEmpty) {
                             return 'Please type an email';
                           }
+                          FocusScope.of(context).nextFocus();
                           return null;
                         },
-                        onSaved: (input) => _email = input,
+                        onSaved: (input) {
+                          _email = input;
+                        },
                       ),
                       SizedBox(height: 20.0),
                       TextFormField(
@@ -215,8 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           )
         ],
-      )
-      ),
+      )),
     );
   }
 

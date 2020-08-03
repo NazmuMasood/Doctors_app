@@ -3,9 +3,11 @@ import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:doctors_app/screens/auth/signupdoc.dart';
 import 'package:doctors_app/screens/patient/categories_screen.dart';
 import 'package:doctors_app/screens/patient/doctor_screen.dart';
+import 'package:doctors_app/screens/patient/home.dart';
 import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/auth/signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => WelcomeScreen(),
+        '/': (context) => AuthenticatorScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
         '/home': (context) => CategoriesScreen(),
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Doctor\'s App',
       theme: ThemeData(
-        fontFamily: 'avenir',
+        fontFamily: 'Avenir',
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -38,15 +40,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/*class MainPage extends StatefulWidget {
+class AuthenticatorScreen extends StatefulWidget {
   @override
-  _MainPageState createState() => _MainPageState();
+  _AuthenticatorScreenState createState() => _AuthenticatorScreenState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return FutureBuilder<FirebaseUser>(
+        future: FirebaseAuth.instance.currentUser(),
+        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot){
+          if (snapshot.hasData){
+            FirebaseUser user = snapshot.data; // this is your user instance
+            /// is because there is user already logged
+            return HomeScreen(user: user);
+          }
+          /// other way there is no user logged.
+          return WelcomeScreen();
+        }
+    );
+    /*return Scaffold(
       appBar: AppBar(
         title: Text('Doctor\'s App'),
       ),
@@ -56,13 +70,13 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             RaisedButton(
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
               },
               child: Text('Login')
             ),
             RaisedButton(
                 onPressed: (){
-                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupScreen()));
                 },
                 child: Text('Sign Up')
             ),
@@ -76,8 +90,7 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-    );
+    );*/
   }
 }
-*/
 

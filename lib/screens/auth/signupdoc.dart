@@ -242,7 +242,8 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                               ),
                             )
                           ],
-                        )
+                        ),
+                        SizedBox(height: 20.0)
                       ],
                     )),
               )
