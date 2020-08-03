@@ -1,6 +1,7 @@
 import 'package:doctors_app/screens/patient/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:doctors_app/screens/auth/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -13,6 +14,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Signupmodel signupmodel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final DatabaseReference database = FirebaseDatabase.instance.reference().child('users').child('patients');
   List<bool> isSelected = [true, false];
   bool _passwordVisible = false, _confirmPasswordVisible = false;
   bool _loading = false;
@@ -311,6 +313,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     email: signupmodel.email, password: signupmodel.password))
                 .user;
         print(signupmodel.name);
+       
+         database.push().set({
+          'name' : signupmodel.name
+          });
+
         Fluttertoast.showToast(
             msg: 'Signup Successful',
             toastLength: Toast.LENGTH_SHORT,
