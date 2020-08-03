@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:doctors_app/widgets/patient/category_item.dart';
-import 'package:doctors_app/dummy/category_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, @required this.user}) : super(key: key);
@@ -75,27 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ])),
         ],
       ),
-      body: GridView(
-        children: DUMMY_CATEGORIES
-            .map(
-              (catData) => CategoryItemWidget(
-              catData.id, catData.title, catData.avatar, catData.text),
-        )
-            .toList(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 300,
-          childAspectRatio: 1.3,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 5,
-        ),
-      ),
+      body: Text('Doctor UI')
     );
   }
 
   _logout() async {
     await _firebaseAuth.signOut().then((_) {
       Navigator.of(context)
-          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+          .pushNamedAndRemoveUntil('/logindoc', (Route<dynamic> route) => false);
     });
   }
 }

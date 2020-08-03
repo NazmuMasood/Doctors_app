@@ -61,7 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             for (int i = 0; i < isSelected.length; i++) {
                               if (i == index) {
                                 isSelected[i] = true;
-                                Navigator.of(context).pushNamed('/logindoc');
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    '/logindoc', (Route<dynamic> route) => false);
                               } else {
                                 isSelected[i] = false;
                               }
@@ -247,10 +248,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
         _hideProgress();
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+            (Route<dynamic> route) => false);
       } catch (e) {
-        print(e.message); _hideProgress();
+        print(e.message);
+        _hideProgress();
         Fluttertoast.showToast(
             msg: 'Login Error',
             toastLength: Toast.LENGTH_SHORT,
@@ -258,8 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.teal,
             textColor: Colors.white,
-            fontSize: 14.0
-        );
+            fontSize: 14.0);
       }
     }
   }

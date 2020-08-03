@@ -14,7 +14,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<bool> isSelected = [true, false];
-  String _name, _email, _password, _confirmPassword;
   bool _passwordVisible = false, _confirmPasswordVisible = false;
   bool _loading = false;
 
@@ -61,7 +60,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         for (int i = 0; i < isSelected.length; i++) {
                           if (i == index) {
                             isSelected[i] = true;
-                            Navigator.of(context).pushNamed('/signupdoc');
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                '/signupdoc', (Route<dynamic> route) => false);
                           } else {
                             isSelected[i] = false;
                           }
@@ -109,7 +109,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => _name = input,
+                          onSaved: (input) => signupmodel.name = input,
                           decoration: InputDecoration(
                               labelText: 'NAME',
                               labelStyle: TextStyle(
@@ -129,7 +129,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => _email = input,
+                          onSaved: (input) => signupmodel.email = input,
                           decoration: InputDecoration(
                               labelText: 'EMAIL ',
                               labelStyle: TextStyle(
@@ -150,7 +150,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               return 'Your password needs to be at-least 6 characters';
                             }
                           },
-                          onSaved: (input) => _password = input,
+                          onSaved: (input) => signupmodel.password = input,
                           obscureText: !_passwordVisible,
                           //This will obscure text dynamically
                           decoration: InputDecoration(
@@ -189,7 +189,7 @@ class _SignupScreenState extends State<SignupScreen> {
 //                            }
                             return null;
                           },
-                          onSaved: (input) => _confirmPassword = input,
+                          onSaved: (input) => signupmodel.confirmPassword = input,
                           obscureText: !_confirmPasswordVisible,
                           //This will obscure text dynamically
                           decoration: InputDecoration(
@@ -308,9 +308,9 @@ class _SignupScreenState extends State<SignupScreen> {
         _showProgress();
         final FirebaseUser user =
             (await _firebaseAuth.createUserWithEmailAndPassword(
-                    email: _email, password: _password))
+                    email: signupmodel.email, password: signupmodel.password))
                 .user;
-        print(_name);
+        print(signupmodel.name);
         Fluttertoast.showToast(
             msg: 'Signup Successful',
             toastLength: Toast.LENGTH_SHORT,

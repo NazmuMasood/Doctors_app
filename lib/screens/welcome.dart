@@ -76,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, '/login');
+                    Navigator.pushReplacementNamed(context, '/login');
                   },
                 ),
               )
