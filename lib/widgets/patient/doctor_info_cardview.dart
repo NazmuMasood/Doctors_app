@@ -17,89 +17,94 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 80,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 302,
-                  height: 50,
-                  //padding: EdgeInsets.all(7),
-                  margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    elevation: 2,
-                    color: Colors.grey[200],
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 80,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 302,
+                height: 50,
+                //padding: EdgeInsets.all(7),
+                margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  elevation: 2,
+                  color: Colors.grey[200],
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
 //                          child: Icon(
 //                            Icons.search,
 //                            color: Colors.grey[700],
 //                            size: 25,
 //                          ),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchedDocController,
+                          onSubmitted: (str) {},
+                          decoration: InputDecoration(
+                              hintText: 'Search for Doctors',
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.w400)),
                         ),
-                        Expanded(
-                          child: TextField(
-                            controller: _searchedDocController,
-                            onSubmitted: (str) {},
-                            decoration: InputDecoration(
-                                hintText: 'Search for Doctors',
-                                border: InputBorder.none,
-                                hintStyle: TextStyle(
-                                    color: Colors.black54,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                Container(
-                  height: 43,
-                  width: 55,
-                  child: RaisedButton(
-                    color: Colors.teal[300],
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    onPressed: () => print(_searchedDocController.text.trim()),
-
-                    ///TODO: Controller.text
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.white,
-                      size: 27,
-                    ),
+              ),
+              Container(
+                height: 43,
+                width: 55,
+                child: RaisedButton(
+                  color: Colors.teal[300],
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  onPressed: () => print(_searchedDocController.text.trim()),
+                  ///TODO: Controller.text
+                  child: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                    size: 27,
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: ListView.builder(shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
+            {
+             return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
+            },
             ),
           ),
-          ListView.builder(scrollDirection: Axis.vertical,shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
-          {
-           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
-          },
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget DocListUI(String address, String category, String degrees, String email,
       String name, String specialities) {
     return Container(
-      padding: EdgeInsets.fromLTRB(21, 5, 21, 6),
+      padding: EdgeInsets.fromLTRB(21, 0, 21, 0),
       height: 165,
       child: Column(
         children: <Widget>[
@@ -110,7 +115,6 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
               ),
               child: Container(
                 height: 146,
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                 child: Column(
                   children: <Widget>[
                     Row(
