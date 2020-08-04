@@ -88,18 +88,17 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           height: 20,
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: ListView.builder(shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
-            {
-             return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
-            },
-            ),
+          child: ListView.builder(padding: EdgeInsets.all(2),shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
+          {
+           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
+          },
           ),
         ),
       ],
     );
   }
+
+
 
   Widget DocListUI(String address, String category, String degrees, String email,
       String name, String specialities) {
@@ -115,6 +114,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
               ),
               child: Container(
                 height: 146,
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Column(
                   children: <Widget>[
                     Row(

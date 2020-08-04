@@ -15,14 +15,14 @@ class DoctorScreen extends StatelessWidget {
     final categoryId = routeArgs['id'];
     //final listDoctors = dummy_doctors.toList();
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
-      resizeToAvoidBottomInset: true,
+
+
       /*appBar: AppBar(
         title: Text(categoryTitle,style: TextStyle(color: Colors.teal),),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),*/
-      body: categoryTitle=='Doctors'?DoctorInfoCardviewWidget():Nothing(),
+      body:  categoryTitle=='Doctors'?DoctorInfoCardviewWidget():Nothing(),
     );
   }
 }
