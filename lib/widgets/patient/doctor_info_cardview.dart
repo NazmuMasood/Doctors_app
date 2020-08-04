@@ -16,137 +16,87 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
 
 
   @override
-  void initState() {
-    super.initState();
-    DatabaseReference postsRef =
-    FirebaseDatabase.instance.reference().child('doctors');
-
-    postsRef.once().then((DataSnapshot snap) {
-      var KEYS = snap.value.keys;
-      var DATA = snap.value;
-
-      doclist.clear();
-
-      for (var individualKey in KEYS) {
-        Doctors doctors = new Doctors(
-          DATA[individualKey]['address'],
-          DATA[individualKey]['category'],
-          DATA[individualKey]['degrees'],
-          DATA[individualKey]['email'],
-          DATA[individualKey]['name'],
-          DATA[individualKey]['specialities'],
-        );
-        doclist.add(doctors);
-      }
-      setState(() {
-        print('Length:$doclist.length');
-      });
-    });
-  }
-
-  List<Doctors> doclist = [];
-
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 80,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 302,
-                height: 50,
-                //padding: EdgeInsets.all(7),
-                margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  elevation: 2,
-                  color: Colors.grey[200],
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 80,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 302,
+                  height: 50,
+                  //padding: EdgeInsets.all(7),
+                  margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    elevation: 2,
+                    color: Colors.grey[200],
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
 //                          child: Icon(
 //                            Icons.search,
 //                            color: Colors.grey[700],
 //                            size: 25,
 //                          ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _searchedDocController,
-                          onSubmitted: (str) {},
-                          decoration: InputDecoration(
-                              hintText: 'Search for Doctors',
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w400)),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: TextField(
+                            controller: _searchedDocController,
+                            onSubmitted: (str) {},
+                            decoration: InputDecoration(
+                                hintText: 'Search for Doctors',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w400)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                height: 43,
-                width: 55,
-                child: RaisedButton(
-                  color: Colors.teal[300],
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  onPressed: () => print(_searchedDocController.text.trim()),
+                Container(
+                  height: 43,
+                  width: 55,
+                  child: RaisedButton(
+                    color: Colors.teal[300],
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    onPressed: () => print(_searchedDocController.text.trim()),
 
-                  ///TODO: Controller.text
-                  child: Icon(
-                    Icons.search,
-                    color: Colors.white,
-                    size: 27,
+                    ///TODO: Controller.text
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                      size: 27,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Container(
-          child: ListView.builder(scrollDirection: Axis.vertical,shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
+          ListView.builder(scrollDirection: Axis.vertical,shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
           {
-           return PostUi(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
+           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
           },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  void bookAppointment(BuildContext ctx, id) {
-    Navigator.of(ctx).push(MaterialPageRoute(
-      builder: (_) {
-        return CreateAppointmentWidget(categoryId: id);
-      },
-    ));
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _searchedDocController.dispose();
-    super.dispose();
-  }
-
-
-
-
-  Widget PostUi(String address, String category, String degrees, String email,
+  Widget DocListUI(String address, String category, String degrees, String email,
       String name, String specialities) {
     return Container(
       padding: EdgeInsets.fromLTRB(21, 5, 21, 6),
@@ -172,8 +122,8 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                           width: 60,
                           child: CircleAvatar(
                             child: Image(
-                              image: AssetImage('assets/image/doctor.png'),
-                                ),
+                              image: AssetImage('assets/images/doctor.png'),
+                            ),
                           ),
                         ),
                         Padding(
@@ -230,7 +180,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                       borderRadius: BorderRadius.circular(6),
                                       side: BorderSide(
                                           color:
-                                              Color.fromRGBO(28, 222, 187, 1))),
+                                          Color.fromRGBO(28, 222, 187, 1))),
                                   child: Text(
                                     'View Profile',
                                     style: TextStyle(
@@ -244,8 +194,9 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                 width: 185,
                                 padding: EdgeInsets.fromLTRB(3, 0, 0, 5),
                                 child: RaisedButton(
-//                                            onPressed: () { bookAppointment(context);
-////                                            print(key);
+                                  onPressed: () => null,
+//                                              bookAppointment(context);
+//                                            print(key);
 //                                            },
                                   color: Colors.teal[400],
                                   //Color.fromRGBO(28, 222, 187, 1),
@@ -273,4 +224,51 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
       ),
     );
   }
+
+  void bookAppointment(BuildContext ctx, id) {
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) {
+        return CreateAppointmentWidget(categoryId: id);
+      },
+    ));
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _searchedDocController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DatabaseReference postsRef =
+    FirebaseDatabase.instance.reference().child('users').child('doctors');
+
+    postsRef.once().then((DataSnapshot snap) {
+      var KEYS = snap.value.keys;
+      var DATA = snap.value;
+
+      doclist.clear();
+
+      for (var individualKey in KEYS) {
+        Doctors doctors = new Doctors(
+          DATA[individualKey]['address'],
+          DATA[individualKey]['category'],
+          DATA[individualKey]['degrees'],
+          DATA[individualKey]['email'],
+          DATA[individualKey]['name'],
+          DATA[individualKey]['specialities'],
+        );
+        doclist.add(doctors);
+      }
+      setState(() {
+        print('Length:${doclist.length}');
+      });
+    });
+  }
+
+  List<Doctors> doclist = [];
+
 }
