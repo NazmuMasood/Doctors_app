@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:doctors_app/widgets/patient/create_appointment.dart';
-import 'posts.dart';
+import 'package:doctors_app/widgets/patient/doctors.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class DoctorInfoCardviewWidget extends StatefulWidget {
@@ -14,7 +14,38 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
 
-  List<Posts> postlist = [];
+
+  @override
+  void initState() {
+    super.initState();
+    DatabaseReference postsRef =
+    FirebaseDatabase.instance.reference().child('doctors');
+
+    postsRef.once().then((DataSnapshot snap) {
+      var KEYS = snap.value.keys;
+      var DATA = snap.value;
+
+      doclist.clear();
+
+      for (var individualKey in KEYS) {
+        Doctors doctors = new Doctors(
+          DATA[individualKey]['address'],
+          DATA[individualKey]['category'],
+          DATA[individualKey]['degrees'],
+          DATA[individualKey]['email'],
+          DATA[individualKey]['name'],
+          DATA[individualKey]['specialities'],
+        );
+        doclist.add(doctors);
+      }
+      setState(() {
+        print('Length:$doclist.length');
+      });
+    });
+  }
+
+  List<Doctors> doclist = [];
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +118,9 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           ),
         ),
         Container(
-          child: ListView.builder(scrollDirection: Axis.vertical,shrinkWrap: true,itemCount: postlist.length,itemBuilder: (_, index)
+          child: ListView.builder(scrollDirection: Axis.vertical,shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
           {
-           return PostUi(postlist[index].address,postlist[index].category,postlist[index].degrees,postlist[index].email,postlist[index].name,postlist[index].specialities);
+           return PostUi(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
           },
           ),
         ),
@@ -112,34 +143,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    DatabaseReference postsRef =
-    FirebaseDatabase.instance.reference().child('doctors');
 
-    postsRef.once().then((DataSnapshot snap) {
-      var KEYS = snap.value.keys;
-      var DATA = snap.value;
-
-      postlist.clear();
-
-      for (var individualKey in KEYS) {
-        Posts posts = new Posts(
-          DATA[individualKey]['address'],
-          DATA[individualKey]['category'],
-          DATA[individualKey]['degrees'],
-          DATA[individualKey]['email'],
-          DATA[individualKey]['name'],
-          DATA[individualKey]['specialities'],
-        );
-        postlist.add(posts);
-      }
-      setState(() {
-        print('Length:$postlist.length');
-      });
-    });
-  }
 
 
   Widget PostUi(String address, String category, String degrees, String email,
