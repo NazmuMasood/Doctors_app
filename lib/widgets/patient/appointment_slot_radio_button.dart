@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 class AppointmentRadioButton extends StatefulWidget {
+  Function(int) onSelectedIndex;
   @override
   _AppointmentRadioButtonState createState() => _AppointmentRadioButtonState();
 }
@@ -7,7 +8,9 @@ class AppointmentRadioButton extends StatefulWidget {
 class _AppointmentRadioButtonState extends State<AppointmentRadioButton> {
 
   List<String> lst = ['Morning','Afternoon','Evening'];
-  int selectedIndex = 0;
+   int selectedIndex = 0;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +30,14 @@ class _AppointmentRadioButtonState extends State<AppointmentRadioButton> {
   void changeIndex(int index){
     setState(() {
       selectedIndex = index;
+      print(selectedIndex);
     });
+
   }
   Widget customRadio(String txt,int index){
     return RaisedButton(
-      onPressed: () => changeIndex(index),
+      onPressed: () {changeIndex(index);
+      },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       color: Colors.white,
 //      borderSide: BorderSide(color: selectedIndex == index ? Colors.teal : Colors.grey),

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:doctors_app/widgets/patient/create_appointment.dart';
-import 'package:doctors_app/widgets/patient/doctors.dart';
+import 'file:///C:/Users/Maroof/AndroidStudioProjects/Doctors_app/lib/models/doctors.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class DoctorInfoCardviewWidget extends StatefulWidget {
@@ -20,7 +20,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 80,
+          height: 60,
         ),
         Padding(
           padding: const EdgeInsets.all(0.0),
@@ -198,10 +198,10 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                 width: 185,
                                 padding: EdgeInsets.fromLTRB(3, 0, 0, 5),
                                 child: RaisedButton(
-                                  onPressed: () => null,
-//                                              bookAppointment(context);
-//                                            print(key);
-//                                            },
+                                  onPressed: () {print(email);
+                                             bookAppointment(context,email,address,specialities,name);
+
+                                             },
                                   color: Colors.teal[400],
                                   //Color.fromRGBO(28, 222, 187, 1),
                                   shape: RoundedRectangleBorder(
@@ -229,11 +229,11 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     );
   }
 
-  void bookAppointment(BuildContext ctx, id) {
+  void bookAppointment(BuildContext ctx, id,address,specialities,name) {
     Navigator.of(ctx).push(MaterialPageRoute(
       builder: (_) {
-        return CreateAppointmentWidget(categoryId: id);
-      },
+        return CreateAppointmentWidget(categoryId: id,categoryAddress:address,categorySpecialities: specialities,categoryTitle: name);
+      }
     ));
   }
 
@@ -257,7 +257,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
       doclist.clear();
 
       for (var individualKey in KEYS) {
-        Doctors doctors = new Doctors(
+        Doctor doctors = new Doctor(
           DATA[individualKey]['address'],
           DATA[individualKey]['category'],
           DATA[individualKey]['degrees'],
@@ -273,6 +273,6 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     });
   }
 
-  List<Doctors> doclist = [];
+  List<Doctor> doclist = [];
 
 }

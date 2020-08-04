@@ -1,4 +1,4 @@
-import 'package:doctors_app/models/doctor.dart';
+import 'package:doctors_app/models/dummy_doctor.dart';
 
 final dummy_doctors = [
   Doctor(

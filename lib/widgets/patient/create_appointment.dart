@@ -1,32 +1,48 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'appointment_slot_radio_button.dart';
+//import 'appointment_slot_radio_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:doctors_app/screens/patient/home.dart';
 
 class CreateAppointmentWidget extends StatefulWidget {
- String categoryId;
- String categoryTitle;
-   String categoryImageUrl;
-   String categoryAddress;
-   String categorySpecialities;
-  CreateAppointmentWidget({@required this.categoryId,this.categoryTitle,this.categoryAddress,this.categoryImageUrl,this.categorySpecialities});
+  String categoryId;
+  String categoryTitle;
+  String categoryImageUrl;
+  String categoryAddress;
+  String categorySpecialities;
+  CreateAppointmentWidget(
+      {@required this.categoryId,
+      this.categoryTitle,
+      this.categoryAddress,
+      this.categoryImageUrl,
+      this.categorySpecialities});
   @override
-  _CreateAppointmentWidgetState createState() => _CreateAppointmentWidgetState();
+  _CreateAppointmentWidgetState createState() =>
+      _CreateAppointmentWidgetState();
 }
 
 class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
   DateTime selectedDate = DateTime.now();
-  CreateAppointmentModel appointment = CreateAppointmentModel();
-  final DatabaseReference database = FirebaseDatabase.instance.reference().child('users').child('appointment');
+//  CreateAppointmentModel appointment = CreateAppointmentModel();
+  List<String> lst = ['Morning', 'Afternoon', 'Evening'];
+  int selectedIndex = 0;
 
-  void presentDatePicker(){
-    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(new Duration(days: 10),
-    ),
+  final DatabaseReference database =
+      FirebaseDatabase.instance.reference().child('appointments');
+
+  void presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(
+        new Duration(days: 10),
+      ),
     ).then((value) {
-      if(value == null)
-      {
+      if (value == null) {
         return;
       }
       setState(() {
@@ -34,6 +50,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +63,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14,horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             child: Text(
               'Select appointment time',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
@@ -66,15 +83,11 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
             child: Row(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.fromLTRB(20,5,5,5),
+                  margin: EdgeInsets.fromLTRB(20, 5, 5, 5),
                   height: 58,
                   width: 58,
                   child: CircleAvatar(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(widget.categoryId),
-                    ),
-                  ),
+                      backgroundImage: AssetImage('assets/images/doctor.png')),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -82,7 +95,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Title Lorem Ipsum',
+                        widget.categoryTitle,
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
@@ -90,7 +103,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                         height: 2,
                       ),
                       Text(
-                        'Specialities Lorem ipsum dolor sit',
+                        widget.categorySpecialities,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                         ),
@@ -98,11 +111,18 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                       SizedBox(
                         height: 2,
                       ),
-                      Text('Address Lorem ipsum dolor sit'),
+                      Text(widget.categoryAddress),
                     ],
                   ),
                 )
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(34, 20, 0, 0),
+            child: Text(
+              'Pick a Date',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
             ),
           ),
           Column(
@@ -110,64 +130,88 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      onPressed:
-                      selectedDate.isBefore(DateTime.now()) ? null: (){
-                        setState(() {
-                          selectedDate = selectedDate.subtract(Duration(days: 1));
-                        });
-                      },
-                      icon: Icon(Icons.arrow_back),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: .5,
+                      color: Colors.grey[300],
                     ),
-                    FlatButton.icon(onPressed: presentDatePicker, icon: Icon(Icons.date_range), label:Text(DateFormat('E, dd MMMM').format(selectedDate),style: TextStyle(fontWeight:FontWeight.bold,fontSize: 17),),),
-                    IconButton(
-                      onPressed: (){
-                        setState(() {
-                          selectedDate = selectedDate.add(Duration(days: 1));
-                          appointment.date= selectedDate.toString();          });
-                      },
-                      icon:Icon(Icons.arrow_forward),
-                    ),
-                  ],
-                 
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: selectedDate.isBefore(DateTime.now())
+                            ? null
+                            : () {
+                                setState(() {
+                                  selectedDate =
+                                      selectedDate.subtract(Duration(days: 1));
+                                });
+                              },
+                        icon: Icon(Icons.arrow_back),
+                      ),
+                      FlatButton.icon(
+                        onPressed: presentDatePicker,
+                        icon: Icon(Icons.date_range),
+                        label: Text(
+                          DateFormat('E, dd MMMM').format(selectedDate),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 17),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedDate = selectedDate.add(Duration(days: 1));
+//                            appointment.date = selectedDate.toString();
+                          });
+                        },
+                        icon: Icon(Icons.arrow_forward),
+                      ),
+                    ],
+                  ),
                 ),
-              
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(34, 8, 0, 0),
-                child: Text('Pick a time slot',style: TextStyle(fontWeight: FontWeight.w700,fontSize: 17),),
+                padding: const EdgeInsets.fromLTRB(34, 5, 0, 0),
+                child: Text(
+                  'Pick a time slot',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+                ),
               ),
-              AppointmentRadioButton(),
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    customRadio(lst[0], 0),
+                    customRadio(lst[1], 1),
+                    customRadio(lst[2], 2),
+                  ],
+                ),
+              ),
             ],
           ),
           SizedBox(
-            height: 180,
+            height: 150,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 25,5),
+                padding: const EdgeInsets.fromLTRB(20, 0, 25, 5),
                 child: Container(
                   height: 75,
                   width: 65,
                   child: FloatingActionButton(
-                    onPressed: (){
+                    onPressed: () {
                       _pushOn();
-                      Fluttertoast.showToast(
-                          msg: 'Appointment Successful',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.teal,
-                          textColor: Colors.white,
-                          fontSize: 14.0
-                      );
                     },
-                    child: Icon(Icons.check,size: 32,),
+                    child: Icon(
+                      Icons.check,
+                      size: 32,
+                    ),
                   ),
                 ),
               ),
@@ -177,24 +221,78 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
       ),
     );
   }
-  
+
+  void changeIndex(int index) {
+    setState(() {
+      selectedIndex = index;
+      print(selectedIndex);
+    });
+  }
+
+  Widget customRadio(String txt, int index) {
+    return RaisedButton(
+      onPressed: () {
+        changeIndex(index);
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      color: Colors.white,
+//      borderSide: BorderSide(color: selectedIndex == index ? Colors.teal : Colors.grey),
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Text(
+          txt,
+          style: TextStyle(
+              color: selectedIndex == index ? Colors.teal : Colors.grey,
+              fontWeight: FontWeight.bold,
+              fontSize: 15),
+        ),
+      ),
+    );
+  }
+
   Future<void> _pushOn() async {
-  database.push().set({
-          'name' : appointment.patientname,
-          'doctor': appointment.doctorname,
-          'date' :appointment.date,
-          'time':appointment.time
-          });
+    try {
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      CreateAppointmentModel appointment = new CreateAppointmentModel(
+          user.email,
+          widget.categoryId,
+          selectedIndex.toString(),
+          selectedDate.toString());
+      await database.push().set({
+        'patientId': appointment.patientId,
+        'doctorId': appointment.doctorId,
+        'date': appointment.date,
+        'time': appointment.time
+      });
+      Fluttertoast.showToast(
+          msg: 'Appointment Successful',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+      Navigator.of(context)
+          .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen(user: user)), (Route<dynamic> route) => false);
+    } catch (e) {
+      print(e.message);
+      Fluttertoast.showToast(
+          msg: 'Appointment Error',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+    }
+  }
 }
-}
-
-
 
 class CreateAppointmentModel {
-  String patientname;
-  String doctorname;
+  String patientId;
+  String doctorId;
   String date;
   String time;
 
-  CreateAppointmentModel({this.patientname, this.doctorname,  this.time ,this.date});
+  CreateAppointmentModel(this.patientId, this.doctorId, this.time, this.date);
 }

@@ -15,8 +15,6 @@ class DoctorScreen extends StatelessWidget {
     final categoryId = routeArgs['id'];
     //final listDoctors = dummy_doctors.toList();
     return Scaffold(
-
-
       /*appBar: AppBar(
         title: Text(categoryTitle,style: TextStyle(color: Colors.teal),),
         backgroundColor: Colors.transparent,

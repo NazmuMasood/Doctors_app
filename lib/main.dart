@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Doctor\'s App',
       theme: ThemeData(
         fontFamily: 'Avenir',
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       //home: MainPage(), // Removed because clash with the route properties

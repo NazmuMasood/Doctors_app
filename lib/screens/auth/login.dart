@@ -204,10 +204,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Colors.blue),
                                 ),
                               ),
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 15.0),
                       ],
                     ))),
-            SizedBox(height: 15.0),
+            SizedBox(height: 10.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

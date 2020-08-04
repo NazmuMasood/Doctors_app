@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+              padding: const EdgeInsets.fromLTRB(2, 8, 0, 0),
               child: Text(
                 widget.user.email,
                 style: TextStyle(
