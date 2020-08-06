@@ -15,7 +15,7 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
   DatabaseReference dbRef =
-      FirebaseDatabase.instance.reference().child("users").child("doctors");
+  FirebaseDatabase.instance.reference().child("users").child("doctors");
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
 //           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
 //          },
 //          ),
-            ),
+        ),
       ],
     );
   }
@@ -213,7 +213,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                       borderRadius: BorderRadius.circular(6),
                                       side: BorderSide(
                                           color:
-                                              Color.fromRGBO(28, 222, 187, 1))),
+                                          Color.fromRGBO(28, 222, 187, 1))),
                                   child: Text(
                                     'View Profile',
                                     style: TextStyle(
