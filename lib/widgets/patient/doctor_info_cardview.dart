@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:doctors_app/widgets/patient/create_appointment.dart';
-import 'file:///C:/Users/Maroof/AndroidStudioProjects/Doctors_app/lib/models/doctors.dart';
+import 'package:doctors_app/models/doctors.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class DoctorInfoCardviewWidget extends StatefulWidget {
