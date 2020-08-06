@@ -14,7 +14,8 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
-
+  DatabaseReference dbRef =
+      FirebaseDatabase.instance.reference().child("users").child("doctors");
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +74,8 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  onPressed: () => searchDoctor(_searchedDocController.text.trim()),
+                  onPressed: () =>
+                      searchDoctor(_searchedDocController.text.trim()),
                   //print(_searchedDocController.text.trim()),
                   ///TODO: Controller.text
                   child: Icon(
@@ -90,20 +92,45 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           height: 20,
         ),
         Expanded(
-          child: ListView.builder(padding: EdgeInsets.all(2),shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
-          {
-           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
-          },
-          ),
-        ),
+            child: FutureBuilder(
+                future: dbRef.once(),
+                builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    lists.clear();
+                    Map<dynamic, dynamic> values = snapshot.data.value;
+                    values.forEach((key, values) {
+                      lists.add(values);
+                    });
+                    return new ListView.builder(
+                        padding: EdgeInsets.all(2),
+                        shrinkWrap: true,
+                        itemCount: lists.length,
+                        itemBuilder: (_, index) {
+                          return DocListUI(
+                              lists[index]["address"],
+                              lists[index]["category"],
+                              lists[index]["degrees"],
+                              lists[index]["email"],
+                              lists[index]["name"],
+                              lists[index]["specialities"]);
+                        });
+                  }
+                  return CircularProgressIndicator();
+                })
+//          child: ListView.builder(padding: EdgeInsets.all(2),shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
+//          {
+//           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
+//          },
+//          ),
+            ),
       ],
     );
   }
 
+  List<dynamic> lists = [];
 
-
-  Widget DocListUI(String address, String category, String degrees, String email,
-      String name, String specialities) {
+  Widget DocListUI(String address, String category, String degrees,
+      String email, String name, String specialities) {
     return Container(
       padding: EdgeInsets.fromLTRB(21, 0, 21, 0),
       height: 165,
@@ -186,7 +213,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                       borderRadius: BorderRadius.circular(6),
                                       side: BorderSide(
                                           color:
-                                          Color.fromRGBO(28, 222, 187, 1))),
+                                              Color.fromRGBO(28, 222, 187, 1))),
                                   child: Text(
                                     'View Profile',
                                     style: TextStyle(
@@ -200,10 +227,11 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                 width: 185,
                                 padding: EdgeInsets.fromLTRB(3, 0, 0, 5),
                                 child: RaisedButton(
-                                  onPressed: () {print(email);
-                                             bookAppointment(context,email,address,specialities,name);
-
-                                             },
+                                  onPressed: () {
+                                    print(email);
+                                    bookAppointment(context, email, address,
+                                        specialities, name);
+                                  },
                                   color: Colors.teal[400],
                                   //Color.fromRGBO(28, 222, 187, 1),
                                   shape: RoundedRectangleBorder(
@@ -231,12 +259,14 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     );
   }
 
-  void bookAppointment(BuildContext ctx, id,address,specialities,name) {
-    Navigator.of(ctx).push(MaterialPageRoute(
-      builder: (_) {
-        return CreateAppointmentWidget(categoryId: id,categoryAddress:address,categorySpecialities: specialities,categoryTitle: name);
-      }
-    ));
+  void bookAppointment(BuildContext ctx, id, address, specialities, name) {
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
+      return CreateAppointmentWidget(
+          categoryId: id,
+          categoryAddress: address,
+          categorySpecialities: specialities,
+          categoryTitle: name);
+    }));
   }
 
   @override
@@ -249,8 +279,8 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   @override
   void initState() {
     super.initState();
-    DatabaseReference postsRef =
-    FirebaseDatabase.instance.reference().child('users').child('doctors');
+    /*DatabaseReference postsRef =
+        FirebaseDatabase.instance.reference().child('users').child('doctors');
 
     postsRef.once().then((DataSnapshot snap) {
       var KEYS = snap.value.keys;
@@ -259,6 +289,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
       doclist.clear();
 
       for (var individualKey in KEYS) {
+        print(individualKey);
         Doctor doctors = new Doctor(
           DATA[individualKey]['address'],
           DATA[individualKey]['category'],
@@ -272,13 +303,13 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
       setState(() {
         print('Length:${doclist.length}');
       });
-    });
+    });*/
   }
 
   List<Doctor> doclist = [];
 
-  void searchDoctor(String searchWord){
-    if(searchWord == null){
+  void searchDoctor(String searchWord) {
+    if (searchWord == "") {
       Fluttertoast.showToast(
           msg: 'Please enter a word to search',
           toastLength: Toast.LENGTH_SHORT,
@@ -289,12 +320,15 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           fontSize: 14.0);
       return;
     }
-    try {
+
+//    dbRef =  FirebaseDatabase.instance.reference().child('users').child('doctors')
+//                .orderByChild("name").startAt(searchWord);
+
+    /*try {
       print(searchWord);
       DatabaseReference doctorsRef =
-      FirebaseDatabase.instance.reference().child('users').child('doctors');
-      doctorsRef
-          .orderByChild("name").startAt(searchWord).once()
+          FirebaseDatabase.instance.reference().child('users').child('doctors');
+      doctorsRef.orderByChild("name").startAt(searchWord).once()
           //.orderByChild("name").equalTo(searchWord).once()
           .then((DataSnapshot snap) {
         var KEYS = snap.value.keys;
@@ -317,8 +351,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           print('Length:${doclist.length}');
         });
       });
-
-    }catch(e){
+    } catch (e) {
       print(e.message);
       Fluttertoast.showToast(
           msg: 'Doctor Fetching Error',
@@ -328,7 +361,6 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           backgroundColor: Colors.teal,
           textColor: Colors.white,
           fontSize: 14.0);
-    }
+    }*/
   }
-
 }
