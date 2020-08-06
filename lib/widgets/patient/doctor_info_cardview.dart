@@ -15,7 +15,10 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
   DatabaseReference dbRef =
-  FirebaseDatabase.instance.reference().child("users").child("doctors");
+      FirebaseDatabase.instance.reference().child("users").child("doctors");
+  List<dynamic> lists = [];
+  bool searchFlag = false;
+  String searchedWord = "";
 
   @override
   Widget build(BuildContext context) {
@@ -91,45 +94,81 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
         SizedBox(
           height: 20,
         ),
-        Expanded(
-            child: FutureBuilder(
-                future: dbRef.once(),
-                builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    lists.clear();
-                    Map<dynamic, dynamic> values = snapshot.data.value;
-                    values.forEach((key, values) {
-                      lists.add(values);
-                    });
-                    return new ListView.builder(
-                        padding: EdgeInsets.all(2),
-                        shrinkWrap: true,
-                        itemCount: lists.length,
-                        itemBuilder: (_, index) {
-                          return DocListUI(
-                              lists[index]["address"],
-                              lists[index]["category"],
-                              lists[index]["degrees"],
-                              lists[index]["email"],
-                              lists[index]["name"],
-                              lists[index]["specialities"]);
-                        });
-                  }
-                  return CircularProgressIndicator();
-                })
-//          child: ListView.builder(padding: EdgeInsets.all(2),shrinkWrap: true,itemCount: doclist.length,itemBuilder: (_, index)
-//          {
-//           return DocListUI(doclist[index].address,doclist[index].category,doclist[index].degrees,doclist[index].email,doclist[index].name,doclist[index].specialities);
-//          },
-//          ),
-        ),
+        Expanded(child: buildDoctorsListSection()),
       ],
     );
   }
 
-  List<dynamic> lists = [];
+  Widget buildDoctorsListSection() {
+    if (searchFlag) {
+      return searchedDoctorFutureBuilder();
+    }
+    return allDoctorsFutureBuilder();
+  }
 
-  Widget DocListUI(String address, String category, String degrees,
+  Widget searchedDoctorFutureBuilder() {
+    return FutureBuilder(
+        future: dbRef.orderByChild("name").startAt(searchedWord).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            lists.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            if (values == null) {
+              return Center(child: Text("No match available"));
+            }
+            values.forEach((key, values) {
+              lists.add(values);
+            });
+            return new ListView.builder(
+                padding: EdgeInsets.all(2),
+                shrinkWrap: true,
+                itemCount: lists.length,
+                itemBuilder: (_, index) {
+                  return docListUI(
+                      lists[index]["address"],
+                      lists[index]["category"],
+                      lists[index]["degrees"],
+                      lists[index]["email"],
+                      lists[index]["name"],
+                      lists[index]["specialities"]);
+                });
+          }
+          return Center(child: CircularProgressIndicator());
+        });
+  }
+
+  Widget allDoctorsFutureBuilder() {
+    return FutureBuilder(
+        future: dbRef.once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            lists.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            if (values == null) {
+              return Center(child: Text("No match available"));
+            }
+            values.forEach((key, values) {
+              lists.add(values);
+            });
+            return new ListView.builder(
+                padding: EdgeInsets.all(2),
+                shrinkWrap: true,
+                itemCount: lists.length,
+                itemBuilder: (_, index) {
+                  return docListUI(
+                      lists[index]["address"],
+                      lists[index]["category"],
+                      lists[index]["degrees"],
+                      lists[index]["email"],
+                      lists[index]["name"],
+                      lists[index]["specialities"]);
+                });
+          }
+          return Center(child: CircularProgressIndicator());
+        });
+  }
+
+  Widget docListUI(String address, String category, String degrees,
       String email, String name, String specialities) {
     return Container(
       padding: EdgeInsets.fromLTRB(21, 0, 21, 0),
@@ -213,7 +252,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                       borderRadius: BorderRadius.circular(6),
                                       side: BorderSide(
                                           color:
-                                          Color.fromRGBO(28, 222, 187, 1))),
+                                              Color.fromRGBO(28, 222, 187, 1))),
                                   child: Text(
                                     'View Profile',
                                     style: TextStyle(
@@ -259,6 +298,23 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     );
   }
 
+  void searchDoctor(String searchedWord) {
+    if (searchedWord == "") {
+      Fluttertoast.showToast(
+          msg: 'Please Type Something To Search',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+      return;
+    }
+    setState(() {
+      searchFlag = true; this.searchedWord = searchedWord;
+    });
+  }
+
   void bookAppointment(BuildContext ctx, id, address, specialities, name) {
     Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
       return CreateAppointmentWidget(
@@ -276,6 +332,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     super.dispose();
   }
 
+  //List<Doctor> docList = [];
   @override
   void initState() {
     super.initState();
@@ -304,63 +361,5 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
         print('Length:${doclist.length}');
       });
     });*/
-  }
-
-  List<Doctor> doclist = [];
-
-  void searchDoctor(String searchWord) {
-    if (searchWord == "") {
-      Fluttertoast.showToast(
-          msg: 'Please enter a word to search',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.teal,
-          textColor: Colors.white,
-          fontSize: 14.0);
-      return;
-    }
-
-//    dbRef =  FirebaseDatabase.instance.reference().child('users').child('doctors')
-//                .orderByChild("name").startAt(searchWord);
-
-    /*try {
-      print(searchWord);
-      DatabaseReference doctorsRef =
-          FirebaseDatabase.instance.reference().child('users').child('doctors');
-      doctorsRef.orderByChild("name").startAt(searchWord).once()
-          //.orderByChild("name").equalTo(searchWord).once()
-          .then((DataSnapshot snap) {
-        var KEYS = snap.value.keys;
-        var DATA = snap.value;
-
-        doclist.clear();
-
-        for (var individualKey in KEYS) {
-          Doctor doctors = new Doctor(
-            DATA[individualKey]['address'],
-            DATA[individualKey]['category'],
-            DATA[individualKey]['degrees'],
-            DATA[individualKey]['email'],
-            DATA[individualKey]['name'],
-            DATA[individualKey]['specialities'],
-          );
-          doclist.add(doctors);
-        }
-        setState(() {
-          print('Length:${doclist.length}');
-        });
-      });
-    } catch (e) {
-      print(e.message);
-      Fluttertoast.showToast(
-          msg: 'Doctor Fetching Error',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.teal,
-          textColor: Colors.white,
-          fontSize: 14.0);
-    }*/
   }
 }
