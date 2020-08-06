@@ -47,4 +47,4 @@ class _AppointmentRadioButtonState extends State<AppointmentRadioButton> {
       ),
     );
   }
-  }
+}
