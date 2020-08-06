@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:doctors_app/widgets/patient/create_appointment.dart';
 import 'package:doctors_app/models/doctors.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DoctorInfoCardviewWidget extends StatefulWidget {
   @override
@@ -72,7 +73,8 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  onPressed: () => print(_searchedDocController.text.trim()),
+                  onPressed: () => searchDoctor(_searchedDocController.text.trim()),
+                  //print(_searchedDocController.text.trim()),
                   ///TODO: Controller.text
                   child: Icon(
                     Icons.search,
@@ -274,5 +276,59 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   }
 
   List<Doctor> doclist = [];
+
+  void searchDoctor(String searchWord){
+    if(searchWord == null){
+      Fluttertoast.showToast(
+          msg: 'Please enter a word to search',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+      return;
+    }
+    try {
+      print(searchWord);
+      DatabaseReference doctorsRef =
+      FirebaseDatabase.instance.reference().child('users').child('doctors');
+      doctorsRef
+          .orderByChild("name").startAt(searchWord).once()
+          //.orderByChild("name").equalTo(searchWord).once()
+          .then((DataSnapshot snap) {
+        var KEYS = snap.value.keys;
+        var DATA = snap.value;
+
+        doclist.clear();
+
+        for (var individualKey in KEYS) {
+          Doctor doctors = new Doctor(
+            DATA[individualKey]['address'],
+            DATA[individualKey]['category'],
+            DATA[individualKey]['degrees'],
+            DATA[individualKey]['email'],
+            DATA[individualKey]['name'],
+            DATA[individualKey]['specialities'],
+          );
+          doclist.add(doctors);
+        }
+        setState(() {
+          print('Length:${doclist.length}');
+        });
+      });
+
+    }catch(e){
+      print(e.message);
+      Fluttertoast.showToast(
+          msg: 'Doctor Fetching Error',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+    }
+  }
 
 }
