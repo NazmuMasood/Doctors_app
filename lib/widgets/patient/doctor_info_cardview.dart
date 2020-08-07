@@ -108,7 +108,11 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
 
   Widget searchedDoctorFutureBuilder() {
     return FutureBuilder(
-        future: dbRef.orderByChild("name").startAt(searchedWord).once(),
+        future: dbRef
+            .orderByChild("name")
+            .startAt(searchedWord)
+            .endAt(searchedWord + '\uF7FF')
+            .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.hasData) {
             lists.clear();
@@ -145,7 +149,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
             lists.clear();
             Map<dynamic, dynamic> values = snapshot.data.value;
             if (values == null) {
-              return Center(child: Text("No match available"));
+              return Center(child: Text("Nothing to show"));
             }
             values.forEach((key, values) {
               lists.add(values);
@@ -311,7 +315,8 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
       return;
     }
     setState(() {
-      searchFlag = true; this.searchedWord = searchedWord;
+      searchFlag = true;
+      this.searchedWord = searchedWord;
     });
   }
 
