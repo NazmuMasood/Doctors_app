@@ -1,3 +1,4 @@
+import 'file:///C:/Users/ASUS/AndroidStudioProjects/doctors_app/lib/models/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -5,8 +6,11 @@ import 'package:doctors_app/widgets/patient/create_appointment.dart';
 import 'package:doctors_app/models/doctors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
+import 'package:algolia/algolia.dart';
 
 class DoctorInfoCardviewWidget extends StatefulWidget {
+
   @override
   _DoctorInfoCardviewWidgetState createState() =>
       _DoctorInfoCardviewWidgetState();
@@ -15,10 +19,15 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
   DatabaseReference dbRef =
-      FirebaseDatabase.instance.reference().child("users").child("doctors");
+  FirebaseDatabase.instance.reference().child("users").child("doctors");
   List<dynamic> lists = [];
-  bool searchFlag = false;
+  bool searchingFirebase = false;
   String searchedWord = "";
+
+  //algolia instance for 'full-text-search' feature
+  final Algolia algolia = AlgoliaApplication.algolia;
+  List<AlgoliaObjectSnapshot> resultsAlgolia = [];
+  bool searchingAlgolia = false; bool showAlgoliaResult = false;
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +109,13 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   }
 
   Widget buildDoctorsListSection() {
-    if (searchFlag) {
-      return searchedDoctorFutureBuilder();
+    if (showAlgoliaResult) {
+      return searchedDoctorAlgoliaFutureBuilder();
     }
+    //Below code commented out because we're searching in algolia index instead of firebase database
+    /*if (searchingFirebase) {
+      return searchedDoctorFutureBuilder();
+    }*/
     return allDoctorsFutureBuilder();
   }
 
@@ -118,7 +131,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
             lists.clear();
             Map<dynamic, dynamic> values = snapshot.data.value;
             if (values == null) {
-              return Center(child: Text("No match available"));
+              return Center(child: Text("No results found"));
             }
             values.forEach((key, values) {
               lists.add(values);
@@ -139,6 +152,52 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           }
           return Center(child: CircularProgressIndicator());
         });
+  }
+
+  Widget searchedDoctorAlgoliaFutureBuilder() {
+    return Container(
+        child: searchingAlgolia == true
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : resultsAlgolia.length == 0
+            ? Center(
+          child: Text("No results found."),
+        )
+            : ListView.builder(
+          itemCount: resultsAlgolia.length,
+          itemBuilder: (BuildContext ctx, int index) {
+            AlgoliaObjectSnapshot snap = resultsAlgolia[index];
+
+            return ListTile(
+              leading: CircleAvatar(
+                child: Text(
+                  (index + 1).toString(),
+                ),
+              ),
+              title: Text(snap.data["name"]),
+              subtitle: Text(snap.data["address"]),
+            );
+          },
+        )
+    );
+  }
+
+  searchAlgolia() async {
+    setState(() {
+      searchingAlgolia = true;
+      showAlgoliaResult = true;
+    });
+
+    AlgoliaQuery query = algolia.instance.index('doctors');
+    query = query.search(searchedWord);
+
+    resultsAlgolia = (await query.getObjects()).hits;
+    print(resultsAlgolia.toString());
+
+    setState(() {
+      searchingAlgolia = false;
+    });
   }
 
   Widget allDoctorsFutureBuilder() {
@@ -256,7 +315,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                       borderRadius: BorderRadius.circular(6),
                                       side: BorderSide(
                                           color:
-                                              Color.fromRGBO(28, 222, 187, 1))),
+                                          Color.fromRGBO(28, 222, 187, 1))),
                                   child: Text(
                                     'View Profile',
                                     style: TextStyle(
@@ -314,10 +373,12 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           fontSize: 14.0);
       return;
     }
-    setState(() {
-      searchFlag = true;
+    searchAlgolia();
+    //Below code commented out because we're searching in algolia index instead of firebase database
+    /*setState(() {
+      searchingFirebase = true;
       this.searchedWord = searchedWord;
-    });
+    });*/
   }
 
   void bookAppointment(BuildContext ctx, id, address, specialities, name) {
