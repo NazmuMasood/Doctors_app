@@ -1,4 +1,4 @@
-import 'package:doctors_app/models/algolia.dart';
+import 'file:///C:/Users/ASUS/AndroidStudioProjects/doctors_app/lib/models/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:algolia/algolia.dart';
 
 class DoctorInfoCardviewWidget extends StatefulWidget {
+
   @override
   _DoctorInfoCardviewWidgetState createState() =>
       _DoctorInfoCardviewWidgetState();
@@ -18,7 +19,7 @@ class DoctorInfoCardviewWidget extends StatefulWidget {
 class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   final _searchedDocController = TextEditingController();
   DatabaseReference dbRef =
-      FirebaseDatabase.instance.reference().child("users").child("doctors");
+  FirebaseDatabase.instance.reference().child("users").child("doctors");
   List<dynamic> lists = [];
   bool searchingFirebase = false;
   String searchedWord = "";
@@ -26,8 +27,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   //algolia instance for 'full-text-search' feature
   final Algolia algolia = AlgoliaApplication.algolia;
   List<AlgoliaObjectSnapshot> resultsAlgolia = [];
-  bool searchingAlgolia = false;
-  bool showAlgoliaResult = false;
+  bool searchingAlgolia = false; bool showAlgoliaResult = false;
 
   @override
   Widget build(BuildContext context) {
@@ -156,27 +156,30 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
 
   Widget searchedDoctorAlgoliaFutureBuilder() {
     return Container(
-      child: searchingAlgolia == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : resultsAlgolia.length == 0
-              ? Center(
-                  child: Text("No results found."),
-                )
-              : ListView.builder(
-                  padding: EdgeInsets.all(2),
-                  shrinkWrap: true,
-                  itemCount: resultsAlgolia.length,
-                  itemBuilder: (_, index) {
-                    return docListUI(
-                        resultsAlgolia[index].data["address"],
-                        resultsAlgolia[index].data["category"],
-                        resultsAlgolia[index].data["degrees"],
-                        resultsAlgolia[index].data["email"],
-                        resultsAlgolia[index].data["name"],
-                        resultsAlgolia[index].data["specialities"]);
-                  }),
+        child: searchingAlgolia == true
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : resultsAlgolia.length == 0
+            ? Center(
+          child: Text("No results found."),
+        )
+            : ListView.builder(
+          itemCount: resultsAlgolia.length,
+          itemBuilder: (BuildContext ctx, int index) {
+            AlgoliaObjectSnapshot snap = resultsAlgolia[index];
+
+            return ListTile(
+              leading: CircleAvatar(
+                child: Text(
+                  (index + 1).toString(),
+                ),
+              ),
+              title: Text(snap.data["name"]),
+              subtitle: Text(snap.data["address"]),
+            );
+          },
+        )
     );
   }
 
@@ -187,10 +190,10 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     });
 
     AlgoliaQuery query = algolia.instance.index('doctors');
-    query = query.search(_searchedDocController.text.trim());
+    query = query.search(searchedWord);
 
     resultsAlgolia = (await query.getObjects()).hits;
-    print("doctors ->" + resultsAlgolia.toString());
+    print(resultsAlgolia.toString());
 
     setState(() {
       searchingAlgolia = false;
@@ -312,7 +315,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                       borderRadius: BorderRadius.circular(6),
                                       side: BorderSide(
                                           color:
-                                              Color.fromRGBO(28, 222, 187, 1))),
+                                          Color.fromRGBO(28, 222, 187, 1))),
                                   child: Text(
                                     'View Profile',
                                     style: TextStyle(
