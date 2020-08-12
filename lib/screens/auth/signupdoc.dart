@@ -1,3 +1,5 @@
+import 'package:algolia/algolia.dart';
+import 'package:doctors_app/models/algolia.dart';
 import 'package:doctors_app/screens/doctor/home.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 //import 'package:firebase/firebase.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,13 +18,15 @@ class SignupDocScreen extends StatefulWidget {
 }
 
 class _SignupDocScreenState extends State<SignupDocScreen> {
-  Signupmodel signupmodel = Signupmodel();
+  Signupmodel signupModel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<bool> isSelected = [false, true];
-  final DatabaseReference database = FirebaseDatabase.instance.reference().child('users').child('doctors');
+  final DatabaseReference database =
+      FirebaseDatabase.instance.reference().child('users').child('doctors');
   bool _passwordVisible = false, _confirmPasswordVisible = false;
   bool _loading = false;
+  final Algolia algolia = AlgoliaApplication.algolia;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +120,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.name = input,
+                          onSaved: (input) => signupModel.name = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'NAME',
                               labelStyle: TextStyle(
@@ -135,7 +140,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.degree = input,
+                          onSaved: (input) => signupModel.degree = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'DEGREES ',
                               labelStyle: TextStyle(
@@ -153,9 +158,9 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.category = input,
+                          onSaved: (input) => signupModel.category = input.trim(),
                           decoration: InputDecoration(
-                              labelText: 'CATAGORIES ',
+                              labelText: 'CATEGORIES ',
                               labelStyle: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontWeight: FontWeight.bold,
@@ -171,7 +176,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.speciality = input,
+                          onSaved: (input) => signupModel.speciality = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'SPECIALITY',
                               labelStyle: TextStyle(
@@ -189,7 +194,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.address= input,
+                          onSaved: (input) => signupModel.address = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'ADDRESS ',
                               labelStyle: TextStyle(
@@ -207,7 +212,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.email = input,
+                          onSaved: (input) => signupModel.email = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'EMAIL ',
                               labelStyle: TextStyle(
@@ -219,16 +224,21 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
-                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
                               return 'Please provide a password';
                             }
-                            if (input.length < 6) {
+                            if (input.trim().length < 6) {
                               return 'Your password needs to be at-least 6 characters';
                             }
+                            return null;
                           },
-                          onSaved: (input) => signupmodel.password = input,
+                          onChanged: (input) {
+                            setState(() {
+                              signupModel.password = input.trim();
+                            });
+                          },
+                          onSaved: (input) => signupModel.password = input.trim(),
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -256,17 +266,22 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
-                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
                               return 'Please provide a password';
                             }
-                            /*if (input != signupmodel.password) {
+                            if (input != signupModel.password) {
                               return 'Your passwords don\'t match';
-                            }*/
+                            }
+                            return null;
+                          },
+                          onChanged: (input) {
+                            setState(() {
+                              signupModel.confirmPassword = input.trim();
+                            });
                           },
                           onSaved: (input) =>
-                              signupmodel.confirmPassword = input,
+                              signupModel.confirmPassword = input.trim(),
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -279,7 +294,8 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                                 onPressed: () {
                                   // Update the state i.e. toogle the state of passwordVisible variable
                                   setState(() {
-                                    _confirmPasswordVisible = !_confirmPasswordVisible;
+                                    _confirmPasswordVisible =
+                                        !_confirmPasswordVisible;
                                   });
                                 },
                               ),
@@ -297,30 +313,30 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                         SizedBox(height: 20.0),
                         !_loading
                             ? Container(
-                          height: 40.0,
-                          child: RaisedButton(
-                            onPressed: _signup,
-                            color: Colors.green,
-                            splashColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(35)),
-                            child: Center(
-                              child: Text(
-                                'SIGN UP',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Montserrat'),
-                              ),
-                            ),
-                          ),
-                        )
+                                height: 40.0,
+                                child: RaisedButton(
+                                  onPressed: _signup,
+                                  color: Colors.green,
+                                  splashColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(35)),
+                                  child: Center(
+                                    child: Text(
+                                      'SIGN UP',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat'),
+                                    ),
+                                  ),
+                                ),
+                              )
                             : Center(
-                          child: CircularProgressIndicator(
-                            valueColor: new AlwaysStoppedAnimation<Color>(
-                                Colors.blue),
-                          ),
-                        ),
+                                child: CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.blue),
+                                ),
+                              ),
                         SizedBox(height: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -361,19 +377,9 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
         _showProgress();
         final FirebaseUser user =
             (await _firebaseAuth.createUserWithEmailAndPassword(
-                email: signupmodel.email,
-                password: signupmodel.password))
+                email: signupModel.email,
+                password: signupModel.password))
                 .user;
-        print(signupmodel.name);
-        database.push().set({
-          'name' : signupmodel.name,
-          'email': signupmodel.email,
-          "degrees": signupmodel.degree,
-				  "category": signupmodel.category,
-				  "specialities": signupmodel.speciality,
-				  "address": signupmodel.address
-        });
-        print(signupmodel.address);
         Fluttertoast.showToast(
             msg: 'Signup Successful',
             toastLength: Toast.LENGTH_SHORT,
@@ -382,7 +388,12 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
             backgroundColor: Colors.teal,
             textColor: Colors.white,
             fontSize: 14.0);
+
+        addToFirebaseDatabase();
+        addToAlgolia();
+
         _hideProgress();
+        //Take user to Homepage after sign-up
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
       } catch (e) {
@@ -396,6 +407,58 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
       }
+    }
+  }
+
+  Future<void> addToFirebaseDatabase() async {
+    try {
+      await database.push().set({
+        'name': signupModel.name,
+        'email': signupModel.email,
+        "degrees": signupModel.degree,
+        "category": signupModel.category,
+        "specialities": signupModel.speciality,
+        "address": signupModel.address
+      });
+      /* Fluttertoast.showToast(
+          msg: 'Firebase Data Add Successful',
+          toastLength: Toast.LENGTH_SHORT);*/
+    } catch (e) {
+      print('Firebase Database error: ' + e.message);
+      Fluttertoast.showToast(
+          msg: 'Firebase Data Add Error', toastLength: Toast.LENGTH_SHORT);
+    }
+  }
+
+  Future<void> addToAlgolia() async {
+    try {
+      Map<String, dynamic> userModel = {
+        'name' : signupModel.name,
+        'email': signupModel.email,
+        "degrees": signupModel.degree,
+        "category": signupModel.category,
+        "specialities": signupModel.speciality,
+        "address": signupModel.address
+      };
+      //AlgoliaTask add
+      AlgoliaTask taskAdded =
+          await algolia.instance.index('doctors').addObject(userModel);
+      if (taskAdded.data['objectID'] != null) {
+        print('Algolia objectID -> ' + taskAdded.data['objectID']);
+        print('Algolia added data -> ' + taskAdded.data.toString());
+        /*Fluttertoast.showToast(
+            msg: 'Algolia Data Add Successful',
+            toastLength: Toast.LENGTH_SHORT);*/
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Algolia Data Add Error',
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      }
+    } catch (e) {
+      print('Algolia error: ' + e.message);
+      Fluttertoast.showToast(
+          msg: 'Algolia Error', toastLength: Toast.LENGTH_SHORT);
     }
   }
 
@@ -413,6 +476,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
 
   @override
   void initState() {
+    super.initState();
     _passwordVisible = false;
     _confirmPasswordVisible = false;
     _loading = false;
@@ -429,5 +493,13 @@ class Signupmodel {
   String speciality;
   String address;
 
-  Signupmodel({this.name, this.email, this.password, this.confirmPassword, this.degree,this.category,this.address,this.speciality});
+  Signupmodel(
+      {this.name,
+      this.email,
+      this.password,
+      this.confirmPassword,
+      this.degree,
+      this.category,
+      this.address,
+      this.speciality});
 }
