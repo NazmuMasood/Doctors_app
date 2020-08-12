@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctors_app/screens/patient/home.dart';
+import 'package:doctors_app/screens/doctor/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginDocScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginDocScreenState createState() => _LoginDocScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginDocScreenState extends State<LoginDocScreen> {
   String _email, _password;
-  List<bool> isSelected = [true, false];
+  List<bool> isSelected = [false, true];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
   bool _loading = false;
@@ -18,10 +18,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      resizeToAvoidBottomPadding: true,
-      resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Column(
+        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (i == index) {
                                 isSelected[i] = true;
                                 Navigator.pushNamedAndRemoveUntil(context,
-                                    '/logindoc', (Route<dynamic> route) => false);
+                                    '/login', (Route<dynamic> route) => false);
                               } else {
                                 isSelected[i] = false;
                               }
@@ -81,12 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(16.0, 175.0, 0.0, 0.0),
-                    child: Text('There',
+                    child: Text('Doctor',
                         style: TextStyle(
                             fontSize: 80.0, fontWeight: FontWeight.bold)),
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(225.0, 175.0, 0.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(255.0, 175.0, 0.0, 0.0),
                     child: Text('.',
                         style: TextStyle(
                             fontSize: 80.0,
@@ -116,17 +116,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (input.isEmpty) {
                               return 'Please type an email';
                             }
-                            FocusScope.of(context).nextFocus();
                             return null;
                           },
-                          onSaved: (input) {
-                            _email = input;
-                          },
+                          onSaved: (input) => _email = input,
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
-                          obscureText: !_passwordVisible,
-                          //This will obscure text dynamically
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -160,6 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                           },
                           onSaved: (input) => _password = input,
+                          obscureText: !_passwordVisible,
                         ),
                         SizedBox(height: 5.0),
                         Container(
@@ -182,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? Container(
                                 height: 40.0,
                                 child: RaisedButton(
-                                  onPressed: _login,
+                                  onPressed: _logindoc,
                                   color: Colors.green,
                                   splashColor: Colors.white,
                                   shape: RoundedRectangleBorder(
@@ -204,10 +200,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Colors.blue),
                                 ),
                               ),
-                        SizedBox(height: 15.0),
+                        SizedBox(height: 20.0),
                       ],
                     ))),
-            SizedBox(height: 10.0),
+            SizedBox(height: 15.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -218,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(width: 5.0),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushReplacementNamed('/signup');
+                    Navigator.of(context).pushNamed('/signupdoc');
                   },
                   child: Text(
                     'SIGN UP',
@@ -233,12 +229,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             )
           ],
-        ),
-      ),
-    );
+        )));
   }
 
-  Future<void> _login() async {
+  Future<void> _logindoc() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
