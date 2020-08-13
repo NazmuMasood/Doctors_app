@@ -11,10 +11,11 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  Signupmodel signupmodel = Signupmodel();
+  Signupmodel signupModel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final DatabaseReference database = FirebaseDatabase.instance.reference().child('users').child('patients');
+  final DatabaseReference database =
+      FirebaseDatabase.instance.reference().child('users').child('patients');
   List<bool> isSelected = [true, false];
   bool _passwordVisible = false, _confirmPasswordVisible = false;
   bool _loading = false;
@@ -111,7 +112,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.name = input,
+                          onSaved: (input) => signupModel.name = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'NAME',
                               labelStyle: TextStyle(
@@ -131,7 +132,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.email = input,
+                          onSaved: (input) => signupModel.email = input.trim(),
                           decoration: InputDecoration(
                               labelText: 'EMAIL ',
                               labelStyle: TextStyle(
@@ -143,16 +144,21 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
-                          //ignore: missing_return
                           validator: (input) {
                             if (input.isEmpty) {
-                              return 'Pleate provide a password';
+                              return 'Please provide a password';
                             }
                             if (input.length < 6) {
                               return 'Your password needs to be at-least 6 characters';
                             }
+                            return null;
                           },
-                          onSaved: (input) => signupmodel.password = input,
+                          onChanged: (input) {
+                            setState(() {
+                              signupModel.password = input.trim();
+                            });
+                          },
+                          onSaved: (input) => signupModel.password = input.trim(),
                           obscureText: !_passwordVisible,
                           //This will obscure text dynamically
                           decoration: InputDecoration(
@@ -186,12 +192,18 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (input.isEmpty) {
                               return 'Please provide a password';
                             }
-//                            if (input.trim() != _password) {
-//                              return 'Your passwords don\'t match';
-//                            }
+                            if (input.trim() != signupModel.password) {
+                              return 'Your passwords don\'t match';
+                            }
                             return null;
                           },
-                          onSaved: (input) => signupmodel.confirmPassword = input,
+                          onChanged: (input) {
+                            setState(() {
+                              signupModel.confirmPassword = input.trim();
+                            });
+                          },
+                          onSaved: (input) =>
+                              signupModel.confirmPassword = input.trim(),
                           obscureText: !_confirmPasswordVisible,
                           //This will obscure text dynamically
                           decoration: InputDecoration(
@@ -247,30 +259,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                               ),
                         SizedBox(height: 20.0),
-                        /* Container(
-                          height: 40.0,
-                          color: Colors.transparent,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.black,
-                                    style: BorderStyle.solid,
-                                    width: 1.0),
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(20.0)),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Center(
-                                child: Text('Go Back',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Montserrat')),
-                              ),
-                            ),
-                          ),
-                        ),*/
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -281,7 +269,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             SizedBox(width: 5.0),
                             InkWell(
                               onTap: () {
-                                Navigator.of(context).pushReplacementNamed('/login');
+                                Navigator.of(context)
+                                    .pushReplacementNamed('/login');
                               },
                               child: Text(
                                 'LOGIN',
@@ -310,14 +299,13 @@ class _SignupScreenState extends State<SignupScreen> {
         _showProgress();
         final FirebaseUser user =
             (await _firebaseAuth.createUserWithEmailAndPassword(
-                    email: signupmodel.email, password: signupmodel.password))
+                    email: signupModel.email, password: signupModel.password))
                 .user;
-        print(signupmodel.name);
-       
-         database.push().set({
-          'name' : signupmodel.name,
-          'email': signupmodel.email
-          });
+        print(signupModel.name);
+
+        database
+            .push()
+            .set({'name': signupModel.name, 'email': signupModel.email});
 
         Fluttertoast.showToast(
             msg: 'Signup Successful',
@@ -328,10 +316,11 @@ class _SignupScreenState extends State<SignupScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
         _hideProgress();
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
       } catch (e) {
-        print(e.message); _hideProgress();
+        print(e.message);
+        _hideProgress();
         Fluttertoast.showToast(
             msg: 'Signup Error',
             toastLength: Toast.LENGTH_SHORT,
