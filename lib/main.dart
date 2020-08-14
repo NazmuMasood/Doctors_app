@@ -5,6 +5,7 @@ import 'package:doctors_app/screens/patient/categories_screen.dart';
 import 'package:doctors_app/screens/patient/doctor_screen.dart';
 import 'package:doctors_app/screens/patient/home.dart';
 import 'package:doctors_app/screens/welcome.dart';
+import 'package:doctors_app/screens/patient/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/auth/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignupScreen(),
         '/logindoc': (context) => LoginDocScreen(),
         '/signupdoc': (context) => SignupDocScreen(),
+        '/userprofile': (context) => UserProfile(),
         DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },
       debugShowCheckedModeBanner: false,
@@ -57,6 +59,7 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
           }
           /// other way there is no user logged.
           return WelcomeScreen();
+        
         }
     );
     /*return Scaffold(

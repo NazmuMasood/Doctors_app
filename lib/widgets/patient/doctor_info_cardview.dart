@@ -40,8 +40,9 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
           padding: const EdgeInsets.all(0.0),
           child: Row(
             children: <Widget>[
+             
               Container(
-                width: 302,
+                width: 200,
                 height: 50,
                 //padding: EdgeInsets.all(7),
                 margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
@@ -77,9 +78,11 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                   ),
                 ),
               ),
+              Expanded(
+                child:
               Container(
                 height: 43,
-                width: 55,
+                width: 10,
                 child: RaisedButton(
                   color: Colors.teal[300],
                   elevation: 2,
@@ -96,7 +99,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                     size: 27,
                   ),
                 ),
-              ),
+              ),),
             ],
           ),
         ),
@@ -294,19 +297,24 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                     SizedBox(
                       height: 12,
                     ),
-                    Column(
+                    Expanded(
+
+                    child:Column(
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
+                              Expanded(
+                                child:
                               Container(
                                 padding: EdgeInsets.fromLTRB(5, 0, 10, 4),
                                 width: 150,
                                 height: 35,
                                 child: RaisedButton(
-                                  onPressed: () => null,
+                                  onPressed: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil('/userprofile', (Route<dynamic> route) => false),
                                   color: Colors.white,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
@@ -320,7 +328,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                                     ),
                                   ),
                                 ),
-                              ),
+                              ),),
                               Container(
                                 height: 35,
                                 width: 185,
@@ -349,7 +357,7 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                           ),
                         ),
                       ],
-                    ),
+                    ),),
                   ],
                 ),
               )),
