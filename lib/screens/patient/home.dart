@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
+    int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +89,22 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSpacing: 5,
         ),
       ),
+       bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text('Home'),
+          ),
+         
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            title: Text('profile'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
     );
   }
 
@@ -96,6 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
     await _firebaseAuth.signOut().then((_) {
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    });
+  }
+  void _onItemTapped(int index) {
+    setState(() {
+      if( index ==0){
+        Navigator.of(context)
+          .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+      }
+      else {
+        Navigator.of(context)
+          .pushNamedAndRemoveUntil('/user', (Route<dynamic> route) => false);
+      }
+      _selectedIndex = index;
     });
   }
 }
