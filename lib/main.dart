@@ -3,7 +3,7 @@ import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:doctors_app/screens/auth/signupdoc.dart';
 import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:doctors_app/screens/patient/profile.dart';
+import 'file:///C:/Users/Maroof/AndroidStudioProjects/Doctors_app/lib/widgets/patient/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/auth/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';

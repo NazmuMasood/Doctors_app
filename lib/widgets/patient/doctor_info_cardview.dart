@@ -1,4 +1,5 @@
 import 'package:doctors_app/models/algolia.dart';
+import 'package:doctors_app/widgets/patient/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -6,6 +7,7 @@ import 'package:doctors_app/widgets/patient/create_appointment.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:algolia/algolia.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class DoctorInfoCardViewWidget extends StatefulWidget {
   @override
@@ -313,8 +315,14 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                     width: 150,
                                     height: 35,
                                     child: RaisedButton(
-                                      onPressed: () => Navigator.of(context)
-                                          .pushNamedAndRemoveUntil('/userprofile', (Route<dynamic> route) => false),
+                                      onPressed: () {
+                                        pushNewScreen(
+                                          context,
+                                          screen: UserProfile(),
+                                          withNavBar: true, // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                        );
+                                      },
                                       color: Colors.white,
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(6),
