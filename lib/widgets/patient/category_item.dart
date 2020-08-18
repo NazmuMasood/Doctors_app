@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/patient/doctor_screen.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 class CategoryItemWidget extends StatelessWidget {
   final String title;
   final Widget avatar;
@@ -8,11 +9,17 @@ class CategoryItemWidget extends StatelessWidget {
   final String id;
 
   CategoryItemWidget(this.id,this.title,this.avatar,this.text);
-  void selectCategory(BuildContext ctx){
-    Navigator.of(ctx).pushNamed(DoctorScreen.routeName,arguments: {
-      'id' :id,'title':title,
-    });
-  }
+//  void selectCategory(BuildContext ctx){
+//    RouteSettings(name: DoctorScreen.routeName,arguments:{
+//    'id' :id,'title':title,
+//    });
+//    screen:DoctorScreen();
+//    withNavBar: true;
+//    pageTransitionAnimation: PageTransitionAnimation.cupertino;
+////    Navigator.of(ctx).pushNamed(DoctorScreen.routeName,arguments: {
+////      'id' :id,'title':title,
+////    });
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,15 @@ class CategoryItemWidget extends StatelessWidget {
       padding:const EdgeInsets.fromLTRB(18, 20, 18, 0),
       child: InkWell(
         onTap: () {
-          selectCategory(context);
+          pushNewScreenWithRouteSettings(
+            context,
+            settings: RouteSettings(name: DoctorScreen.routeName,arguments:{
+              'id' :id,'title':title,
+            }),
+            screen: DoctorScreen(),
+            withNavBar: true,
+            pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          );
           print(id);
         },
         splashColor: Colors.tealAccent,

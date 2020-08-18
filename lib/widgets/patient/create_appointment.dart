@@ -122,66 +122,76 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
             padding: const EdgeInsets.fromLTRB(34, 20, 0, 0),
             child: Text(
               'Pick a Date',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                  letterSpacing: 1.2),
             ),
           ),
+          const SizedBox(
+            height: 15,
+          ),
+          const Divider(height: 10, thickness: 1),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: .5,
-                      color: Colors.grey[300],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    IconButton(
+                      onPressed: selectedDate.isBefore(DateTime.now())
+                          ? null
+                          : () {
+                              setState(() {
+                                selectedDate =
+                                    selectedDate.subtract(Duration(days: 1));
+                              });
+                            },
+                      icon: Icon(Icons.arrow_back),
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      IconButton(
-                        onPressed: selectedDate.isBefore(DateTime.now())
-                            ? null
-                            : () {
-                                setState(() {
-                                  selectedDate =
-                                      selectedDate.subtract(Duration(days: 1));
-                                });
-                              },
-                        icon: Icon(Icons.arrow_back),
+                    FlatButton.icon(
+                      onPressed: presentDatePicker,
+                      icon: Icon(Icons.date_range),
+                      label: Text(
+                        DateFormat('E, dd MMMM').format(selectedDate),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 17),
                       ),
-                      FlatButton.icon(
-                        onPressed: presentDatePicker,
-                        icon: Icon(Icons.date_range),
-                        label: Text(
-                          DateFormat('E, dd MMMM').format(selectedDate),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedDate = selectedDate.add(Duration(days: 1));
+                    ),
+                    IconButton(
+                      onPressed: selectedDate.isAfter(DateTime.now().add(
+                        new Duration(days: 9),
+                      ))
+                          ? null
+                          : () {
+                              setState(() {
+                                selectedDate =
+                                    selectedDate.add(Duration(days: 1));
 //                            appointment.date = selectedDate.toString();
-                          });
-                        },
-                        icon: Icon(Icons.arrow_forward),
-                      ),
-                    ],
-                  ),
+                              });
+                            },
+                      icon: Icon(Icons.arrow_forward),
+                    ),
+                  ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(34, 5, 0, 0),
                 child: Text(
                   'Pick a time slot',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      letterSpacing: 1.2),
                 ),
               ),
+              const SizedBox(
+                height: 6.5,
+              ),
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -193,14 +203,14 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
               ),
             ],
           ),
-          SizedBox(
-            height: 150,
+          const SizedBox(
+            height: 140,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 25, 5),
+                padding: const EdgeInsets.fromLTRB(20, 0, 30, 5),
                 child: Container(
                   height: 75,
                   width: 65,
@@ -272,8 +282,9 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
           backgroundColor: Colors.teal,
           textColor: Colors.white,
           fontSize: 14.0);
-      Navigator.of(context)
-          .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen(user: user)), (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+          (Route<dynamic> route) => false);
     } catch (e) {
       print(e.message);
       Fluttertoast.showToast(

@@ -1,22 +1,19 @@
-import 'file:///C:/Users/ASUS/AndroidStudioProjects/doctors_app/lib/models/algolia.dart';
+import 'package:doctors_app/models/algolia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:doctors_app/widgets/patient/create_appointment.dart';
-import 'package:doctors_app/models/doctors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:async';
 import 'package:algolia/algolia.dart';
 
-class DoctorInfoCardviewWidget extends StatefulWidget {
-
+class DoctorInfoCardViewWidget extends StatefulWidget {
   @override
-  _DoctorInfoCardviewWidgetState createState() =>
-      _DoctorInfoCardviewWidgetState();
+  _DoctorInfoCardViewWidgetState createState() =>
+      _DoctorInfoCardViewWidgetState();
 }
 
-class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
+class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
   final _searchedDocController = TextEditingController();
   DatabaseReference dbRef =
   FirebaseDatabase.instance.reference().child("users").child("doctors");
@@ -27,87 +24,90 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
   //algolia instance for 'full-text-search' feature
   final Algolia algolia = AlgoliaApplication.algolia;
   List<AlgoliaObjectSnapshot> resultsAlgolia = [];
-  bool searchingAlgolia = false; bool showAlgoliaResult = false;
+  bool searchingAlgolia = false;
+  bool showAlgoliaResult = false;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 60,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Row(
-            children: <Widget>[
-             
-              Container(
-                width: 200,
-                height: 50,
-                //padding: EdgeInsets.all(7),
-                margin: EdgeInsets.fromLTRB(23, 7, 3, 8),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  elevation: 2,
-                  color: Colors.grey[200],
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 60,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 22, 0),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 300,
+                  height: 50,
+                  //padding: EdgeInsets.all(7),
+                  margin: EdgeInsets.fromLTRB(23, 7, 5, 8),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    elevation: 2,
+                    color: Colors.grey[200],
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(8, 0, 5, 0),
 //                          child: Icon(
 //                            Icons.search,
 //                            color: Colors.grey[700],
 //                            size: 25,
 //                          ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _searchedDocController,
-                          onSubmitted: (str) {},
-                          decoration: InputDecoration(
-                              hintText: 'Search for Doctors',
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w400)),
                         ),
+                        Expanded(
+                          child: TextField(
+                            controller: _searchedDocController,
+                            onSubmitted: (str) {},
+                            decoration: InputDecoration(
+                                hintText: 'Search for Doctors',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w400)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child:
+                  Container(
+                    height: 43,
+                    width: 10,
+                    child: RaisedButton(
+                      color: Colors.teal[300],
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child:
-              Container(
-                height: 43,
-                width: 10,
-                child: RaisedButton(
-                  color: Colors.teal[300],
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  onPressed: () =>
-                      searchDoctor(_searchedDocController.text.trim()),
-                  //print(_searchedDocController.text.trim()),
-                  ///TODO: Controller.text
-                  child: Icon(
-                    Icons.search,
-                    color: Colors.white,
-                    size: 27,
-                  ),
-                ),
-              ),),
-            ],
+                      onPressed: () =>
+                          searchDoctor(_searchedDocController.text.trim()),
+                      //print(_searchedDocController.text.trim()),
+                      ///TODO: Controller.text
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                        size: 27,
+                      ),
+                    ),
+                  ),),
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Expanded(child: buildDoctorsListSection()),
-      ],
+          SizedBox(
+            height: 20,
+          ),
+          Expanded(child: buildDoctorsListSection()),
+        ],
+      ),
     );
   }
 
@@ -159,30 +159,27 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
 
   Widget searchedDoctorAlgoliaFutureBuilder() {
     return Container(
-        child: searchingAlgolia == true
-            ? Center(
-          child: CircularProgressIndicator(),
-        )
-            : resultsAlgolia.length == 0
-            ? Center(
-          child: Text("No results found."),
-        )
-            : ListView.builder(
+      child: searchingAlgolia == true
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : resultsAlgolia.length == 0
+          ? Center(
+        child: Text("No results found."),
+      )
+          : ListView.builder(
+          padding: EdgeInsets.all(2),
+          shrinkWrap: true,
           itemCount: resultsAlgolia.length,
-          itemBuilder: (BuildContext ctx, int index) {
-            AlgoliaObjectSnapshot snap = resultsAlgolia[index];
-
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text(
-                  (index + 1).toString(),
-                ),
-              ),
-              title: Text(snap.data["name"]),
-              subtitle: Text(snap.data["address"]),
-            );
-          },
-        )
+          itemBuilder: (_, index) {
+            return docListUI(
+                resultsAlgolia[index].data["address"],
+                resultsAlgolia[index].data["category"],
+                resultsAlgolia[index].data["degrees"],
+                resultsAlgolia[index].data["email"],
+                resultsAlgolia[index].data["name"],
+                resultsAlgolia[index].data["specialities"]);
+          }),
     );
   }
 
@@ -193,10 +190,10 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     });
 
     AlgoliaQuery query = algolia.instance.index('doctors');
-    query = query.search(searchedWord);
+    query = query.search(_searchedDocController.text.trim());
 
     resultsAlgolia = (await query.getObjects()).hits;
-    print(resultsAlgolia.toString());
+    print("doctors ->" + resultsAlgolia.toString());
 
     setState(() {
       searchingAlgolia = false;
@@ -302,65 +299,65 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
                     ),
                     Expanded(
 
-                    child:Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Expanded(
-                                child:
-                              Container(
-                                padding: EdgeInsets.fromLTRB(5, 0, 10, 4),
-                                width: 150,
-                                height: 35,
-                                child: RaisedButton(
-                                  onPressed: () => Navigator.of(context)
-                              .pushNamedAndRemoveUntil('/userprofile', (Route<dynamic> route) => false),
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
+                      child:Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Expanded(
+                                  child:
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(5, 0, 10, 4),
+                                    width: 150,
+                                    height: 35,
+                                    child: RaisedButton(
+                                      onPressed: () => Navigator.of(context)
+                                          .pushNamedAndRemoveUntil('/userprofile', (Route<dynamic> route) => false),
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(6),
+                                          side: BorderSide(
+                                              color:
+                                              Color.fromRGBO(28, 222, 187, 1))),
+                                      child: Text(
+                                        'View Profile',
+                                        style: TextStyle(
+                                          color: Colors.teal[600],
+                                        ),
+                                      ),
+                                    ),
+                                  ),),
+                                Container(
+                                  height: 35,
+                                  width: 185,
+                                  padding: EdgeInsets.fromLTRB(3, 0, 0, 5),
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      print(email);
+                                      bookAppointment(context, email, address,
+                                          specialities, name);
+                                    },
+                                    color: Colors.teal[400],
+                                    //Color.fromRGBO(28, 222, 187, 1),
+                                    shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
-                                      side: BorderSide(
-                                          color:
-                                          Color.fromRGBO(28, 222, 187, 1))),
-                                  child: Text(
-                                    'View Profile',
-                                    style: TextStyle(
-                                      color: Colors.teal[600],
+                                    ),
+                                    child: Text(
+                                      'Book Appointment',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
                                     ),
                                   ),
-                                ),
-                              ),),
-                              Container(
-                                height: 35,
-                                width: 185,
-                                padding: EdgeInsets.fromLTRB(3, 0, 0, 5),
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    print(email);
-                                    bookAppointment(context, email, address,
-                                        specialities, name);
-                                  },
-                                  color: Colors.teal[400],
-                                  //Color.fromRGBO(28, 222, 187, 1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    'Book Appointment',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),),
+                        ],
+                      ),),
                   ],
                 ),
               )),
@@ -412,13 +409,10 @@ class _DoctorInfoCardviewWidgetState extends State<DoctorInfoCardviewWidget> {
     super.initState();
     /*DatabaseReference postsRef =
         FirebaseDatabase.instance.reference().child('users').child('doctors');
-
     postsRef.once().then((DataSnapshot snap) {
       var KEYS = snap.value.keys;
       var DATA = snap.value;
-
       doclist.clear();
-
       for (var individualKey in KEYS) {
         print(individualKey);
         Doctor doctors = new Doctor(

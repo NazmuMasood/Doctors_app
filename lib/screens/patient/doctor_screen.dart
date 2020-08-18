@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-//import'package:meals_app/dummy_doctors.dart';
 import 'package:doctors_app/widgets/patient/doctor_info_cardview.dart';
 import 'package:doctors_app/screens/patient/Nothing.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class DoctorScreen extends StatelessWidget {
 //  final String categoryId;
@@ -20,7 +20,7 @@ class DoctorScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),*/
-      body:  categoryTitle=='Doctors'?DoctorInfoCardviewWidget():Nothing(),
+      body:  categoryTitle=='Doctors'?DoctorInfoCardViewWidget():Nothing(),
     );
   }
 }

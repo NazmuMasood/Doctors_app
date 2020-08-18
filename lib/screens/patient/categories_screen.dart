@@ -1,7 +1,7 @@
 import 'package:doctors_app/widgets/patient/category_item.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/dummy/category_data.dart';
-import 'package:doctors_app/widgets/patient/category_item.dart';
+
 
 class CategoriesScreen extends StatelessWidget {
   @override
@@ -59,7 +59,7 @@ class CategoriesScreen extends StatelessWidget {
         )
             .toList(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 300,
+          maxCrossAxisExtent: 200,
           childAspectRatio: 1.3,
           crossAxisSpacing: 0,
           mainAxisSpacing: 5,

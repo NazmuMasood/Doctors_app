@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/patient/home.dart';
+import 'package:doctors_app/widgets/patient/bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -317,7 +318,7 @@ class _SignupScreenState extends State<SignupScreen> {
             fontSize: 14.0);
         _hideProgress();
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+            MaterialPageRoute(builder: (context) =>BottomNavigationTabView(user)));
       } catch (e) {
         print(e.message);
         _hideProgress();

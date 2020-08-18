@@ -1,17 +1,17 @@
 import 'package:doctors_app/screens/auth/login.dart';
 import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:doctors_app/screens/auth/signupdoc.dart';
-import 'package:doctors_app/screens/patient/categories_screen.dart';
-import 'package:doctors_app/screens/patient/doctor_screen.dart';
-import 'package:doctors_app/screens/patient/home.dart';
 import 'package:doctors_app/screens/welcome.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:doctors_app/screens/patient/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/auth/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:device_preview/device_preview.dart';
+import 'widgets/patient/bottom_navigation_tab_view.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(DevicePreview(enabled: false, builder: (context) => MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: DevicePreview.of(context).locale, // <--- Add the locale
+      builder: DevicePreview.appBuilder, // <--- Add the builder
       initialRoute: '/',
       routes: {
         '/': (context) => AuthenticatorScreen(),
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
         '/logindoc': (context) => LoginDocScreen(),
         '/signupdoc': (context) => SignupDocScreen(),
         '/userprofile': (context) => UserProfile(),
-        DoctorScreen.routeName:(ctx) => DoctorScreen(),
+//        DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },
       debugShowCheckedModeBanner: false,
       title: 'Doctor\'s App',
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home: MainPage(), // Removed because clash with the route properties
+//      home: HomeView(), // Removed because clash with the route properties
     );
   }
 }
@@ -51,17 +53,15 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder<FirebaseUser>(
         future: FirebaseAuth.instance.currentUser(),
-        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot){
-          if (snapshot.hasData){
-            FirebaseUser user = snapshot.data; // this is your user instance
+        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
+          if (snapshot.hasData) {
+            FirebaseUser user = snapshot.data;
             /// is because there is user already logged
-            return HomeScreen(user: user);
+            return BottomNavigationTabView(user);
           }
           /// other way there is no user logged.
           return WelcomeScreen();
-        
-        }
-    );
+        });
     /*return Scaffold(
       appBar: AppBar(
         title: Text('Doctor\'s App'),

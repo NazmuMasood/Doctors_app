@@ -46,7 +46,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   child: Center(
-                    
                   )
                 ),
               ),
