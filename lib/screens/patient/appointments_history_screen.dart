@@ -17,6 +17,7 @@ class AppointmentHistoryScreen extends StatefulWidget {
 
 class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
   List<Appointment> appointments = [];
+  List<dynamic> keys = [];
   DatabaseReference appointmentsRef =
       FirebaseDatabase.instance.reference().child("appointments");
 
@@ -57,6 +58,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
           builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
             if (snapshot.hasData) {
               appointments.clear();
+              keys.clear();
               Map<dynamic, dynamic> values = snapshot.data.value;
               print('Downloaded snapshot -> ' + snapshot.data.value.toString());
               if (values == null) {
@@ -69,6 +71,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
                 );
               }
               values.forEach((key, values) {
+                keys.add(key);
                 appointments.add(Appointment.fromMap(values));
               });
               print('Appointments list length -> ' +
@@ -92,14 +95,27 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
       itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentHistoryWidget(
             appointment: appointments[index],
-            // onTap: () {
-            //   Navigator.pushNamed(context, 'post', arguments: appointments[index]);
-            // },
+            onCancelPressed: () {
+              print('Appointment Cancelled with - '+keys[index].toString()+"on index $index");
+              deleteAppointment(keys[index].toString(), index);
+              //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
+            },
           ));
 
   Future<void> refresh() async {
     setState(() {
       appointments = [];
+      keys = [];
+    });
+  }
+
+  Future<void> deleteAppointment(String appointmentId, int index) async{
+    await appointmentsRef.child(appointmentId).remove().then((_) {
+      print("Delete appointment $appointmentId successful");
+      setState(() {
+        appointments.removeAt(index);
+        keys.removeAt(index);
+      });
     });
   }
 }

@@ -138,8 +138,9 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
 
 class AppointmentHistoryWidget extends StatelessWidget {
   final Appointment appointment;
+  final Function onCancelPressed;
 
-  AppointmentHistoryWidget({this.appointment});
+  AppointmentHistoryWidget({this.appointment, this.onCancelPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +238,7 @@ class AppointmentHistoryWidget extends StatelessWidget {
               width: 332,
               height: 35,
               child: RaisedButton(
-                onPressed: () => print('Appointment Cancelled'),
+                onPressed: onCancelPressed,
                 child: Text(
                   'Cancel Appointment',
                   style: TextStyle(
