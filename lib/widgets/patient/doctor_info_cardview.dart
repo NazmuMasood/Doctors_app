@@ -193,7 +193,6 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
 
     AlgoliaQuery query = algolia.instance.index('doctors');
     query = query.search(_searchedDocController.text.trim());
-
     resultsAlgolia = (await query.getObjects()).hits;
     print("doctors ->" + resultsAlgolia.toString());
 

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/widgets/patient/category_item.dart';
 import 'package:doctors_app/dummy/category_data.dart';
-
+import 'package:doctors_app/screens/auth/login.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, @required this.user}) : super(key: key);
 
@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-    int _selectedIndex = 0;
+//    int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,8 +110,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _logout() async {
     await _firebaseAuth.signOut().then((_) {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+//      Navigator.of(context)
+////          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      Navigator.of(context,rootNavigator: true).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return LoginScreen();
+          },
+        ),
+            (_) => false,
+      );
     });
   }
 //  void _onItemTapped(int index) {
