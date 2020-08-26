@@ -48,7 +48,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
 
   Widget allAppointmentsFutureBuilder() {
     return RefreshIndicator(
-      onRefresh: fetchAllAppointments,
+      onRefresh: refresh,
       child: FutureBuilder(
           future: appointmentsRef
               .orderByChild("patientId")
@@ -64,7 +64,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
                   physics: AlwaysScrollableScrollPhysics(),
                   child: Container(
                     child: Center(child: Text('No results found')),
-                    height: MediaQuery.of(context).size.height-165,
+                    height: MediaQuery.of(context).size.height - 165,
                   ),
                 );
               }
@@ -97,7 +97,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
             // },
           ));
 
-  Future<void> fetchAllAppointments() async {
+  Future<void> refresh() async {
     setState(() {
       appointments = [];
     });
