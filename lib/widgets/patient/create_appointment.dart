@@ -263,7 +263,7 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
   Future<void> _pushOn() async {
     try {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      CreateAppointmentModel appointment = new CreateAppointmentModel(
+      AppointmentModel appointment = new AppointmentModel(
           user.email,
           widget.categoryId,
           selectedIndex.toString(),
@@ -299,11 +299,11 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
   }
 }
 
-class CreateAppointmentModel {
+class AppointmentModel {
   String patientId;
   String doctorId;
   String date;
   String time;
 
-  CreateAppointmentModel(this.patientId, this.doctorId, this.time, this.date);
+  AppointmentModel(this.patientId, this.doctorId, this.time, this.date);
 }
