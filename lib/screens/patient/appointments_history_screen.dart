@@ -20,6 +20,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
   List<dynamic> keys = [];
   DatabaseReference appointmentsRef =
       FirebaseDatabase.instance.reference().child("appointments");
+  bool firstTimeLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +51,14 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
   Widget allAppointmentsFutureBuilder() {
     return RefreshIndicator(
       onRefresh: refresh,
-      child: FutureBuilder(
+      child: firstTimeLoading ? FutureBuilder(
           future: appointmentsRef
               .orderByChild("patientId")
               .equalTo(widget.user.email)
               .once(),
           builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
             if (snapshot.hasData) {
+              firstTimeLoading = false;
               appointments.clear();
               keys.clear();
               Map<dynamic, dynamic> values = snapshot.data.value;
@@ -86,7 +88,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
               return getAppointmentsUi(appointments);
             }
             return Center(child: CircularProgressIndicator());
-          }),
+          }) : getAppointmentsUi(appointments),
     );
   }
 
@@ -104,6 +106,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
 
   Future<void> refresh() async {
     setState(() {
+      firstTimeLoading = true;
       appointments = [];
       keys = [];
     });

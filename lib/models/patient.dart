@@ -5,7 +5,7 @@ class Patient {
   String bloodgroup;
   String weight;
 
-  Patient({this.email, this.name, this.age, this.bloodgroup,this.weight});
+  Patient({this.email, this.name, this.age, this.bloodgroup, this.weight});
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,15 +17,15 @@ class Patient {
     };
   }
 
-static Patient fromMap(Map<dynamic, dynamic> map) {
+  static Patient fromMap(Map<dynamic, dynamic> map) {
     if (map == null) {
       return null;
     }
-      return Patient(
+    return Patient(
         email: map['email'],
-      name: map['name'],
-      age: map['age'],
-      bloodgroup: map['bloodgroup'],
-      weight: map['weight']);
-}
+        name: map['name'],
+        age: map['age'],
+        bloodgroup: map['bloodgroup'],
+        weight: map['weight']);
+  }
 }

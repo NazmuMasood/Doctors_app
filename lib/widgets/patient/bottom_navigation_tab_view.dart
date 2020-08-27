@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import 'package:doctors_app/widgets/patient/profile.dart';
-import 'package:doctors_app/widgets/patient/user_profile.dart';
-=======
 import 'package:doctors_app/screens/patient/appointments_history_screen.dart';
->>>>>>> 645e1afa544c441759d96261591e73a4aaa02c6d
+import 'package:doctors_app/widgets/patient/user_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -46,38 +42,37 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
   List<Widget> _buildScreens() {
     return [
       HomeScreen(user: widget.user),
-      AppointmentHistory(),
-      UserofProfile(user:widget.user),
-     // Scaffold(body: Center(child: Text('Profile here'),),),
+      AppointmentHistoryScreen(user: widget.user),
+      UserProfile(user: widget.user),
     ];
   }// this is your user instance
-    @override
+  @override
   Widget build(BuildContext context) {
     return PersistentTabView(
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(),
-        confineInSafeArea: true,
-        backgroundColor: Colors.white,
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears.
-        stateManagement: true,
-        hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument.
-        decoration: NavBarDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          colorBehindNavBar: Colors.white,
-        ),
-        popAllScreensOnTapOfSelectedTab: true,
-        itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-          animateTabTransition: true,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
-        ),
-        navBarStyle: NavBarStyle.style6,
-      );
+      controller: _controller,
+      screens: _buildScreens(),
+      items: _navBarsItems(),
+      confineInSafeArea: true,
+      backgroundColor: Colors.white,
+      handleAndroidBackButtonPress: true,
+      resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears.
+      stateManagement: true,
+      hideNavigationBarWhenKeyboardShows: true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument.
+      decoration: NavBarDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        colorBehindNavBar: Colors.white,
+      ),
+      popAllScreensOnTapOfSelectedTab: true,
+      itemAnimationProperties: ItemAnimationProperties( // Navigation Bar's items animation properties.
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease,
+      ),
+      screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
+        animateTabTransition: true,
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 200),
+      ),
+      navBarStyle: NavBarStyle.style3,
+    );
   }
 }
