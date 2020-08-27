@@ -1,11 +1,15 @@
+<<<<<<< HEAD
 import 'package:doctors_app/widgets/patient/profile.dart';
 import 'package:doctors_app/widgets/patient/user_profile.dart';
+=======
+import 'package:doctors_app/screens/patient/appointments_history_screen.dart';
+>>>>>>> 645e1afa544c441759d96261591e73a4aaa02c6d
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:doctors_app/screens/patient/home.dart';
-import 'appointment_history.dart';
+import 'appointment_history_widget.dart';
 
 
 class BottomNavigationTabView extends StatefulWidget {
