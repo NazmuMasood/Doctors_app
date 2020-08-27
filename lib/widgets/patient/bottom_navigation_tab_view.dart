@@ -47,7 +47,7 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
     return [
       HomeScreen(user: widget.user),
       AppointmentHistory(),
-      UserofProfile(),
+      UserofProfile(user:widget.user),
      // Scaffold(body: Center(child: Text('Profile here'),),),
     ];
   }// this is your user instance
