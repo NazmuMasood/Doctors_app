@@ -1,6 +1,7 @@
 import 'package:doctors_app/screens/auth/login.dart';
 import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:doctors_app/screens/auth/signupdoc.dart';
+import 'package:doctors_app/screens/patient/user_profile.dart';
 import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:doctors_app/widgets/patient/profile.dart';
@@ -57,7 +58,8 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             /// is because there is user already logged
-            return BottomNavigationTabView(user);
+            //return BottomNavigationTabView(user);
+            return UserProfileScreen(user: user);
           }
           /// other way there is no user logged.
           return WelcomeScreen();

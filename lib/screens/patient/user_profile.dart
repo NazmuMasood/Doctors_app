@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class UserProfile extends StatefulWidget {
-  const UserProfile({Key key, @required this.user}) : super(key: key);
+class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({Key key, @required this.user}) : super(key: key);
   final FirebaseUser user;
 
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _UserProfileScreenState createState() => _UserProfileScreenState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileScreenState extends State<UserProfileScreen> {
   Patient patient;
   Patient updatePatient;
   bool isLoading = true;
@@ -29,8 +29,6 @@ class _UserProfileState extends State<UserProfile> {
       ageController = TextEditingController(),
       bloodgroupController = TextEditingController();
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,72 +36,69 @@ class _UserProfileState extends State<UserProfile> {
       resizeToAvoidBottomInset: true,
       body: /*SingleChildScrollView(
         child:*/
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-              Widget>[
-        Container(
-          child: Stack(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.fromLTRB(25.0, 50.0, 0.0, 0.0),
-                child: Text(
-                  'Profile',
-                  style: TextStyle(fontSize: 50.0, fontWeight: FontWeight.bold),
-                ),
+          Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+            Container(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(25.0, 50.0, 0.0, 0.0),
+                    child: Text(
+                      'Profile',
+                      style: TextStyle(
+                          fontSize: 50.0, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(170.0, 21.0, 0.0, 0.0),
+                    child: Text(
+                      '.',
+                      style: TextStyle(
+                          fontSize: 80.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green),
+                    ),
+                  )
+                ],
               ),
-              Container(
-                padding: EdgeInsets.fromLTRB(170.0, 21.0, 0.0, 0.0),
-                child: Text(
-                  '.',
-                  style: TextStyle(
-                      fontSize: 80.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green),
-                ),
-              )
-            ],
-          ),
-        ),
-        Expanded(child: profileFutureBuilder()),
-      ]),
+            ),
+            Expanded(child: profileFutureBuilder()),
+          ]),
       //),
     );
   }
 
-  Widget profileFutureBuilder(){
-    if(firstTimeLoading) {
-      return FutureBuilder(
-          future: patientsRef
-              .orderByChild('email')
-              .equalTo(widget.user.email)
-              .once(),
-          builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-            if (snapshot.hasData) {
-              Map<dynamic, dynamic> values = snapshot.data.value;
-              print('Downloaded snapshot -> ' + snapshot.data.value.toString());
-              /*if (values == null) {
-                return RefreshIndicator(
-                  onRefresh: refresh,
-                  child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Container(
-                      child: Center(child: Text('Profile not available')),
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height - 300,
-                    ),
-                  ),
-                );
-              }
-              firstTimeLoading = false;
-              values.forEach((key, values) {
-                patient = Patient.fromMap(values);
-              });*/
-              patient = Patient(
-                  name: "abc name", email: 'bc @email.com', age: 'c 33', weight: 'd 20kg', bloodgroup: 'e ab+');
-              print('Patient info -> ' +
-                  patient.email.toString());
+  DatabaseReference appointmentsRef =
+      FirebaseDatabase.instance.reference().child("appointments");
+
+  Widget profileFutureBuilder() {
+    return FutureBuilder(
+        future:
+            patientsRef.orderByChild('email').equalTo(widget.user.email).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            if (values == null) {
               return RefreshIndicator(
+                onRefresh: refresh,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    child: Center(child: Text('Profile not available')),
+                    height: MediaQuery.of(context).size.height - 300,
+                  ),
+                ),
+              );
+            }
+            values.forEach((key, values) {
+              patient = Patient.fromMap(values);
+            });
+//              patient = Patient(
+//                  name: "abc name", email: 'bc @email.com', age: 'c 33', weight: 'd 20kg', bloodgroup: 'e ab+');
+            print('Patient info -> ' + patient.email.toString());
+            return RefreshIndicator(
                 onRefresh: refresh,
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
@@ -116,14 +111,13 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
               );
-            }
-            return Center(child: CircularProgressIndicator());
-          });
-    }
-    return profileContainer(patient);
+            //return profileContainer(patient);
+          }
+          return Center(child: CircularProgressIndicator());
+        });
   }
 
-  Widget profileContainer(Patient patient){
+  Widget profileContainer(Patient patient) {
     return RefreshIndicator(
       onRefresh: refresh,
       child: SingleChildScrollView(
@@ -191,8 +185,7 @@ class _UserProfileState extends State<UserProfile> {
                       return null;
                     },
                     initialValue: patient?.weight,
-                    onSaved: (input) =>
-                    updatePatient.weight = input.trim(),
+                    onSaved: (input) => updatePatient.weight = input.trim(),
                     decoration: InputDecoration(
                         labelText: 'WEIGHT ',
                         labelStyle: TextStyle(
@@ -275,10 +268,8 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  Future<void> updateProfile() async {}
-
   Future<void> getUser() async {
-    print('refresh mail '+widget.user.email);
+    print('refresh mail ' + widget.user.email);
     try {
       await patientsRef
           .orderByChild('email')
@@ -309,28 +300,16 @@ class _UserProfileState extends State<UserProfile> {
     bloodgroupController = TextEditingController(text: patient.bloodgroup);
   }*/
 
+  Future<void> updateProfile() async {}
+
   @override
   void initState() {
     super.initState();
-    /*patient = Patient(
-        name: "a", email: 'b', age: '33', weight: '20kg', bloodgroup: 'ab+');*/
-    //print('name -> ' + patient.name);
-    /*setState(() {
-      nameController.text = patient.name;
-    });*/
-    //setupTextControllers();
-    /* setState(() {
-      isLoading = false;
-      print('name -> '+patient.name);
-    });*/
   }
 
   Future<void> refresh() async {
-    await Future.delayed(const Duration(seconds: 1), () => "1 second");
-    setState(() {
-      firstTimeLoading = true;
-    });
-    //getUser();
+    //await Future.delayed(const Duration(seconds: 1), () => "1 second");
+    setState(() {});
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:doctors_app/screens/patient/appointments_history_screen.dart';
-import 'package:doctors_app/widgets/patient/user_profile.dart';
+import 'package:doctors_app/screens/patient/user_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -43,7 +43,7 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
     return [
       HomeScreen(user: widget.user),
       AppointmentHistoryScreen(user: widget.user),
-      UserProfile(user: widget.user),
+      UserProfileScreen(user: widget.user),
     ];
   }// this is your user instance
   @override
