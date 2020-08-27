@@ -359,6 +359,8 @@ class Signupmodel {
   String email;
   String password;
   String confirmPassword;
+  String birthDate;
+  String weight;
 
-  Signupmodel({this.name, this.email, this.password, this.confirmPassword});
+  Signupmodel({this.name, this.email, this.password, this.confirmPassword,this.birthDate, this.weight});
 }

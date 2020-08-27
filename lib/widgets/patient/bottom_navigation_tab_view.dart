@@ -1,3 +1,5 @@
+import 'package:doctors_app/widgets/patient/profile.dart';
+import 'package:doctors_app/widgets/patient/user_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -41,7 +43,8 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
     return [
       HomeScreen(user: widget.user),
       AppointmentHistory(),
-      Scaffold(body: Center(child: Text('Profile here'),),),
+      UserofProfile(),
+     // Scaffold(body: Center(child: Text('Profile here'),),),
     ];
   }// this is your user instance
     @override
@@ -70,7 +73,7 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
           curve: Curves.ease,
           duration: Duration(milliseconds: 200),
         ),
-        navBarStyle: NavBarStyle.style3,
+        navBarStyle: NavBarStyle.style6,
       );
   }
 }
