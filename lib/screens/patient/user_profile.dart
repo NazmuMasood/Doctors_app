@@ -16,7 +16,7 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
   Patient patient;  List<dynamic> keys = [];
-  Patient updatePatient = Patient();
+  Patient updatePatient;
   bool isLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -190,7 +190,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     //initialValue: patient?.weight,
                     onSaved: (input) => updatePatient.weight = input.trim(),
                     decoration: InputDecoration(
-                        labelText: 'WEIGHT ',
+                        labelText: 'WEIGHT (in KG)',
                         labelStyle: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.bold,
@@ -210,7 +210,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     //initialValue: patient?.age,
                     onSaved: (input) => updatePatient.age = input.trim(),
                     decoration: InputDecoration(
-                        labelText: 'AGE ',
+                        labelText: 'AGE (in Years)',
                         labelStyle: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.bold,
@@ -230,7 +230,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     //initialValue: patient?.bloodgroup,
                     onSaved: (input) => updatePatient.bloodgroup = input.trim(),
                     decoration: InputDecoration(
-                        labelText: 'BLOOD GROUP ',
+                        labelText: 'BLOOD GROUP (A+, O-, AB+, ...)',
                         labelStyle: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.bold,
@@ -239,7 +239,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             borderSide: BorderSide(color: Colors.green))),
                   ),
                   SizedBox(height: 10.0),
-                  isLoading ? Container(
+                  !isLoading ? Container(
                     height: 50.0,
                     child: RaisedButton(
                       onPressed: updateProfile,
@@ -283,12 +283,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
-      ///Update firebase node here
       setState(() {
         isLoading = true;
       });
       try {
         await Future.delayed(const Duration(seconds: 1), () => "1 second");
+        print('Uploading map '+updatePatient.toMap().toString());
+        await patientsRef.child(keys[0]).set(updatePatient.toMap());
         setState(() {
           isLoading = false;
         });
@@ -320,11 +321,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     super.initState();
+    updatePatient = Patient();
   }
 
   Future<void> refresh() async {
     await Future.delayed(const Duration(seconds: 1), () => "1 second");
-    setState(() {keys.clear();});
+    setState(() {
+      keys.clear();
+      isLoading = false;
+    });
   }
 
   @override

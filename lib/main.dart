@@ -58,8 +58,7 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             /// is because there is user already logged
-            //return BottomNavigationTabView(user);
-            return UserProfileScreen(user: user);
+            return BottomNavigationTabView(user);
           }
           /// other way there is no user logged.
           return WelcomeScreen();

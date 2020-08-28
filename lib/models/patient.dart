@@ -28,4 +28,14 @@ class Patient {
         bloodgroup: map['bloodgroup'],
         weight: map['weight']);
   }
+
+  toJson(){
+    return{
+      'email': email,
+      'name': name,
+      'age': age,
+      'bloodgroup': bloodgroup,
+      'weight': weight
+    };
+  }
 }
