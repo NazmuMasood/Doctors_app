@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:doctors_app/widgets/doctor/doc_bottom_navigation_tab_view.dart';
 //import 'package:firebase/firebase.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -394,8 +394,12 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
 
         _hideProgress();
         //Take user to Homepage after sign-up
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+        /*Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));*/
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)),
+                (Route<dynamic> route) => false);
       } catch (e) {
         print(e.message); _hideProgress();
         Fluttertoast.showToast(

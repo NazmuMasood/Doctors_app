@@ -160,7 +160,7 @@ class AppointmentHistoryWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
                   radius: 37,
-                  backgroundImage: AssetImage('assets/images/doctor.png'),
+                  backgroundImage: AssetImage('assets/images/patient.png'),
                 ),
               ),
               Column(
@@ -170,7 +170,7 @@ class AppointmentHistoryWidget extends StatelessWidget {
                     height: 8,
                   ),
                   Text(
-                    appointment.doctorId,
+                    appointment.patientId,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
