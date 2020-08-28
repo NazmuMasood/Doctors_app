@@ -228,7 +228,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       return null;
                     },
                     //initialValue: patient?.bloodgroup,
-                    onSaved: (input) => updatePatient.bloodgroup = input,
+                    onSaved: (input) => updatePatient.bloodgroup = input.trim(),
                     decoration: InputDecoration(
                         labelText: 'BLOOD GROUP ',
                         labelStyle: TextStyle(
