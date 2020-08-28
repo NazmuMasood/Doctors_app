@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ])),
         ],
       ),
-      body: Text('Doctor Home Page')
+      body: Center(child: Text('Doctor Home Page'))
     );
   }
 
