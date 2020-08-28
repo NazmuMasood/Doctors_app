@@ -238,7 +238,7 @@ class AppointmentHistoryWidget extends StatelessWidget {
               width: 332,
               height: 35,
               child: RaisedButton(
-                onPressed: appointment.flag=='pending'?onCancelPressed : {},
+                onPressed: appointment.flag=='pending'?onCancelPressed : (){},
                 child: Text(
                   appointment.flag=='pending'?'Cancel Appointment' : 'FINISHED',
                   style: TextStyle(
