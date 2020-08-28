@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key key, @required this.user}) : super(key: key);
@@ -14,10 +15,9 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  Patient patient;
-  Patient updatePatient;
-  bool isLoading = true;
-  bool firstTimeLoading = true;
+  Patient patient;  List<dynamic> keys = [];
+  Patient updatePatient = Patient();
+  bool isLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DatabaseReference patientsRef =
@@ -78,6 +78,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             patientsRef.orderByChild('email').equalTo(widget.user.email).once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.hasData) {
+            keys.clear();
             Map<dynamic, dynamic> values = snapshot.data.value;
             print('Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
@@ -93,25 +94,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               );
             }
             values.forEach((key, values) {
+              keys.add(key);
               patient = Patient.fromMap(values);
             });
-//              patient = Patient(
-//                  name: "abc name", email: 'bc @email.com', age: 'c 33', weight: 'd 20kg', bloodgroup: 'e ab+');
+            print('Key -> ' + keys[0].toString());
             print('Patient info -> ' + patient.email.toString());
-            return RefreshIndicator(
+            setupTextControllers();
+            /*return RefreshIndicator(
                 onRefresh: refresh,
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
                   child: Container(
-                    child: Center(child: Text(patient.name)),
+                    child: Center(child: Text(nameController.text)),
                     height: MediaQuery
                         .of(context)
                         .size
                         .height - 300,
                   ),
                 ),
-              );
-            //return profileContainer(patient);
+              );*/
+            return profileContainer(patient);
           }
           return Center(child: CircularProgressIndicator());
         });
@@ -138,9 +140,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    //controller: nameController,
-                    onSaved: (input) => input = updatePatient.name,
-                    initialValue: patient?.name,
+                    controller: nameController,
+                    onSaved: (input) => updatePatient.name = input.trim(),
+                    //initialValue: patient?.name,
                     decoration: InputDecoration(
                         labelText: 'NAME',
                         labelStyle: TextStyle(
@@ -151,21 +153,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             borderSide: BorderSide(color: Colors.green))),
                     validator: (input) {
                       if (input.isEmpty) {
-                        //return 'Please type an name';
+                        return 'Please type an name';
                       }
                       return null;
                     },
                   ),
                   TextFormField(
-                    //controller: emailController,
+                    controller: emailController,
                     validator: (input) {
                       if (input.isEmpty) {
                         return 'Please type an email';
                       }
                       return null;
                     },
-                    onSaved: (input) => input = updatePatient.email,
-                    initialValue: patient?.email,
+                    enabled: false,
+                    onSaved: (input) => updatePatient.email = input.trim(),
+                    //initialValue: patient?.email,
                     decoration: InputDecoration(
                         labelText: 'EMAIL ',
                         labelStyle: TextStyle(
@@ -177,14 +180,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                   SizedBox(height: 10.0),
                   TextFormField(
-                    //controller: weightController,
+                    controller: weightController,
                     validator: (input) {
                       if (input.isEmpty) {
-                        //return 'Please enter your weight';
+                        return 'Please enter your weight';
                       }
                       return null;
                     },
-                    initialValue: patient?.weight,
+                    //initialValue: patient?.weight,
                     onSaved: (input) => updatePatient.weight = input.trim(),
                     decoration: InputDecoration(
                         labelText: 'WEIGHT ',
@@ -197,14 +200,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                   SizedBox(height: 10.0),
                   TextFormField(
-                    //controller: ageController,
+                    controller: ageController,
                     validator: (input) {
                       if (input.isEmpty) {
-                        //return 'Please type age';
+                        return 'Please type age';
                       }
                       return null;
                     },
-                    initialValue: patient?.age,
+                    //initialValue: patient?.age,
                     onSaved: (input) => updatePatient.age = input.trim(),
                     decoration: InputDecoration(
                         labelText: 'AGE ',
@@ -217,15 +220,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                   SizedBox(height: 10.0),
                   TextFormField(
-                    //controller: bloodgroupController,
+                    controller: bloodgroupController,
                     validator: (input) {
                       if (input.isEmpty) {
                         return 'Please type blood group';
                       }
                       return null;
                     },
-                    initialValue: patient?.bloodgroup,
-                    onSaved: (input) => input = updatePatient.bloodgroup,
+                    //initialValue: patient?.bloodgroup,
+                    onSaved: (input) => updatePatient.bloodgroup = input,
                     decoration: InputDecoration(
                         labelText: 'BLOOD GROUP ',
                         labelStyle: TextStyle(
@@ -236,7 +239,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             borderSide: BorderSide(color: Colors.green))),
                   ),
                   SizedBox(height: 10.0),
-                  Container(
+                  isLoading ? Container(
                     height: 50.0,
                     child: RaisedButton(
                       onPressed: updateProfile,
@@ -254,53 +257,65 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ),
                       ),
                     ),
+                  ) : Center(
+                    child: CircularProgressIndicator(
+                      valueColor: new AlwaysStoppedAnimation<Color>(
+                          Colors.blue),
+                    ),
                   ),
                   SizedBox(height: 30.0),
                 ],
               )),
-          /*child: Column(
-                        children: <Widget>[
-                          TextField(autofillHints: ['hello','mello'], controller: nameController, enabled: false,)
-                        ],
-                      )*/
         ),
       ),
     );
   }
 
-  Future<void> getUser() async {
-    print('refresh mail ' + widget.user.email);
-    try {
-      await patientsRef
-          .orderByChild('email')
-          .equalTo(widget.user.email)
-          .once()
-          .then((DataSnapshot snapshot) {
-        print('Downloaded snapshot of user : ${snapshot.value}');
-        setState(() {
-          patient = Patient.fromMap(snapshot.value);
-          nameController.text = patient.name;
-          emailController.text = patient.email;
-          ageController.text = patient.age;
-          weightController.text = patient.weight;
-          bloodgroupController.text = patient.bloodgroup;
-          isLoading = false;
-        });
-      });
-    } catch (e) {
-      print(e.message);
-    }
+  void setupTextControllers(){
+      nameController.text = patient.name;
+      emailController.text = patient.email;
+      ageController.text = patient.age;
+      weightController.text = patient.weight;
+      bloodgroupController.text = patient.bloodgroup;
   }
 
-  /*void setupTextControllers(){
-    nameController = TextEditingController(text: patient.name);
-    emailController = TextEditingController(text: patient.email);
-    ageController = TextEditingController(text: patient.age);
-    weightController = TextEditingController(text: patient.weight);
-    bloodgroupController = TextEditingController(text: patient.bloodgroup);
-  }*/
-
-  Future<void> updateProfile() async {}
+  Future<void> updateProfile() async {
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      formState.save();
+      ///Update firebase node here
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        await Future.delayed(const Duration(seconds: 1), () => "1 second");
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(
+            msg: 'Update Successful',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
+      } catch (e) {
+        print(e.message);
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(
+            msg: 'Login Error',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
+      }
+      }
+  }
 
   @override
   void initState() {
@@ -308,12 +323,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Future<void> refresh() async {
-    //await Future.delayed(const Duration(seconds: 1), () => "1 second");
-    setState(() {});
+    await Future.delayed(const Duration(seconds: 1), () => "1 second");
+    setState(() {keys.clear();});
   }
 
   @override
   void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    ageController.dispose();
+    weightController.dispose();
+    bloodgroupController.dispose();
     super.dispose();
   }
 }
