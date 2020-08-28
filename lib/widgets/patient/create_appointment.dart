@@ -1,3 +1,4 @@
+import 'package:doctors_app/models/appointment.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -195,6 +196,14 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
+                    RaisedButton(
+                      onPressed: _pushOn,
+                      child: Text('Book',style: TextStyle(color: Colors.white,letterSpacing: 3.5,fontWeight: FontWeight.w800),),
+                      color: Colors.teal[400],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
                     customRadio(lst[0], 0),
                     customRadio(lst[1], 1),
                     customRadio(lst[2], 2),
@@ -263,16 +272,15 @@ class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
   Future<void> _pushOn() async {
     try {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      AppointmentModel appointment = new AppointmentModel(
-          user.email,
-          widget.categoryId,
-          selectedIndex.toString(),
-          selectedDate.toString());
+      Appointment appointment = Appointment(
+          patientId: user.email, doctorId: widget.categoryId,
+          time: selectedIndex.toString(), date: selectedDate.toString(), flag:'pending');
       await database.push().set({
         'patientId': appointment.patientId,
         'doctorId': appointment.doctorId,
         'date': appointment.date,
-        'time': appointment.time
+        'time': appointment.time,
+        'flag': appointment.flag
       });
       Fluttertoast.showToast(
           msg: 'Appointment Successful',

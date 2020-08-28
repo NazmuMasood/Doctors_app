@@ -3,15 +3,17 @@ class Appointment {
   String doctorId;
   String date;
   String time;
+  String flag;
 
-  Appointment({this.patientId, this.doctorId, this.time, this.date});
+  Appointment({this.patientId, this.doctorId, this.time, this.date, this.flag});
 
   Map<String, dynamic> toMap() {
     return {
       'patientId': patientId,
       'doctorId': doctorId,
       'date': date,
-      'time': time
+      'time': time,
+      'flag' : flag
     };
   }
 
@@ -23,7 +25,8 @@ class Appointment {
         patientId: map['patientId'],
         doctorId: map['doctorId'],
         date: map['date'],
-        time: map['time']);
+        time: map['time'],
+        flag: map['flag']);
   }
 
   Appointment.fromJson(Map<dynamic, dynamic> json){
@@ -31,5 +34,6 @@ class Appointment {
     doctorId = json['doctorId'];
     date = json['date'];
     time = json['time'];
+    flag = json['flag'];
   }
 }

@@ -1,4 +1,4 @@
-import 'package:doctors_app/widgets/patient/appointment_history_widget.dart';
+import 'package:doctors_app/widgets/doctor/doc_appointment_history_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +52,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
       onRefresh: refresh,
       child: FutureBuilder(
           future: appointmentsRef
-              .orderByChild("patientId")
+              .orderByChild("doctorId")
               .equalTo(widget.user.email)
               .once(),
           builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
@@ -95,9 +95,18 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
       itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentHistoryWidget(
             appointment: appointments[index],
-            onCancelPressed: () {
-              print('Appointment Cancelled with - '+keys[index].toString()+"on index $index");
-              deleteAppointment(keys[index].toString(), index);
+            onDonePressed: () {
+              print('Appointment Done with - ' +
+                  keys[index].toString() +
+                  "on index $index");
+              doneAppointment(keys[index].toString(), index);
+              //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
+            },
+            onUndonePressed: () {
+              print('Appointment Undone with - ' +
+                  keys[index].toString() +
+                  "on index $index");
+              undoneAppointment(keys[index].toString(), index);
               //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
             },
           ));
@@ -109,13 +118,25 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
     });
   }
 
-  Future<void> deleteAppointment(String appointmentId, int index) async{
-    await appointmentsRef.child(appointmentId).remove().then((_) {
-      print("Delete appointment $appointmentId successful");
-      setState(() {
-        appointments.removeAt(index);
-        keys.removeAt(index);
-      });
+  Future<void> doneAppointment(String appointmentId, int index) async {
+    await appointmentsRef
+        .child(appointmentId)
+        .child('flag')
+        .set('done')
+        .then((_) {
+      print("Done appointment $appointmentId successful");
+      setState(() {});
+    });
+  }
+
+  Future<void> undoneAppointment(String appointmentId, int index) async {
+    await appointmentsRef
+        .child(appointmentId)
+        .child('flag')
+        .set('pending')
+        .then((_) {
+      print("Undone appointment $appointmentId successful");
+      setState(() {});
     });
   }
 }

@@ -138,9 +138,9 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
 
 class AppointmentHistoryWidget extends StatelessWidget {
   final Appointment appointment;
-  final Function onCancelPressed;
+  final Function onDonePressed, onUndonePressed;
 
-  AppointmentHistoryWidget({this.appointment, this.onCancelPressed});
+  AppointmentHistoryWidget({this.appointment, this.onDonePressed, this.onUndonePressed});
 
   @override
   Widget build(BuildContext context) {
@@ -238,15 +238,15 @@ class AppointmentHistoryWidget extends StatelessWidget {
               width: 332,
               height: 35,
               child: RaisedButton(
-                onPressed: onCancelPressed,
+                onPressed: appointment.flag=='pending'?onDonePressed : onUndonePressed,
                 child: Text(
-                  'Cancel Appointment',
+                  appointment.flag=='pending' ? 'FINISH' : 'FINISHED',
                   style: TextStyle(
                       color: Colors.white,
                       letterSpacing: 3.5,
                       fontWeight: FontWeight.w800),
                 ),
-                color: Colors.teal[400],
+                color: appointment.flag=='pending' ? Colors.deepOrangeAccent : Colors.white12,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),

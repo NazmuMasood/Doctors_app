@@ -238,15 +238,15 @@ class AppointmentHistoryWidget extends StatelessWidget {
               width: 332,
               height: 35,
               child: RaisedButton(
-                onPressed: onCancelPressed,
+                onPressed: appointment.flag=='pending'?onCancelPressed : {},
                 child: Text(
-                  'Cancel Appointment',
+                  appointment.flag=='pending'?'Cancel Appointment' : 'FINISHED',
                   style: TextStyle(
                       color: Colors.white,
                       letterSpacing: 3.5,
                       fontWeight: FontWeight.w800),
                 ),
-                color: Colors.teal[400],
+                color: appointment.flag=='pending'?Colors.teal[400] : Colors.white12,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),

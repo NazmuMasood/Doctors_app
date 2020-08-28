@@ -1,3 +1,4 @@
+import 'package:doctors_app/screens/auth/logindoc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -72,14 +73,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ])),
         ],
       ),
-      body: Text('Doctor UI')
+      body: Text('Doctor Home Page')
     );
   }
 
   _logout() async {
     await _firebaseAuth.signOut().then((_) {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/logindoc', (Route<dynamic> route) => false);
+      /*Navigator.of(context)
+          .pushNamedAndRemoveUntil('/logindoc', (Route<dynamic> route) => false);*/
+      Navigator.of(context,rootNavigator: true).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return LoginDocScreen();
+          },
+        ),
+            (_) => false,
+      );
     });
   }
 }

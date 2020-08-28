@@ -1,3 +1,4 @@
+import 'package:doctors_app/widgets/doctor/doc_bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctors_app/screens/doctor/home.dart';
@@ -244,7 +245,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
         _hideProgress();
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+            MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)),
             (Route<dynamic> route) => false);
       } catch (e) {
         print(e.message);
@@ -277,5 +278,6 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
   void initState() {
     _passwordVisible = false;
     _loading = false;
+    super.initState();
   }
 }
