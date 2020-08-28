@@ -274,9 +274,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   void setupTextControllers(){
       nameController.text = patient.name;
       emailController.text = patient.email;
-      ageController.text = patient.age;
-      weightController.text = patient.weight;
-      bloodgroupController.text = patient.bloodgroup;
+      ageController.text = patient.age!=null ? patient.age : '';
+      weightController.text = patient.weight!=null ? patient.weight : '';
+      bloodgroupController.text = patient.bloodgroup!=null ? patient.bloodgroup : '';
   }
 
   Future<void> updateProfile() async {
