@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:doctors_app/widgets/patient/category_item.dart';
-import 'package:doctors_app/models/algolia.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:doctors_app/widgets/patient/create_appointment.dart';
-import 'package:doctors_app/models/doctors.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:doctors_app/styles/colorScheme.dart';
-import 'dart:async';
-import 'package:algolia/algolia.dart';
 
-class UserProfile extends StatefulWidget {
+class DoctorProfileScreen extends StatefulWidget {
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _DoctorProfileScreenState createState() => _DoctorProfileScreenState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   @override
   Widget build(BuildContext context) {
       

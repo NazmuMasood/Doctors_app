@@ -1,9 +1,7 @@
-import 'package:doctors_app/screens/patient/home.dart';
-import 'package:doctors_app/widgets/patient/bottom_navigation_tab_view.dart';
+import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:doctors_app/screens/auth/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupScreen extends StatefulWidget {

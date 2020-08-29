@@ -1,8 +1,7 @@
+import 'package:doctors_app/screens/auth/doc_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:doctors_app/widgets/patient/category_item.dart';
-import 'package:doctors_app/dummy/category_data.dart';
-import 'package:doctors_app/screens/auth/login.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, @required this.user}) : super(key: key);
 
@@ -14,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-//    int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-
             Padding(
-              padding: const EdgeInsets.fromLTRB(2, 8, 0, 0),
+              padding: const EdgeInsets.fromLTRB(3, 8, 0, 0),
               child: Text(
                 widget.user.email,
                 style: TextStyle(
@@ -75,64 +73,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ])),
         ],
       ),
-      body: GridView(
-        children: DUMMY_CATEGORIES
-            .map(
-              (catData) => CategoryItemWidget(
-              catData.id, catData.title, catData.avatar, catData.text),
-        )
-            .toList(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 300,
-          childAspectRatio: 1.3,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 5,
-        ),
-      ),
-//       bottomNavigationBar: BottomNavigationBar(
-//        items: const <BottomNavigationBarItem>[
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.home),
-//            title: Text('Home'),
-//          ),
-//
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.dashboard),
-//            title: Text('profile'),
-//          ),
-//        ],
-//        currentIndex: _selectedIndex,
-//        selectedItemColor: Colors.amber[800],
-//        onTap: _onItemTapped,
-//      ),
+      body: Center(child: Text('Doctor Home Page'))
     );
   }
 
   _logout() async {
     await _firebaseAuth.signOut().then((_) {
-//      Navigator.of(context)
-////          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      /*Navigator.of(context)
+          .pushNamedAndRemoveUntil('/logindoc', (Route<dynamic> route) => false);*/
       Navigator.of(context,rootNavigator: true).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (BuildContext context) {
-            return LoginScreen();
+            return DocLoginScreen();
           },
         ),
             (_) => false,
       );
     });
   }
-//  void _onItemTapped(int index) {
-//    setState(() {
-//      if( index ==0){
-//        Navigator.of(context)
-//          .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-//      }
-//      else {
-//        Navigator.of(context)
-//          .pushNamedAndRemoveUntil('/user', (Route<dynamic> route) => false);
-//      }
-//      _selectedIndex = index;
-//    });
-//  }
 }

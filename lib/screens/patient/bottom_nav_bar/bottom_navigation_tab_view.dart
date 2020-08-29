@@ -1,10 +1,10 @@
-import 'package:doctors_app/screens/doctor/doc_appointments_history_screen.dart';
-//import 'package:doctors_app/screens/doctor/user_profile.dart';
+import 'package:doctors_app/screens/patient/appointment_list/appointment_list_screen.dart';
+import 'package:doctors_app/screens/patient/user_profile/user_profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:doctors_app/screens/doctor/home.dart';
+import 'package:doctors_app/screens/patient/home/home_screen.dart';
 
 
 class BottomNavigationTabView extends StatefulWidget {
@@ -41,8 +41,8 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
   List<Widget> _buildScreens() {
     return [
       HomeScreen(user: widget.user),
-      AppointmentHistoryScreen(user: widget.user),
-      Scaffold(body: Center(child: Text("Doctor Profile"))),
+      AppointmentListScreen(user: widget.user),
+      UserProfileScreen(user: widget.user),
     ];
   }// this is your user instance
   @override

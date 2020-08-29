@@ -4,28 +4,27 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-//import 'appointment_slot_radio_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:doctors_app/screens/patient/home.dart';
+import 'package:doctors_app/screens/patient/home/home_screen.dart';
 
-class CreateAppointmentWidget extends StatefulWidget {
+class CreateAppointmentScreen extends StatefulWidget {
   String categoryId;
   String categoryTitle;
   String categoryImageUrl;
   String categoryAddress;
   String categorySpecialities;
-  CreateAppointmentWidget(
+  CreateAppointmentScreen(
       {@required this.categoryId,
       this.categoryTitle,
       this.categoryAddress,
       this.categoryImageUrl,
       this.categorySpecialities});
   @override
-  _CreateAppointmentWidgetState createState() =>
-      _CreateAppointmentWidgetState();
+  _CreateAppointmentScreenState createState() =>
+      _CreateAppointmentScreenState();
 }
 
-class _CreateAppointmentWidgetState extends State<CreateAppointmentWidget> {
+class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   DateTime selectedDate = DateTime.now();
 //  CreateAppointmentModel appointment = CreateAppointmentModel();
   List<String> lst = ['Morning', 'Afternoon', 'Evening'];

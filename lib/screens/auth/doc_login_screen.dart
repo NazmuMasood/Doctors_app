@@ -1,15 +1,14 @@
-import 'package:doctors_app/widgets/doctor/doc_bottom_navigation_tab_view.dart';
+import 'package:doctors_app/screens/doctor/bottom_nav_bar/doc_bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctors_app/screens/doctor/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginDocScreen extends StatefulWidget {
+class DocLoginScreen extends StatefulWidget {
   @override
-  _LoginDocScreenState createState() => _LoginDocScreenState();
+  _DocLoginScreenState createState() => _DocLoginScreenState();
 }
 
-class _LoginDocScreenState extends State<LoginDocScreen> {
+class _DocLoginScreenState extends State<DocLoginScreen> {
   String _email, _password;
   List<bool> isSelected = [false, true];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -179,7 +178,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
                             ? Container(
                                 height: 40.0,
                                 child: RaisedButton(
-                                  onPressed: _logindoc,
+                                  onPressed: _loginDoc,
                                   color: Colors.green,
                                   splashColor: Colors.white,
                                   shape: RoundedRectangleBorder(
@@ -233,7 +232,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
         )));
   }
 
-  Future<void> _logindoc() async {
+  Future<void> _loginDoc() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
@@ -245,7 +244,7 @@ class _LoginDocScreenState extends State<LoginDocScreen> {
         _hideProgress();
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)),
+            MaterialPageRoute(builder: (context) => DocBottomNavigationTabView(user)),
             (Route<dynamic> route) => false);
       } catch (e) {
         print(e.message);

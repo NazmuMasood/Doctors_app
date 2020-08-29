@@ -1,4 +1,3 @@
-import 'package:doctors_app/screens/auth/login.dart';
 import 'package:flutter/material.dart';
 import '../styles/colorScheme.dart';
 

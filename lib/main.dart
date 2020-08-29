@@ -1,15 +1,14 @@
-import 'package:doctors_app/screens/auth/login.dart';
-import 'package:doctors_app/screens/auth/logindoc.dart';
-import 'package:doctors_app/screens/auth/signupdoc.dart';
-import 'package:doctors_app/screens/patient/user_profile.dart';
+import 'package:doctors_app/screens/auth/login_screen.dart';
+import 'package:doctors_app/screens/auth/doc_login_screen.dart';
+import 'package:doctors_app/screens/auth/doc_signup_screen.dart';
+import 'package:doctors_app/screens/patient/user_profile/user_profile_screen.dart';
 import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:doctors_app/widgets/patient/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:doctors_app/screens/auth/signup.dart';
+import 'package:doctors_app/screens/auth/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_preview/device_preview.dart';
-import 'widgets/patient/bottom_navigation_tab_view.dart';
+import 'screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 
 void main() {
   runApp(DevicePreview(enabled: false, builder: (context) => MyApp()));
@@ -27,9 +26,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => AuthenticatorScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
-        '/logindoc': (context) => LoginDocScreen(),
-        '/signupdoc': (context) => SignupDocScreen(),
-        '/userprofile': (context) => UserProfile(),
+        '/logindoc': (context) => DocLoginScreen(),
+        '/signupdoc': (context) => DocSignupScreen(),
+        '/userprofile': (context) => UserProfileScreen(),
 //        DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },
       debugShowCheckedModeBanner: false,
@@ -59,6 +58,7 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
             FirebaseUser user = snapshot.data;
             /// is because there is user already logged
             return BottomNavigationTabView(user);
+            /// !!!!!!!!! doctor gets logged in as patient !!!! handle it ASAP
           }
           /// other way there is no user logged.
           return WelcomeScreen();

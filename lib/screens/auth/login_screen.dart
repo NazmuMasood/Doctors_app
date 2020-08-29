@@ -1,7 +1,6 @@
-import 'package:doctors_app/widgets/patient/bottom_navigation_tab_view.dart';
+import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctors_app/screens/patient/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {

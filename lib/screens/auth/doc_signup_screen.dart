@@ -1,23 +1,19 @@
 import 'package:algolia/algolia.dart';
 import 'package:doctors_app/models/algolia.dart';
-import 'package:doctors_app/screens/doctor/home.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doctors_app/screens/auth/logindoc.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:doctors_app/widgets/doctor/doc_bottom_navigation_tab_view.dart';
-//import 'package:firebase/firebase.dart';
+import 'package:doctors_app/screens/doctor/bottom_nav_bar/doc_bottom_navigation_tab_view.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class SignupDocScreen extends StatefulWidget {
+class DocSignupScreen extends StatefulWidget {
   @override
-  _SignupDocScreenState createState() => _SignupDocScreenState();
+  _DocSignupScreenState createState() => _DocSignupScreenState();
 }
 
-class _SignupDocScreenState extends State<SignupDocScreen> {
+class _DocSignupScreenState extends State<DocSignupScreen> {
   Signupmodel signupModel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -315,7 +311,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
                             ? Container(
                                 height: 40.0,
                                 child: RaisedButton(
-                                  onPressed: _signup,
+                                  onPressed: _signupDoc,
                                   color: Colors.green,
                                   splashColor: Colors.white,
                                   shape: RoundedRectangleBorder(
@@ -369,7 +365,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
             ])));
   }
 
-  Future<void> _signup() async {
+  Future<void> _signupDoc() async {
     //form saving
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -398,7 +394,7 @@ class _SignupDocScreenState extends State<SignupDocScreen> {
             context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));*/
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)),
+            MaterialPageRoute(builder: (context) => DocBottomNavigationTabView(user)),
                 (Route<dynamic> route) => false);
       } catch (e) {
         print(e.message); _hideProgress();

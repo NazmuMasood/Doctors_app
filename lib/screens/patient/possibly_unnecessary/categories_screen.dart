@@ -1,5 +1,4 @@
-import 'package:doctors_app/widgets/patient/category_item.dart';
-import 'package:flutter/material.dart';
+import 'package:doctors_app/screens/patient/home/home_gridview_items_widget.dart';import 'package:flutter/material.dart';
 import 'package:doctors_app/dummy/category_data.dart';
 
 

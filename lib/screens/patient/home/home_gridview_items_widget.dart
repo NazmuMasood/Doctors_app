@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:doctors_app/screens/patient/doctor_screen.dart';
+import 'package:doctors_app/screens/patient/search_doctor/search_doctor_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 class CategoryItemWidget extends StatelessWidget {
   final String title;
@@ -29,10 +29,10 @@ class CategoryItemWidget extends StatelessWidget {
         onTap: () {
           pushNewScreenWithRouteSettings(
             context,
-            settings: RouteSettings(name: DoctorScreen.routeName,arguments:{
+            settings: RouteSettings(name: SearchDoctorScreen.routeName,arguments:{
               'id' :id,'title':title,
             }),
-            screen: DoctorScreen(),
+            screen: SearchDoctorScreen(),
             withNavBar: true,
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           );

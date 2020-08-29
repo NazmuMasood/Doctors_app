@@ -1,9 +1,9 @@
 import 'package:doctors_app/models/algolia.dart';
-import 'package:doctors_app/widgets/patient/profile.dart';
+import 'package:doctors_app/screens/patient/book_appointment/create_appointment_screen.dart';
+import 'package:doctors_app/screens/patient/view_doctor_profile/doctor_profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:doctors_app/widgets/patient/create_appointment.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:algolia/algolia.dart';
@@ -317,7 +317,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                       onPressed: () {
                                         pushNewScreen(
                                           context,
-                                          screen: UserProfile(),
+                                          screen: DoctorProfileScreen(),
                                           withNavBar: true, // OPTIONAL VALUE. True by default.
                                           pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                         );
@@ -395,7 +395,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
 
   void bookAppointment(BuildContext ctx, id, address, specialities, name) {
     Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
-      return CreateAppointmentWidget(
+      return CreateAppointmentScreen(
           categoryId: id,
           categoryAddress: address,
           categorySpecialities: specialities,
