@@ -1,8 +1,10 @@
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/patient/home/home_gridview_items_widget.dart';
 import 'package:doctors_app/dummy/category_data.dart';
 import 'package:doctors_app/screens/auth/login_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, @required this.user}) : super(key: key);
 
@@ -14,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
 //    int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-
             Padding(
               padding: const EdgeInsets.fromLTRB(2, 8, 0, 0),
               child: Text(
@@ -62,10 +64,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ButtonTheme(
                   height: 28,
                   minWidth: 50,
-                  child: RaisedButton(onPressed: _logout,child: Text('Logout',style: TextStyle(color: Colors.redAccent),),color: Colors.white,elevation: 1,
+                  child: RaisedButton(
+                    onPressed: _logout,
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.redAccent),
+                    ),
+                    color: Colors.white,
+                    elevation: 1,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)
-                    ),),),
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
                 IconButton(
                     icon: Icon(
                       Icons.notifications_none,
@@ -79,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
         children: DUMMY_CATEGORIES
             .map(
               (catData) => CategoryItemWidget(
-              catData.id, catData.title, catData.avatar, catData.text),
-        )
+                  catData.id, catData.title, catData.avatar, catData.text),
+            )
             .toList(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 300,
@@ -110,16 +120,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _logout() async {
     await _firebaseAuth.signOut().then((_) {
-//      Navigator.of(context)
-////          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-      Navigator.of(context,rootNavigator: true).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return LoginScreen();
-          },
-        ),
-            (_) => false,
-      );
+      try {
+        SharedPreferencesHelper.addStringToSF('user_type', 'patient_logout');
+        print(
+            'Logging out -> firebase logout success, shared_pref logout success');
+        //      Navigator.of(context)
+        //        .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return LoginScreen();
+            },
+          ),
+          (_) => false,
+        );
+      } catch (e) {
+        print('Shared preferences logout error ->' + e.message);
+      }
     });
   }
 //  void _onItemTapped(int index) {

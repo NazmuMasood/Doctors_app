@@ -1,6 +1,8 @@
 import 'package:doctors_app/screens/auth/login_screen.dart';
 import 'package:doctors_app/screens/auth/doc_login_screen.dart';
 import 'package:doctors_app/screens/auth/doc_signup_screen.dart';
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
+import 'package:doctors_app/screens/doctor/bottom_nav_bar/doc_bottom_navigation_tab_view.dart';
 import 'package:doctors_app/screens/patient/user_profile/user_profile_screen.dart';
 import 'package:doctors_app/screens/welcome.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,8 +21,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      locale: DevicePreview.of(context).locale, // <--- Add the locale
-      builder: DevicePreview.appBuilder, // <--- Add the builder
+      locale: DevicePreview.of(context).locale,
+      // <--- Add the locale
+      builder: DevicePreview.appBuilder,
+      // <--- Add the builder
       initialRoute: '/',
       routes: {
         '/': (context) => AuthenticatorScreen(),
@@ -56,10 +60,33 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
         builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
+            return FutureBuilder<String>(
+              future: SharedPreferencesHelper.getStringValueSF('user_type'),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  print('user_type-> ' + snapshot.data.toString());
+                  if (snapshot.data == 'patient') {
+                    return BottomNavigationTabView(user);
+                  }
+                  if (snapshot.data == 'doctor') {
+                    return DocBottomNavigationTabView(user);
+                  }
+                  if (snapshot.data == 'patient_logout') {
+                    return LoginScreen();
+                  }
+                  if (snapshot.data == 'doctor_logout') {
+                    return DocLoginScreen();
+                  }
+                  return WelcomeScreen();
+                }
+                return WelcomeScreen();
+              },
+            );
             /// is because there is user already logged
-            return BottomNavigationTabView(user);
+            //return BottomNavigationTabView(user);
             /// !!!!!!!!! doctor gets logged in as patient !!!! handle it ASAP
           }
+
           /// other way there is no user logged.
           return WelcomeScreen();
         });
@@ -96,4 +123,3 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
     );*/
   }
 }
-

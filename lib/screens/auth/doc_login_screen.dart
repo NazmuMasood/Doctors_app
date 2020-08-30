@@ -1,3 +1,4 @@
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/doctor/bottom_nav_bar/doc_bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -242,6 +243,8 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
         _hideProgress();
+        //saves user info in shared preferences
+        SharedPreferencesHelper.addStringToSF('user_type', 'doctor');
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => DocBottomNavigationTabView(user)),

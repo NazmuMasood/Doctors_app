@@ -1,3 +1,4 @@
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -315,6 +316,8 @@ class _SignupScreenState extends State<SignupScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
         _hideProgress();
+        //saves user info in shared preferences
+        SharedPreferencesHelper.addStringToSF('user_type', 'patient');
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) =>BottomNavigationTabView(user)));
       } catch (e) {

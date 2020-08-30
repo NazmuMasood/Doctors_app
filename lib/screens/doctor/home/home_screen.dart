@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/auth/doc_login_screen.dart';
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -79,16 +80,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _logout() async {
     await _firebaseAuth.signOut().then((_) {
-      /*Navigator.of(context)
-          .pushNamedAndRemoveUntil('/logindoc', (Route<dynamic> route) => false);*/
-      Navigator.of(context,rootNavigator: true).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return DocLoginScreen();
-          },
-        ),
-            (_) => false,
-      );
+      try {
+        SharedPreferencesHelper.addStringToSF('user_type', 'doctor_logout');
+        print(
+            'Logging out -> firebase logout success, shared_pref logout success');
+        //      Navigator.of(context)
+        //        .pushNamedAndRemoveUntil('/logindoc', (Route<dynamic> route) => false);
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return DocLoginScreen();
+            },
+          ),
+              (_) => false,
+        );
+      } catch (e) {
+        print('Shared preferences logout error ->' + e.message);
+      }
     });
   }
 }

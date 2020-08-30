@@ -1,5 +1,6 @@
 import 'package:algolia/algolia.dart';
 import 'package:doctors_app/models/algolia.dart';
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -389,6 +390,8 @@ class _DocSignupScreenState extends State<DocSignupScreen> {
         addToAlgolia();
 
         _hideProgress();
+        //saves user info in shared preferences
+        SharedPreferencesHelper.addStringToSF('user_type', 'doctor');
         //Take user to Homepage after sign-up
         /*Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomeScreen(user: user)));*/

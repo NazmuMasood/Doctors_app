@@ -1,3 +1,4 @@
+import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -62,8 +63,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               for (int i = 0; i < isSelected.length; i++) {
                                 if (i == index) {
                                   isSelected[i] = true;
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      '/logindoc', (Route<dynamic> route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      '/logindoc',
+                                      (Route<dynamic> route) => false);
                                 } else {
                                   isSelected[i] = false;
                                 }
@@ -112,7 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey),
                                 focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.green))),
+                                    borderSide:
+                                        BorderSide(color: Colors.green))),
                             validator: (input) {
                               if (input.isEmpty) {
                                 return 'Please type an email';
@@ -150,7 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey),
                                 focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.green))),
+                                    borderSide:
+                                        BorderSide(color: Colors.green))),
                             //ignore: missing_return
                             validator: (input) {
                               if (input.isEmpty) {
@@ -187,7 +192,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.green,
                                     splashColor: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(35)),
+                                        borderRadius:
+                                            BorderRadius.circular(35)),
                                     child: Center(
                                       child: Text(
                                         'LOGIN',
@@ -201,8 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )
                               : Center(
                                   child: CircularProgressIndicator(
-                                    valueColor: new AlwaysStoppedAnimation<Color>(
-                                        Colors.blue),
+                                    valueColor:
+                                        new AlwaysStoppedAnimation<Color>(
+                                            Colors.blue),
                                   ),
                                 ),
                           SizedBox(height: 15.0),
@@ -250,10 +257,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
         _hideProgress();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)),
-            (Route<dynamic> route) => false);
+        //saves user info in shared preferences
+        try {
+          SharedPreferencesHelper.addStringToSF('user_type', 'patient');
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BottomNavigationTabView(user)),
+              (Route<dynamic> route) => false);
+        } catch (e) {
+          print('Shared preferences login error ->' + e.message);
+        }
       } catch (e) {
         print(e.message);
         _hideProgress();
