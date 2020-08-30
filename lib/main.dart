@@ -110,13 +110,6 @@ class _AuthenticatorScreenState extends State<AuthenticatorScreen> {
                 },
                 child: Text('Sign Up')
             ),
-            ///TODO: Amir and Ayon please create a button for each of the UI that..
-            ///TODO: ..you're gonna create and put that button in HERE i.e. the temporary 'opening screen'
-            ///TODO: We're doing this to keep a track of all the UI we're individually creating
-            ///TODO: And also to avoid code-conflicts
-            ///TODO: For example button names can be 'create-appointment-ui-1', 'create-appointment-ui-2'
-            ///TODO: Also 'home-ui', 'search-ui' etc
-            ///TODO: Clicking those buttons will open the ui that you designed
           ],
         ),
       ),

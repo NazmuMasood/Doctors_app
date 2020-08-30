@@ -195,14 +195,14 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    RaisedButton(
+                    /*RaisedButton(
                       onPressed: _pushOn,
                       child: Text('Book',style: TextStyle(color: Colors.white,letterSpacing: 3.5,fontWeight: FontWeight.w800),),
                       color: Colors.teal[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
-                    ),
+                    ),*/
                     customRadio(lst[0], 0),
                     customRadio(lst[1], 1),
                     customRadio(lst[2], 2),
