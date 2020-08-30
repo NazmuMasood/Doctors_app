@@ -27,7 +27,7 @@ class DocAppointmentListWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
                   radius: 37,
-                  backgroundImage: AssetImage('assets/images/patient_custom.png'),
+                  backgroundImage: AssetImage('assets/images/patient.png'),
                 ),
               ),
               Column(
