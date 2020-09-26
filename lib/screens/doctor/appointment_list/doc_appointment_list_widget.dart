@@ -115,7 +115,7 @@ class DocAppointmentListWidget extends StatelessWidget {
                         letterSpacing: 3.5,
                         fontWeight: FontWeight.w800),
                   ),
-                  color: appointment.flag=='pending' ? Colors.deepOrangeAccent : Colors.white12,
+                  color: appointment.flag=='pending' ? Colors.blue : Colors.white12,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
                   ),
