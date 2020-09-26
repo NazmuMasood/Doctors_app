@@ -239,7 +239,7 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
       formState.save();
       try {
         _showProgress();
-        FirebaseUser user = (await FirebaseAuth.instance
+        User user = (await FirebaseAuth.instance
                 .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
         _hideProgress();

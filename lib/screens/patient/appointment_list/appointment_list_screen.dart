@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 class AppointmentListScreen extends StatefulWidget {
   const AppointmentListScreen({Key key, @required this.user}) : super(key: key);
-  final FirebaseUser user;
+  final User user;
 
   @override
   _AppointmentListScreenState createState() => _AppointmentListScreenState();

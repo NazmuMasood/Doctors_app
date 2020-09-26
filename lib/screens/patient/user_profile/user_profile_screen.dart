@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key key, @required this.user}) : super(key: key);
-  final FirebaseUser user;
+  final User user;
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class DocHomeScreen extends StatefulWidget {
   const DocHomeScreen({Key key, @required this.user}) : super(key: key);
 
-  final FirebaseUser user;
+  final User user;
 
   @override
   _DocHomeScreenState createState() => _DocHomeScreenState();

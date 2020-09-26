@@ -297,7 +297,7 @@ class _SignupScreenState extends State<SignupScreen> {
       _formKey.currentState.save();
       try {
         _showProgress();
-        final FirebaseUser user =
+        final User user =
             (await _firebaseAuth.createUserWithEmailAndPassword(
                     email: signupModel.email, password: signupModel.password))
                 .user;

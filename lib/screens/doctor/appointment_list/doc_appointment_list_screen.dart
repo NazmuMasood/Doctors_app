@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 class DocAppointmentListScreen extends StatefulWidget {
   const DocAppointmentListScreen({Key key, @required this.user})
       : super(key: key);
-  final FirebaseUser user;
+  final User user;
 
   @override
   _DocAppointmentListScreenState createState() =>
@@ -80,8 +80,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       onRefresh: refresh,
       child: FutureBuilder(
           future: appointmentsRef
-              .orderByChild("doctorId")
-              .equalTo(widget.user.email)
+              .orderByChild("dHelper")
+              .equalTo(widget.user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+timeSlot)
               .once(),
           builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
             if (snapshot.hasData) {

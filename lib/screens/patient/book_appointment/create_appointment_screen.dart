@@ -270,7 +270,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
 
   Future<void> _pushOn() async {
     try {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      User user = FirebaseAuth.instance.currentUser;
       Appointment appointment = Appointment(
           patientId: user.email, doctorId: widget.categoryId,
           time: selectedIndex.toString(), date: selectedDate.toString(), flag:'pending',
