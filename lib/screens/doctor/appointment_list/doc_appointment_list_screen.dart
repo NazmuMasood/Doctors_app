@@ -91,6 +91,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Widget getAppointmentsUi(List<Appointment> appointments) => ListView.builder(
+    padding: EdgeInsets.all(0),
       physics: AlwaysScrollableScrollPhysics(),
       itemCount: appointments.length,
       itemBuilder: (context, index) => DocAppointmentListWidget(

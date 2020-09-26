@@ -71,7 +71,7 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
         curve: Curves.ease,
         duration: Duration(milliseconds: 200),
       ),
-      navBarStyle: NavBarStyle.style3,
+      navBarStyle: NavBarStyle.style6,
     );
   }
 }
