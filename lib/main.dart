@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignupScreen(),
         '/logindoc': (context) => DocLoginScreen(),
         '/signupdoc': (context) => DocSignupScreen(),
-        '/userprofile': (context) => UserProfileScreen(),
+        '/userprofile': (context) => UserProfileScreen(user: null,),
 //        DoctorScreen.routeName:(ctx) => DoctorScreen(),
       },
       debugShowCheckedModeBanner: false,

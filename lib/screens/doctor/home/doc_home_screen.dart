@@ -3,16 +3,16 @@ import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key, @required this.user}) : super(key: key);
+class DocHomeScreen extends StatefulWidget {
+  const DocHomeScreen({Key key, @required this.user}) : super(key: key);
 
   final FirebaseUser user;
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _DocHomeScreenState createState() => _DocHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DocHomeScreenState extends State<DocHomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override

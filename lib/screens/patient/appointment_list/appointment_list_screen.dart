@@ -22,6 +22,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       FirebaseDatabase.instance.reference().child("appointments");
   DateTime selectedDate = DateTime.now();
   String dropdownValue = 'Morning';
+  String timeSlot = '0';
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +78,11 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       onRefresh: refresh,
       child: FutureBuilder(
           future: appointmentsRef
-              .orderByChild("patientId")
-              .equalTo(widget.user.email)
+              .orderByChild("pHelper")
+              .equalTo(widget.user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+timeSlot)
               .once(),
           builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+            print('pHelper-> '+widget.user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+timeSlot);
             if (snapshot.hasData) {
               appointments.clear();
               keys.clear();
@@ -145,6 +147,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       onChanged: (String newValue) {
         setState(() {
           dropdownValue = newValue;
+          timeSlot = newValue=='Morning'?'0' : newValue=='Afternoon'?'1' : newValue=='Evening'?'2': '00';
         });
       },
       items: <String>['Morning', 'Afternoon', 'Evening']

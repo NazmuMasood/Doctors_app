@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:doctors_app/screens/doctor/home/home_screen.dart';
+import 'package:doctors_app/screens/doctor/home/doc_home_screen.dart';
 
 
 class DocBottomNavigationTabView extends StatefulWidget {
@@ -39,7 +39,7 @@ class _DocBottomNavigationTabViewState extends State<DocBottomNavigationTabView>
 
   List<Widget> _buildScreens() {
     return [
-      HomeScreen(user: widget.user),
+      DocHomeScreen(user: widget.user),
       DocAppointmentListScreen(user: widget.user),
       Scaffold(body: Center(child: Text("Doctor Profile"))),
     ];

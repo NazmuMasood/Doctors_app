@@ -273,17 +273,23 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       Appointment appointment = Appointment(
           patientId: user.email, doctorId: widget.categoryId,
-          time: selectedIndex.toString(), date: selectedDate.toString(), flag:'pending');
+          time: selectedIndex.toString(), date: selectedDate.toString(), flag:'pending',
+          dHelper: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
+          pHelper: user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString()
+      );
+
       await database.push().set({
         'patientId': appointment.patientId,
         'doctorId': appointment.doctorId,
         'date': appointment.date,
         'time': appointment.time,
-        'flag': appointment.flag
+        'flag': appointment.flag,
+        'dHelper': appointment.dHelper,
+        'pHelper': appointment.pHelper
       });
       Fluttertoast.showToast(
-          msg: 'Appointment Successful',
-          toastLength: Toast.LENGTH_SHORT,
+          msg: 'Appointment successful',
+          toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.teal,
