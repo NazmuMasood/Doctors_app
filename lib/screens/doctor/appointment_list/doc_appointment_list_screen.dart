@@ -76,7 +76,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   child: TextFormField(
                 decoration: InputDecoration(labelText: 'Message'),
                     controller: myController,
-
                   ),
                 ),
                 Positioned(left: 300,top: 9,child:FlatButton(child:Icon(Icons.send_rounded,color: Colors.white,size: 22,),onPressed:() =>print(myController),
