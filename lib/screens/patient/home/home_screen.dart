@@ -8,7 +8,7 @@ import 'package:doctors_app/screens/auth/login_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, @required this.user}) : super(key: key);
 
-  final FirebaseUser user;
+  final User user;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
