@@ -203,9 +203,10 @@ class _DocSignupScreenState extends State<DocSignupScreen> {
                         ),
                         SizedBox(height: 10.0),
                         TextFormField(
+                          keyboardType: TextInputType.emailAddress,
                           validator: (input) {
-                            if (input.isEmpty) {
-                              return 'Please type an email';
+                            if (input.isEmpty || !input.contains('@')) {
+                              return 'Please type an valid email';
                             }
                             return null;
                           },

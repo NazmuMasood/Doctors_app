@@ -105,6 +105,7 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
                     child: Column(
                       children: <Widget>[
                         TextFormField(
+                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                               labelText: 'EMAIL',
                               labelStyle: TextStyle(
@@ -114,8 +115,8 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
                               focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.green))),
                           validator: (input) {
-                            if (input.isEmpty) {
-                              return 'Please type an email';
+                            if (input.isEmpty|| !input.contains('@')) {
+                              return 'Please type an valid email';
                             }
                             return null;
                           },

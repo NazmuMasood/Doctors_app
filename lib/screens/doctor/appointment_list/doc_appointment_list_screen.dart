@@ -6,6 +6,7 @@ import 'package:doctors_app/models/appointment.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
+
 class DocAppointmentListScreen extends StatefulWidget {
   const DocAppointmentListScreen({Key key, @required this.user})
       : super(key: key);
@@ -24,7 +25,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   DateTime selectedDate = DateTime.now();
   String dropdownValue = 'Morning';
   String timeSlot = '0';
-
+  var myController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +43,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               style: TextStyle(fontSize: 25),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Row(
@@ -52,8 +52,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   icon: Icon(Icons.date_range),
                   label: Text(
                     DateFormat('E, dd MMM').format(selectedDate),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 17),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   ),
                 ),
                 SizedBox(
@@ -63,6 +62,26 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   child: dropDownList(),
                   onPressed: null,
                 )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 23
+            ),
+            child:Stack(
+              children: [
+                Container(
+                  width: 365,
+                  height: 65,
+                  child: TextFormField(
+                decoration: InputDecoration(labelText: 'Message'),
+                    controller: myController,
+
+                  ),
+                ),
+                Positioned(left: 300,top: 9,child:FlatButton(child:Icon(Icons.send_rounded,color: Colors.white,size: 22,),onPressed:() =>print(myController),
+                  color: Colors.blue,shape: CircleBorder(),height: 40,) ,),
+
               ],
             ),
           ),
@@ -119,7 +138,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Widget getAppointmentsUi(List<Appointment> appointments) => ListView.builder(
-    padding: EdgeInsets.all(0),
+      padding: EdgeInsets.all(0),
       physics: AlwaysScrollableScrollPhysics(),
       itemCount: appointments.length,
       itemBuilder: (context, index) => DocAppointmentListWidget(
@@ -140,13 +159,17 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             },
           ));
 
-  Widget dropDownList(){
+  Widget dropDownList() {
     return DropdownButton<String>(
       value: dropdownValue,
       icon: Icon(Icons.arrow_downward),
       iconSize: 20,
       elevation: 16,
-      style: TextStyle(color: Colors.black,fontWeight:FontWeight.w700,fontSize: 15,fontFamily: 'Avenir'),
+      style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+          fontFamily: 'Avenir'),
       underline: Container(
         height: 2,
         color: Colors.blue,
@@ -154,7 +177,11 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       onChanged: (String newValue) {
         setState(() {
           dropdownValue = newValue;
-          timeSlot = newValue=='Morning'?'0' : newValue=='Afternoon'?'1' : newValue=='Evening'?'2': '00';
+          timeSlot = newValue == 'Morning'
+              ? '0'
+              : newValue == 'Afternoon'
+                  ? '1'
+                  : newValue == 'Evening' ? '2' : '00';
         });
       },
       items: <String>['Morning', 'Afternoon', 'Evening']
@@ -166,7 +193,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       }).toList(),
     );
   }
-
 
   void presentDatePicker() {
     showDatePicker(
@@ -180,7 +206,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       if (value == null) {
         return;
       }
-      
+
       setState(() {
         selectedDate = value;
       });

@@ -108,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: <Widget>[
                           TextFormField(
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                                 labelText: 'EMAIL',
                                 labelStyle: TextStyle(
@@ -118,8 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     borderSide:
                                         BorderSide(color: Colors.green))),
                             validator: (input) {
-                              if (input.isEmpty) {
-                                return 'Please type an email';
+                              if (input.isEmpty|| !input.contains('@')) {
+                                return 'Please type an valid email';
                               }
                               FocusScope.of(context).nextFocus();
                               return null;
