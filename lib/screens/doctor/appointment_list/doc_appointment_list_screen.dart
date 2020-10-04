@@ -6,7 +6,6 @@ import 'package:doctors_app/models/appointment.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
-
 class DocAppointmentListScreen extends StatefulWidget {
   const DocAppointmentListScreen({Key key, @required this.user})
       : super(key: key);
@@ -26,6 +25,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   String dropdownValue = 'Morning';
   String timeSlot = '0';
   var myController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,21 +66,32 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 23
-            ),
-            child:Stack(
+            padding: const EdgeInsets.only(left: 23),
+            child: Stack(
               children: [
                 Container(
                   width: 365,
                   height: 65,
                   child: TextFormField(
-                decoration: InputDecoration(labelText: 'Message'),
+                    decoration: InputDecoration(labelText: 'Message'),
                     controller: myController,
                   ),
                 ),
-                Positioned(left: 300,top: 9,child:FlatButton(child:Icon(Icons.send_rounded,color: Colors.white,size: 22,),onPressed:() =>print(myController),
-                  color: Colors.blue,shape: CircleBorder(),height: 40,) ,),
-
+                Positioned(
+                  left: 300,
+                  top: 9,
+                  child: FlatButton(
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                    onPressed: () => sendMessage(),
+                    color: Colors.blue,
+                    shape: CircleBorder(),
+                    //height: 40,
+                  ),
+                ),
               ],
             ),
           ),
@@ -93,13 +104,22 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     );
   }
 
+  void sendMessage(){
+    FocusScope.of(context).unfocus();
+    print(myController.text);
+  }
+
   Widget allAppointmentsFutureBuilder() {
     return RefreshIndicator(
       onRefresh: refresh,
       child: FutureBuilder(
           future: appointmentsRef
               .orderByChild("dHelper")
-              .equalTo(widget.user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+timeSlot)
+              .equalTo(widget.user.email +
+                  '_' +
+                  selectedDate.toString().split(' ')[0] +
+                  '_' +
+                  timeSlot)
               .once(),
           builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
             if (snapshot.hasData) {
@@ -216,6 +236,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     setState(() {
       appointments = [];
       keys = [];
+      myController.clear();
     });
   }
 

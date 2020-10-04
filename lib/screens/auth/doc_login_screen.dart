@@ -1,5 +1,6 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/doctor/bottom_nav_bar/doc_bottom_navigation_tab_view.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -120,7 +121,7 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
                             }
                             return null;
                           },
-                          onSaved: (input) => _email = input,
+                          onSaved: (input) => _email = input.trim(),
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
@@ -156,7 +157,7 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
                               return 'Your password needs to be at-least 6 characters';
                             }
                           },
-                          onSaved: (input) => _password = input,
+                          onSaved: (input) => _password = input.trim(),
                           obscureText: !_passwordVisible,
                         ),
                         SizedBox(height: 5.0),
@@ -246,6 +247,11 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
         _hideProgress();
         //saves user info in shared preferences
         SharedPreferencesHelper.addStringToSF('user_type', 'doctor');
+
+        FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+        String fcmToken = await firebaseMessaging.getToken();
+        print('fcmToken -> '+fcmToken);
+
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => DocBottomNavigationTabView(user)),

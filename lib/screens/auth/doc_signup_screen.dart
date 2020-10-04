@@ -2,6 +2,7 @@ import 'package:algolia/algolia.dart';
 import 'package:doctors_app/models/algolia.dart';
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -416,13 +417,18 @@ class _DocSignupScreenState extends State<DocSignupScreen> {
 
   Future<void> addToFirebaseDatabase() async {
     try {
+      FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+      String fcmToken = await firebaseMessaging.getToken();
+      print('fcmToken -> '+fcmToken);
+
       await database.push().set({
         'name': signupModel.name,
         'email': signupModel.email,
         "degrees": signupModel.degree,
         "category": signupModel.category,
         "specialities": signupModel.speciality,
-        "address": signupModel.address
+        "address": signupModel.address,
+        "fcmToken": fcmToken
       });
       /* Fluttertoast.showToast(
           msg: 'Firebase Data Add Successful',

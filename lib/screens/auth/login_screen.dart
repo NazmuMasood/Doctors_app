@@ -1,5 +1,6 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -261,6 +262,12 @@ class _LoginScreenState extends State<LoginScreen> {
         //saves user info in shared preferences
         try {
           SharedPreferencesHelper.addStringToSF('user_type', 'patient');
+
+          FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+          String fcmToken = await firebaseMessaging.getToken();
+          print('fcmToken -> '+fcmToken);
+
+
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(

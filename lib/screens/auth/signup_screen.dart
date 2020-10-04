@@ -1,5 +1,6 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -304,9 +305,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 .user;
         print(signupModel.name);
 
+        FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+        String fcmToken = await firebaseMessaging.getToken();
+
         database
             .push()
-            .set({'name': signupModel.name, 'email': signupModel.email});
+            .set({'name': signupModel.name, 'email': signupModel.email, 'fcmToken': fcmToken});
 
         Fluttertoast.showToast(
             msg: 'Signup Successful',
