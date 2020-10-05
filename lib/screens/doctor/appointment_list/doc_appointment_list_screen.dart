@@ -25,6 +25,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   String dropdownValue = 'Morning';
   String timeSlot = '0';
   var myController = TextEditingController();
+  bool pressAll = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +39,29 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 26, bottom: 3),
-            child: Text(
-              'Appointments',
-              style: TextStyle(fontSize: 25),
+            child: Row(
+              children: [
+                Text(
+                  'Appointments',
+                  style: TextStyle(fontSize: 25),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 120.0),
+                  child: new RaisedButton(
+                    child: new Text('All'),
+                    textColor: pressAll ? Colors.white : Colors.black,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0),
+                    ),
+                    color: pressAll ? Colors.grey : Colors.white30,
+                    onPressed: () => setState(() => pressAll = !pressAll),
+                  ),
+                ),
+              ],
             ),
           ),
-          Padding(
+          !pressAll
+              ? Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Row(
               children: [
@@ -52,7 +70,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   icon: Icon(Icons.date_range),
                   label: Text(
                     DateFormat('E, dd MMM').format(selectedDate),
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 17),
                   ),
                 ),
                 SizedBox(
@@ -64,8 +83,10 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                 )
               ],
             ),
-          ),
-          Padding(
+          )
+              : Container(),
+          !pressAll
+              ? Padding(
             padding: const EdgeInsets.only(left: 23),
             child: Stack(
               children: [
@@ -94,8 +115,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                 ),
               ],
             ),
-          ),
-          Expanded(child: allAppointmentsFutureBuilder()),
+          ) : Container(),
+          Expanded(child: appointmentsFutureBuilder()),
           SizedBox(
             height: 20,
           ),
@@ -109,51 +130,103 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     print(myController.text);
   }
 
-  Widget allAppointmentsFutureBuilder() {
+  Widget appointmentsFutureBuilder() {
     return RefreshIndicator(
       onRefresh: refresh,
-      child: FutureBuilder(
-          future: appointmentsRef
-              .orderByChild("dHelper")
-              .equalTo(widget.user.email +
-                  '_' +
-                  selectedDate.toString().split(' ')[0] +
-                  '_' +
-                  timeSlot)
-              .once(),
-          builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-            if (snapshot.hasData) {
-              appointments.clear();
-              keys.clear();
-              Map<dynamic, dynamic> values = snapshot.data.value;
-              print('Downloaded snapshot -> ' + snapshot.data.value.toString());
-              if (values == null) {
-                return SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Container(
-                    child: Center(child: Text('No results found')),
-                    height: MediaQuery.of(context).size.height - 165,
-                  ),
-                );
-              }
-              values.forEach((key, values) {
-                keys.add(key);
-                appointments.add(Appointment.fromMap(values));
-              });
-              print('Appointments list length -> ' +
-                  appointments.length.toString());
-              /*var appointmentsJson = json.decode(snapshot.data.value);
+      child: checkIfAll(),
+    );
+  }
+
+  Widget checkIfAll() {
+    if (pressAll) {
+      return allAppointments();
+    }
+    return sortedAppointments();
+  }
+
+  Widget allAppointments() {
+    return FutureBuilder(
+        future: appointmentsRef
+            .orderByChild("doctorId")
+            .equalTo(widget.user.email)
+            .once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          print('doctorId-> ' +
+              widget.user.email);
+          if (snapshot.hasData) {
+            appointments.clear();
+            keys.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            if (values == null) {
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  child: Center(child: Text('No results found')),
+                  height: MediaQuery.of(context).size.height - 165,
+                ),
+              );
+            }
+            values.forEach((key, values) {
+              keys.add(key);
+              appointments.add(Appointment.fromMap(values));
+            });
+            print('Appointments list length -> ' +
+                appointments.length.toString());
+            return getAppointmentsUi(appointments);
+          }
+          return Center(child: CircularProgressIndicator());
+        });
+  }
+
+  Widget sortedAppointments() {
+    return FutureBuilder(
+        future: appointmentsRef
+            .orderByChild("dHelper")
+            .equalTo(widget.user.email +
+            '_' +
+            selectedDate.toString().split(' ')[0] +
+            '_' +
+            timeSlot)
+            .once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          print('dHelper-> ' +
+              widget.user.email +
+              '_' +
+              selectedDate.toString().split(' ')[0] +
+              '_' +
+              timeSlot);
+          if (snapshot.hasData) {
+            appointments.clear();
+            keys.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            if (values == null) {
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  child: Center(child: Text('No results found')),
+                  height: MediaQuery.of(context).size.height - 165,
+                ),
+              );
+            }
+            values.forEach((key, values) {
+              keys.add(key);
+              appointments.add(Appointment.fromMap(values));
+            });
+            print('Appointments list length -> ' +
+                appointments.length.toString());
+            /*var appointmentsJson = json.decode(snapshot.data.value);
                 if (appointmentsJson == null) {
                   return Center(child: Text("No results found"));
                 }
                 for(var appointmentJson in appointmentsJson){
                   appointments.add(Appointment.fromJson(appointmentJson));
                 }*/
-              return getAppointmentsUi(appointments);
-            }
-            return Center(child: CircularProgressIndicator());
-          }),
-    );
+            return getAppointmentsUi(appointments);
+          }
+          return Center(child: CircularProgressIndicator());
+        });
   }
 
   Widget getAppointmentsUi(List<Appointment> appointments) => ListView.builder(
