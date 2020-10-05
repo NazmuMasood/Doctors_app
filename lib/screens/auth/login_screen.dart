@@ -256,38 +256,27 @@ class _LoginScreenState extends State<LoginScreen> {
       formState.save();
       try {
         _showProgress();
-        User user = (await FirebaseAuth.instance
-                .signInWithEmailAndPassword(email: _email, password: _password))
-            .user;
-        _hideProgress();
-        //saves user info in shared preferences
-        try {
-          SharedPreferencesHelper.addStringToSF('user_type', 'patient');
 
-          FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-          String fcmToken = await firebaseMessaging.getToken();
-          print('fcmToken -> '+fcmToken);
+        //Firstly, check if patient exists with that email
+        DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
+        patientsRef.orderByChild('email').equalTo(_email).once().then((DataSnapshot snap) {
+          var values = snap.value;
+          if (values == null){
+            _hideProgress();
+            print('No patient with that email');
+            Fluttertoast.showToast(
+                msg: 'Login Error',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.teal,
+                textColor: Colors.white,
+                fontSize: 14.0);
+          }
+          //Secondly, authenticate
+          else {_authenticate();}
+        });
 
-          DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
-          patientsRef.orderByChild('email').equalTo(user.email).once().then((DataSnapshot snap) {
-            var keys = snap.value.keys;
-            var values = snap.value;
-            for (var key in keys){
-              print(key.toString()+" | "+values[key]['email'].toString());
-              patientsRef.child(key).child('fcmToken').set(fcmToken).then((_){
-                print("Update fcmToken of "+values[key]['email'].toString()+" successful");
-              });
-            }
-          });
-
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BottomNavigationTabView(user)),
-              (Route<dynamic> route) => false);
-        } catch (e) {
-          print('Shared preferences login error ->' + e.message);
-        }
       } catch (e) {
         print(e.message);
         _hideProgress();
@@ -300,6 +289,47 @@ class _LoginScreenState extends State<LoginScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
       }
+    }
+  }
+
+  Future<void> _authenticate() async{
+    try {
+    //Authenticate
+    User user = (await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: _email, password: _password))
+        .user;
+    _hideProgress();
+    //saves user info in shared preferences
+    SharedPreferencesHelper.addStringToSF('user_type', 'patient');
+
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+    String fcmToken = await firebaseMessaging.getToken();
+    print('fcmToken -> '+fcmToken);
+
+    DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
+    patientsRef.orderByChild('email').equalTo(user.email).once().then((DataSnapshot snap) {
+    var keys = snap.value.keys;
+    var values = snap.value;
+    for (var key in keys){
+    print("Logging in user successful : "+key.toString()+" | "+values[key]['email'].toString());
+    patientsRef.child(key).child('fcmToken').set(fcmToken).then((_){
+    print("Updated fcmToken of "+values[key]['email'].toString()+" successful");
+    });
+    }
+    });
+
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)), (Route<dynamic> route) => false);
+    } catch (e) {
+    print('Login error ->' + e.message);
+    _hideProgress();
+    Fluttertoast.showToast(
+        msg: 'Login Error',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.teal,
+        textColor: Colors.white,
+        fontSize: 14.0);
     }
   }
 
