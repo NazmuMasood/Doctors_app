@@ -23,6 +23,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   DateTime selectedDate = DateTime.now();
   String dropdownValue = 'Morning';
   String timeSlot = '0';
+  bool pressAll = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,35 +37,53 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 26, bottom: 3),
-            child: Text(
-              'Appointments',
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
             child: Row(
               children: [
-                FlatButton.icon(
-                  onPressed: presentDatePicker,
-                  icon: Icon(Icons.date_range),
-                  label: Text(
-                    DateFormat('E, dd MMM').format(selectedDate),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 17),
+                Text(
+                  'Appointments',
+                  style: TextStyle(fontSize: 25),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 120.0),
+                  child: new RaisedButton(
+                    child: new Text('All'),
+                    textColor: pressAll ? Colors.white : Colors.black,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0),
+                    ),
+                    color: pressAll ? Colors.grey : Colors.white30,
+                    onPressed: () => setState(() => pressAll = !pressAll),
                   ),
                 ),
-                SizedBox(
-                  width: 0,
-                ),
-                FlatButton(
-                  child: dropDownList(),
-                  onPressed: null,
-                )
               ],
             ),
           ),
-          Expanded(child: allAppointmentsFutureBuilder()),
+          !pressAll
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      FlatButton.icon(
+                        onPressed: presentDatePicker,
+                        icon: Icon(Icons.date_range),
+                        label: Text(
+                          DateFormat('E, dd MMM').format(selectedDate),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 17),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 0,
+                      ),
+                      FlatButton(
+                        child: dropDownList(),
+                        onPressed: null,
+                      )
+                    ],
+                  ),
+                )
+              : Container(),
+          Expanded(child: appointmentsFutureBuilder()),
           SizedBox(
             height: 20,
           ),
@@ -73,48 +92,103 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
     );
   }
 
-  Widget allAppointmentsFutureBuilder() {
+  Widget appointmentsFutureBuilder() {
     return RefreshIndicator(
       onRefresh: refresh,
-      child: FutureBuilder(
-          future: appointmentsRef
-              .orderByChild("pHelper")
-              .equalTo(widget.user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+timeSlot)
-              .once(),
-          builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-            print('pHelper-> '+widget.user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+timeSlot);
-            if (snapshot.hasData) {
-              appointments.clear();
-              keys.clear();
-              Map<dynamic, dynamic> values = snapshot.data.value;
-              print('Downloaded snapshot -> ' + snapshot.data.value.toString());
-              if (values == null) {
-                return SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Container(
-                    child: Center(child: Text('No results found')),
-                    height: MediaQuery.of(context).size.height - 165,
-                  ),
-                );
-              }
-              values.forEach((key, values) {
-                keys.add(key);
-                appointments.add(Appointment.fromMap(values));
-              });
-              print('Appointments list length -> ' +
-                  appointments.length.toString());
-              /*var appointmentsJson = json.decode(snapshot.data.value);
+      child: checkIfAll(),
+    );
+  }
+
+  Widget checkIfAll() {
+    if (pressAll) {
+      return allAppointments();
+    }
+    return sortedAppointments();
+  }
+
+  Widget allAppointments() {
+    return FutureBuilder(
+        future: appointmentsRef
+            .orderByChild("patientId")
+            .equalTo(widget.user.email)
+            .once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          print('patientId-> ' +
+              widget.user.email);
+          if (snapshot.hasData) {
+            appointments.clear();
+            keys.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            if (values == null) {
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  child: Center(child: Text('No results found')),
+                  height: MediaQuery.of(context).size.height - 165,
+                ),
+              );
+            }
+            values.forEach((key, values) {
+              keys.add(key);
+              appointments.add(Appointment.fromMap(values));
+            });
+            print('Appointments list length -> ' +
+                appointments.length.toString());
+            return getAppointmentsUi(appointments);
+          }
+          return Center(child: CircularProgressIndicator());
+        });
+  }
+
+  Widget sortedAppointments() {
+    return FutureBuilder(
+        future: appointmentsRef
+            .orderByChild("pHelper")
+            .equalTo(widget.user.email +
+                '_' +
+                selectedDate.toString().split(' ')[0] +
+                '_' +
+                timeSlot)
+            .once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          print('pHelper-> ' +
+              widget.user.email +
+              '_' +
+              selectedDate.toString().split(' ')[0] +
+              '_' +
+              timeSlot);
+          if (snapshot.hasData) {
+            appointments.clear();
+            keys.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            if (values == null) {
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  child: Center(child: Text('No results found')),
+                  height: MediaQuery.of(context).size.height - 165,
+                ),
+              );
+            }
+            values.forEach((key, values) {
+              keys.add(key);
+              appointments.add(Appointment.fromMap(values));
+            });
+            print('Appointments list length -> ' +
+                appointments.length.toString());
+            /*var appointmentsJson = json.decode(snapshot.data.value);
                 if (appointmentsJson == null) {
                   return Center(child: Text("No results found"));
                 }
                 for(var appointmentJson in appointmentsJson){
                   appointments.add(Appointment.fromJson(appointmentJson));
                 }*/
-              return getAppointmentsUi(appointments);
-            }
-            return Center(child: CircularProgressIndicator());
-          }),
-    );
+            return getAppointmentsUi(appointments);
+          }
+          return Center(child: CircularProgressIndicator());
+        });
   }
 
   Widget getAppointmentsUi(List<Appointment> appointments) => ListView.builder(
@@ -132,14 +206,17 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
             },
           ));
 
-
-  Widget dropDownList(){
+  Widget dropDownList() {
     return DropdownButton<String>(
       value: dropdownValue,
       icon: Icon(Icons.arrow_downward),
       iconSize: 20,
       elevation: 16,
-      style: TextStyle(color: Colors.black,fontWeight:FontWeight.w700,fontSize: 15,fontFamily: 'Avenir'),
+      style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+          fontFamily: 'Avenir'),
       underline: Container(
         height: 2,
         color: Colors.teal,
@@ -147,7 +224,11 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       onChanged: (String newValue) {
         setState(() {
           dropdownValue = newValue;
-          timeSlot = newValue=='Morning'?'0' : newValue=='Afternoon'?'1' : newValue=='Evening'?'2': '00';
+          timeSlot = newValue == 'Morning'
+              ? '0'
+              : newValue == 'Afternoon'
+                  ? '1'
+                  : newValue == 'Evening' ? '2' : '00';
         });
       },
       items: <String>['Morning', 'Afternoon', 'Evening']
@@ -159,7 +240,6 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       }).toList(),
     );
   }
-
 
   Future<void> refresh() async {
     setState(() {

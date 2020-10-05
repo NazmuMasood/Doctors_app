@@ -308,8 +308,7 @@ class _SignupScreenState extends State<SignupScreen> {
         FirebaseMessaging firebaseMessaging = FirebaseMessaging();
         String fcmToken = await firebaseMessaging.getToken();
 
-        database
-            .push()
+        database.push()
             .set({'name': signupModel.name, 'email': signupModel.email, 'fcmToken': fcmToken});
 
         Fluttertoast.showToast(
