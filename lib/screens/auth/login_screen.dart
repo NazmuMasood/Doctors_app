@@ -1,5 +1,6 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -267,6 +268,17 @@ class _LoginScreenState extends State<LoginScreen> {
           String fcmToken = await firebaseMessaging.getToken();
           print('fcmToken -> '+fcmToken);
 
+          DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
+          patientsRef.orderByChild('email').equalTo(user.email).once().then((DataSnapshot snap) {
+            var keys = snap.value.keys;
+            var values = snap.value;
+            for (var key in keys){
+              print(key.toString()+" | "+values[key]['email'].toString());
+              patientsRef.child(key).child('fcmToken').set(fcmToken).then((_){
+                print("Update fcmToken of "+values[key]['email'].toString()+" successful");
+              });
+            }
+          });
 
           Navigator.pushAndRemoveUntil(
               context,

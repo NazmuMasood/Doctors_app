@@ -1,5 +1,6 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/patient/home/home_gridview_items_widget.dart';
 import 'package:doctors_app/dummy/category_data.dart';
@@ -119,11 +120,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _logout() async {
+    DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
+    await patientsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
+      var keys = snap.value.keys;
+      var values = snap.value;
+      for (var key in keys){
+        print(key.toString()+" | "+values[key]['email'].toString());
+        patientsRef.child(key).child('fcmToken').remove().then((_){
+          print("Deleted fcmToken of "+values[key]['email'].toString()+" successful");
+        });
+      }
+    });
+
     await _firebaseAuth.signOut().then((_) {
       try {
         SharedPreferencesHelper.addStringToSF('user_type', 'patient_logout');
-        print(
-            'Logging out -> firebase logout success, shared_pref logout success');
+        print('Logging out user successful');
         //      Navigator.of(context)
         //        .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
         Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
