@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_id" translatable="false">my_unique_fcm_id</string>
+    <string name="notification_channel_name">The (channel) name of this notification</string>
+    <string name="notification_channel_desc">A description of the notification.</string>
+</resources>

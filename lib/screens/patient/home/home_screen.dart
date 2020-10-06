@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
+import 'package:doctors_app/services/messaging_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //Messaging service for receiving push notification
+  final MessagingService _messagingService = MessagingService();
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 //    int _selectedIndex = 0;
@@ -151,6 +155,13 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+
+  @override
+  void initState() {
+    _messagingService.initialise();
+    super.initState();
+  }
+
 //  void _onItemTapped(int index) {
 //    setState(() {
 //      if( index ==0){
@@ -164,4 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
 //      _selectedIndex = index;
 //    });
 //  }
+
+
 }

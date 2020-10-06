@@ -1,8 +1,10 @@
+import 'package:doctors_app/models/message.dart';
 import 'package:doctors_app/screens/doctor/appointment_list/doc_appointment_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/models/appointment.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
@@ -24,7 +26,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   DateTime selectedDate = DateTime.now();
   String dropdownValue = 'Morning';
   String timeSlot = '0';
-  var myController = TextEditingController();
+  var msgController = TextEditingController();
   bool pressAll = false;
 
   @override
@@ -62,60 +64,61 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
           ),
           !pressAll
               ? Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Row(
-              children: [
-                FlatButton.icon(
-                  onPressed: presentDatePicker,
-                  icon: Icon(Icons.date_range),
-                  label: Text(
-                    DateFormat('E, dd MMM').format(selectedDate),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 17),
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      FlatButton.icon(
+                        onPressed: presentDatePicker,
+                        icon: Icon(Icons.date_range),
+                        label: Text(
+                          DateFormat('E, dd MMM').format(selectedDate),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 17),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 0,
+                      ),
+                      FlatButton(
+                        child: dropDownList(),
+                        onPressed: null,
+                      )
+                    ],
                   ),
-                ),
-                SizedBox(
-                  width: 0,
-                ),
-                FlatButton(
-                  child: dropDownList(),
-                  onPressed: null,
                 )
-              ],
-            ),
-          )
               : Container(),
           !pressAll
               ? Padding(
-            padding: const EdgeInsets.only(left: 23),
-            child: Stack(
-              children: [
-                Container(
-                  width: 365,
-                  height: 65,
-                  child: TextFormField(
-                    decoration: InputDecoration(labelText: 'Message'),
-                    controller: myController,
+                  padding: const EdgeInsets.only(left: 23),
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 365,
+                        height: 65,
+                        child: TextFormField(
+                          decoration: InputDecoration(labelText: 'Message'),
+                          controller: msgController,
+                        ),
+                      ),
+                      Positioned(
+                        left: 300,
+                        top: 9,
+                        child: FlatButton(
+                          child: Icon(
+                            Icons.send,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                          onPressed: () => sendMessage(),
+                          color: Colors.blue,
+                          shape: CircleBorder(),
+                          //height: 40,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Positioned(
-                  left: 300,
-                  top: 9,
-                  child: FlatButton(
-                    child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                    onPressed: () => sendMessage(),
-                    color: Colors.blue,
-                    shape: CircleBorder(),
-                    //height: 40,
-                  ),
-                ),
-              ],
-            ),
-          ) : Container(),
+                )
+              : Container(),
           Expanded(child: appointmentsFutureBuilder()),
           SizedBox(
             height: 20,
@@ -123,11 +126,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         ],
       ),
     );
-  }
-
-  void sendMessage(){
-    FocusScope.of(context).unfocus();
-    print(myController.text);
   }
 
   Widget appointmentsFutureBuilder() {
@@ -151,8 +149,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             .equalTo(widget.user.email)
             .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-          print('doctorId-> ' +
-              widget.user.email);
+          print('doctorId-> ' + widget.user.email);
           if (snapshot.hasData) {
             appointments.clear();
             keys.clear();
@@ -184,10 +181,10 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         future: appointmentsRef
             .orderByChild("dHelper")
             .equalTo(widget.user.email +
-            '_' +
-            selectedDate.toString().split(' ')[0] +
-            '_' +
-            timeSlot)
+                '_' +
+                selectedDate.toString().split(' ')[0] +
+                '_' +
+                timeSlot)
             .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           print('dHelper-> ' +
@@ -286,6 +283,41 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     );
   }
 
+  Future<void> sendMessage() async {
+    FocusScope.of(context).unfocus();
+    print('Message : ' + msgController.text);
+    Message msg = new Message(
+        dId: widget.user.email,
+        dHelper: widget.user.email +'_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot,
+        date: DateTime.now().toString(),
+        msg: msgController.text);
+
+    try {
+      DatabaseReference msgRef = FirebaseDatabase.instance.reference().child("messages");
+      await msgRef.push().set(msg.toMap());
+
+      msgController.clear();
+      Fluttertoast.showToast(
+          msg: 'Message sending success',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+    } catch (e) {
+      print(e.message);
+      Fluttertoast.showToast(
+          msg: 'Message sending error',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+    }
+  }
+
   void presentDatePicker() {
     showDatePicker(
       context: context,
@@ -309,7 +341,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     setState(() {
       appointments = [];
       keys = [];
-      myController.clear();
+      msgController.clear();
     });
   }
 
