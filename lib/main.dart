@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/auth/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 
 void main() async {
@@ -23,31 +24,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      locale: DevicePreview
-          .of(context)
-          .locale,
-      // <--- Add the locale
-      builder: DevicePreview.appBuilder,
-      // <--- Add the builder
-      initialRoute: '/',
-      routes: {
-        '/': (context) => AuthenticatorScreen(),
-        '/login': (context) => LoginScreen(),
-        '/signup': (context) => SignupScreen(),
-        '/logindoc': (context) => DocLoginScreen(),
-        '/signupdoc': (context) => DocSignupScreen(),
-        '/userprofile': (context) => UserProfileScreen(user: null,),
+    return OverlaySupport(
+      child: MaterialApp(
+        locale: DevicePreview.of(context).locale,
+        builder: DevicePreview.appBuilder,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => AuthenticatorScreen(),
+          '/login': (context) => LoginScreen(),
+          '/signup': (context) => SignupScreen(),
+          '/logindoc': (context) => DocLoginScreen(),
+          '/signupdoc': (context) => DocSignupScreen(),
+          '/userprofile': (context) => UserProfileScreen(user: null,),
 //        DoctorScreen.routeName:(ctx) => DoctorScreen(),
-      },
-      debugShowCheckedModeBanner: false,
-      title: 'Doctor\'s App',
-      theme: ThemeData(
-        fontFamily: 'Avenir',
-        primarySwatch: Colors.teal,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+        },
+        debugShowCheckedModeBanner: false,
+        title: 'Doctor\'s App',
+        theme: ThemeData(
+          fontFamily: 'Avenir',
+          primarySwatch: Colors.teal,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
 //      home: HomeView(), // Removed because clash with the route properties
+      ),
     );
   }
 }

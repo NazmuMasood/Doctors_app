@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class MessagingService {
   final FirebaseMessaging _fcm = FirebaseMessaging();
@@ -15,7 +16,29 @@ class MessagingService {
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
 
-        ///TODO
+        //Custom notification top-overlay for foreground messages
+        showOverlayNotification((context) {
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SafeArea(
+              child: ListTile(
+                leading: SizedBox.fromSize(
+                    size: const Size(40, 40),
+                    child: CircleAvatar(
+                      radius: 37,
+                      backgroundImage: AssetImage('assets/images/doctor.png'),
+                    )),
+                title: Text(message['notification']['title']),
+                subtitle: Text(message['notification']['body']),
+                trailing: IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      OverlaySupportEntry.of(context).dismiss();
+                    }),
+              ),
+            ),
+          );
+        }, duration: Duration(milliseconds: 5000));
       },
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
@@ -27,8 +50,9 @@ class MessagingService {
     );
   }
 
-  static Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
-    print('myBgMsgHandler: '+message.toString());
+  static Future<dynamic> myBackgroundMessageHandler(
+      Map<String, dynamic> message) async {
+    print('myBgMsgHandler: ' + message.toString());
 
     if (message.containsKey('data')) {
       // Handle data message
@@ -42,5 +66,4 @@ class MessagingService {
 
     // Or do other work.
   }
-
 }
