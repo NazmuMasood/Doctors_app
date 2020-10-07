@@ -28,7 +28,7 @@ class MessagingService {
                       radius: 37,
                       backgroundImage: AssetImage('assets/images/doctor.png'),
                     )),
-                title: Text(message['notification']['title']),
+                title: Text(message['notification']['title'].toString().split('@')[0]),
                 subtitle: Text(message['notification']['body']),
                 trailing: IconButton(
                     icon: Icon(Icons.close),
