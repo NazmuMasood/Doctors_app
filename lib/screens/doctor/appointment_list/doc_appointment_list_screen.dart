@@ -285,6 +285,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
   Future<void> sendMessage() async {
     FocusScope.of(context).unfocus();
+    if(msgController.text.isEmpty){return;}
     print('Message : ' + msgController.text);
     Message msg = new Message(
         dId: widget.user.email,
