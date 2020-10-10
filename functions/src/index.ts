@@ -13,17 +13,6 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
         console.log('Doctor\'s Message: '+original.msg)
         //console.log('Message value', context.params.messageId, original)
 
-        const payload : admin.messaging.MessagingPayload = {
-            notification: {
-                title: `Doctor ${original.dId}`,
-                body: `${original.msg}`,
-                icon: 'https://drive.google.com/file/d/1BUlK63xeTV6cP7SLPvWVhh7GfjreBOMy/view?usp=sharing',
-                clickAction: 'FLUTTER_NOTIFICATION_CLICK'
-            }
-        }
-
-        const patientIds : string[] = []
-
         // return db.ref('users').child('patients').orderByChild('email').equalTo('patient@gmail.com').once('value').then(snappy=>{
         //     const p1 = snappy.val()
         //     const key = Object.keys(p1)[0]
@@ -31,24 +20,41 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
         //     console.log('p1token '+p1token)
         // }).catch(err=>{console.log('err: '+err)})
 
-        
-        const appointmentsRef = db.ref('appointments').orderByChild('dHelper').equalTo(original.dHelper)
-        return appointmentsRef.once('value').then(snap => {
+        /*
+         * Get the doctor's 'name' from the doctor's 'id'
+         */
+        let docName;
+        const doctorsRef = db.ref('users').child('doctors').orderByChild('email').equalTo(original.dId)
+        return doctorsRef.once('value').then( doctorSnap => {
+            const doctor = doctorSnap.val()
+            const dKey = Object.keys(doctor)[0]
+            docName = doctor[dKey].name
+            console.log('docName: '+docName)
+            
+            /*
+             * Got the doctor's/sender's name, now get the unique 'appointments' list of the 'slot' that this message is targeted to  
+             */
+            const appointmentsRef = db.ref('appointments').orderByChild('dHelper').equalTo(original.dHelper)
+            return appointmentsRef.once('value')
+
+        }).then(snap => {
             const promises = []
 
             const appointments = snap.val()
             const keys = Object.keys(appointments)
             for(const key of keys){
                 const patientId = appointments[key].patientId 
-                patientIds.push(patientId)
                 console.log('Patient id: '+patientId)
                 
+                /*
+                 * Got the 'appointments', have the 'patientIds' from that, now get the 'fcmToken' of those 'patientIds' 
+                 */
                 const promise = db.ref('users').child('patients').orderByChild('email').equalTo(patientId).once('value')
                 promises.push(promise)
             }
             
             return Promise.all(promises)
-       
+    
         }).then(results => {     
             const fcmTokens : string[] = []
             results.forEach(result => {
@@ -61,7 +67,22 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
                 }
             })
 
+            /*
+             * Got the 'fcmTokens' of those 'patients', now create the notification/message payload
+             */
             console.log(`fcmTokens are - `+fcmTokens.toString())
+            const payload : admin.messaging.MessagingPayload = {
+                notification: {
+                    title: `Doctor ${docName}`,
+                    body: `${original.msg}`,
+                    icon: 'https://drive.google.com/file/d/1BUlK63xeTV6cP7SLPvWVhh7GfjreBOMy/view?usp=sharing',
+                    clickAction: 'FLUTTER_NOTIFICATION_CLICK'
+                }
+            }
+
+            /*
+             * Message is ready, now send to the targeted devices
+             */
             return fcm.sendToDevice(fcmTokens, payload)
 
         }).then((response) => {

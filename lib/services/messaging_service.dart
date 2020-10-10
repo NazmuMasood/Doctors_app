@@ -29,7 +29,7 @@ class MessagingService {
 
                       backgroundImage: AssetImage('assets/images/doctor.png'),
                     )),
-                title: Text(message['notification']['title'].toString().split('@')[0]),
+                title: Text(message['notification']['title']),
                 subtitle: Text(message['notification']['body']),
                 trailing: IconButton(
                     icon: Icon(Icons.close),
