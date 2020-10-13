@@ -1,4 +1,5 @@
 import 'package:doctors_app/models/message.dart';
+import 'package:doctors_app/models/running_slot.dart';
 import 'package:doctors_app/screens/doctor/appointment_list/doc_appointment_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -28,6 +29,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   String timeSlot = '0';
   var msgController = TextEditingController();
   bool pressAll = false;
+  String slotState = 'notStarted';
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +68,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               ? Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Row(
+                    mainAxisSize: MainAxisSize.max
+                    ,
                     children: [
                       FlatButton.icon(
                         onPressed: presentDatePicker,
@@ -82,7 +86,59 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                       FlatButton(
                         child: dropDownList(),
                         onPressed: null,
-                      )
+                      ),
+                      SizedBox(
+                        width: slotState=='notStarted' || slotState == 'ended'? 60 : slotState == 'paused' || slotState=='running'? 10
+                            : 0,
+                      ),
+                      slotState=='notStarted' || slotState=='paused' || slotState == 'ended' ? Expanded(
+                        child: Container(
+                          child:  FlatButton(
+                            child: Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                            onPressed: () => setSlotState('running'),
+                            color: Colors.blue,
+                            shape: CircleBorder(),
+                            //height: 40,
+                          ),
+                        ),
+                        flex: 2,
+                      ): Container(),
+                      slotState=='running' ? Expanded(
+                        child: Container(
+                          child:  FlatButton(
+                            child: Icon(
+                              Icons.pause,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            onPressed: () => setSlotState('paused'),
+                            color: Colors.blue,
+                            shape: CircleBorder(),
+                            //height: 40,
+                          ),
+                        ),
+                        flex: 2,
+                      ): Container(),
+                      slotState=='running' || slotState=='paused' ? Expanded(
+                        child: Container(
+                          child:  FlatButton(
+                            child: Icon(
+                              Icons.stop,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            onPressed: () => setSlotState('ended'),
+                            color: Colors.blue,
+                            shape: CircleBorder(),
+                            //height: 40,
+                          ),
+                        ),
+                        flex: 2,
+                      ): Container(),
                     ],
                   ),
                 )
@@ -285,7 +341,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
   Future<void> sendMessage() async {
     FocusScope.of(context).unfocus();
-    if(msgController.text.isEmpty){return;}
+    if(msgController.text.isEmpty || appointments.isEmpty){return;}
     print('Message : ' + msgController.text);
     Message msg = new Message(
         dId: widget.user.email,
@@ -319,33 +375,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     }
   }
 
-  void presentDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(
-        new Duration(days: 10),
-      ),
-    ).then((value) {
-      if (value == null) {
-        return;
-      }
-
-      setState(() {
-        selectedDate = value;
-      });
-    });
-  }
-
-  Future<void> refresh() async {
-    setState(() {
-      appointments = [];
-      keys = [];
-      msgController.clear();
-    });
-  }
-
   Future<void> doneAppointment(String appointmentId, int index) async {
     await appointmentsRef
         .child(appointmentId)
@@ -366,5 +395,113 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       print("Undone appointment $appointmentId successful");
       setState(() {});
     });
+  }
+
+  Future<void> setSlotState(String mSlotState) async{
+    if(appointments.isEmpty){return;}
+    print('slotState : '+mSlotState);
+    try {
+      String dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
+      String appointmentDate = selectedDate.toString().split(' ')[0];
+      String msgToSend = '';
+      DatabaseReference runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
+
+      runningSlotsRef.orderByChild('dHelper').equalTo(dHelper).once().then((DataSnapshot snapshot) async {
+        Map<dynamic, dynamic> values = snapshot.value;
+        if(values == null){
+          RunningSlot newRunningSlot = new RunningSlot(
+              currentSerial: 0,
+              dHelper: dHelper,
+              currentState: 'running'
+          );
+          await runningSlotsRef.push().set(newRunningSlot.toMap());
+          msgToSend = 'Patient checking of $appointmentDate has been started';
+        }
+        else {
+          String key = '';
+          values.forEach((mKey, value) {key = mKey;});
+          print('key: $key, snapshot: ${snapshot.value}');
+
+          if (mSlotState == 'ended') {
+            await runningSlotsRef.child(key).remove();
+            msgToSend = 'Patient checking of $appointmentDate has been ended';
+          }
+          else {
+            await runningSlotsRef.child(key).child('currentState').set(mSlotState);
+            msgToSend = 'Patient checking of $appointmentDate has been paused';
+          }
+        }
+
+        Message msg = new Message(
+            dId: widget.user.email,
+            dHelper: dHelper,
+            date: DateTime.now().toString(),
+            msg: msgToSend);
+        DatabaseReference msgRef = FirebaseDatabase.instance.reference().child("messages");
+        await msgRef.push().set(msg.toMap());
+
+        setState(() {
+          slotState = mSlotState;
+        });
+        Fluttertoast.showToast(
+            msg: 'Slot state updated successfully',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
+      });
+    } catch (e) {
+      print(e.message);
+      Fluttertoast.showToast(
+          msg: 'Slot state updating error',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
+    }
+  }
+
+  void presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(
+        new Duration(days: 30),
+      ),
+      lastDate: DateTime.now().add(
+        new Duration(days: 30),
+      ),
+    ).then((value) {
+      if (value == null) {
+        return;
+      }
+
+      setState(() {
+        selectedDate = value;
+      });
+    });
+  }
+
+  Future<void> refresh() async {
+    setState(() {
+      appointments = [];
+      keys = [];
+      msgController.clear();
+      slotState = 'notStarted';
+    });
+  }
+
+  Future<bool> firebaseRefExists(DatabaseReference databaseReference) async{
+    DataSnapshot snapshot = await databaseReference.once();
+    if( snapshot.value == null ){
+      print("Item doesn't exist in the db");
+    }else{
+      print("Item exists in the db");
+    }
+    return snapshot.value != null;
   }
 }

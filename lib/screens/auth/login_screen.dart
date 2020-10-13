@@ -349,5 +349,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     _passwordVisible = false;
     _loading = false;
+    super.initState();
   }
 }

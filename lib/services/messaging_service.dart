@@ -26,7 +26,6 @@ class MessagingService {
                     size: const Size(40, 40),
                     child: CircleAvatar(
                       radius: 37,
-
                       backgroundImage: AssetImage('assets/images/doctor.png'),
                     )),
                 title: Text(message['notification']['title']),
