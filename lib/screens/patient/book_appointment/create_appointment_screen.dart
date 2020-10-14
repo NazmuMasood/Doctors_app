@@ -37,9 +37,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(
+      new Duration(days: 30),
+      ),
       lastDate: DateTime.now().add(
-        new Duration(days: 10),
+        new Duration(days: 30),
       ),
     ).then((value) {
       if (value == null) {
@@ -279,15 +281,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
           dHelperFull: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString()+'_'+'pending'
       );
 
-      await database.push().set({
-        'patientId': appointment.patientId,
-        'doctorId': appointment.doctorId,
-        'date': appointment.date,
-        'time': appointment.time,
-        'flag': appointment.flag,
-        'dHelper': appointment.dHelper,
-        'pHelper': appointment.pHelper
-      });
+      await database.push().set(appointment.toMap());
       Fluttertoast.showToast(
           msg: 'Appointment successful',
           toastLength: Toast.LENGTH_LONG,
@@ -313,11 +307,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   }
 }
 
-class AppointmentModel {
+/*class AppointmentModel {
   String patientId;
   String doctorId;
   String date;
   String time;
 
   AppointmentModel(this.patientId, this.doctorId, this.time, this.date);
-}
+}*/
