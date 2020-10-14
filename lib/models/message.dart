@@ -2,16 +2,16 @@ import 'package:intl/intl.dart';
 
 class Message{
   String dId;
-  String dHelper;
+  String dHelperFull;
   String date;
   String msg;
 
-  Message({this.dId, this.dHelper, this.date, this.msg});
+  Message({this.dId, this.dHelperFull, this.date, this.msg});
 
   Map<String, dynamic> toMap() {
     return {
       'dId': dId,
-      'dHelper': dHelper,
+      'dHelperFull': dHelperFull,
       'date': date,
       'msg': msg
     };
@@ -23,7 +23,7 @@ class Message{
     }
     return Message(
         dId: map['dId'],
-        dHelper: map['dHelper'],
+        dHelperFull: map['dHelperFull'],
         date: map['date'],
         msg: map['msg']
     );

@@ -275,7 +275,8 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
           patientId: user.email, doctorId: widget.categoryId,
           time: selectedIndex.toString(), date: selectedDate.toString(), flag:'pending',
           dHelper: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
-          pHelper: user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString()
+          pHelper: user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
+          dHelperFull: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString()+'_'+'pending'
       );
 
       await database.push().set({

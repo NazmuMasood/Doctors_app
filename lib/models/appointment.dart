@@ -9,8 +9,9 @@ class Appointment {
   String flag;
   String dHelper;
   String pHelper;
+  String dHelperFull;
 
-  Appointment({this.patientId, this.doctorId, this.time, this.date, this.flag, this.dHelper, this.pHelper});
+  Appointment({this.patientId, this.doctorId, this.time, this.date, this.flag, this.dHelper, this.pHelper, this.dHelperFull});
 
   Map<String, dynamic> toMap() {
     return {
@@ -20,7 +21,8 @@ class Appointment {
       'time': time,
       'flag' : flag,
       'dHelper': dHelper,
-      'pHelper': pHelper
+      'pHelper': pHelper,
+      'dHelperFull': dHelperFull,
     };
   }
 
@@ -35,7 +37,8 @@ class Appointment {
         time: map['time'],
         flag: map['flag'],
         dHelper: map['dHelper'],
-        pHelper: map['pHelper']
+        pHelper: map['pHelper'],
+        dHelperFull: map['dHelperFull'],
     );
   }
 

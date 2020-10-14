@@ -22,14 +22,19 @@ class DocAppointmentListScreen extends StatefulWidget {
 class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   List<Appointment> appointments = [];
   List<dynamic> keys = [];
-  DatabaseReference appointmentsRef =
-      FirebaseDatabase.instance.reference().child("appointments");
-  DateTime selectedDate = DateTime.now();
+  DatabaseReference appointmentsRef;
+  DatabaseReference runningSlotsRef;
+  DateTime selectedDate = DateTime.now().subtract(
+    new Duration(days: 4),
+  );
   String dropdownValue = 'Morning';
   String timeSlot = '0';
+  String dHelper = '';
   var msgController = TextEditingController();
   bool pressAll = false;
+  bool slotStateLoading = false;
   String slotState = 'notStarted';
+  String slotKey = '';
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +54,10 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   'Appointments',
                   style: TextStyle(fontSize: 25),
                 ),
+                SizedBox(width: slotStateLoading? 80: 110,),
+                slotStateLoading? CircularProgressIndicator(): Container(),
                 Container(
-                  margin: const EdgeInsets.only(left: 120.0),
+                  margin: const EdgeInsets.only(left: 10.0),
                   child: new RaisedButton(
                     child: new Text('All'),
                     textColor: pressAll ? Colors.white : Colors.black,
@@ -68,8 +75,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               ? Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Row(
-                    mainAxisSize: MainAxisSize.max
-                    ,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
                       FlatButton.icon(
                         onPressed: presentDatePicker,
@@ -210,7 +216,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             appointments.clear();
             keys.clear();
             Map<dynamic, dynamic> values = snapshot.data.value;
-            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            //print('Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
               return SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
@@ -236,24 +242,15 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     return FutureBuilder(
         future: appointmentsRef
             .orderByChild("dHelper")
-            .equalTo(widget.user.email +
-                '_' +
-                selectedDate.toString().split(' ')[0] +
-                '_' +
-                timeSlot)
+            .equalTo(dHelper)
             .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-          print('dHelper-> ' +
-              widget.user.email +
-              '_' +
-              selectedDate.toString().split(' ')[0] +
-              '_' +
-              timeSlot);
+          print('dHelper-> ' + dHelper);
           if (snapshot.hasData) {
             appointments.clear();
             keys.clear();
             Map<dynamic, dynamic> values = snapshot.data.value;
-            print('Downloaded snapshot -> ' + snapshot.data.value.toString());
+            //print('Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
               return SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
@@ -327,6 +324,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               : newValue == 'Afternoon'
                   ? '1'
                   : newValue == 'Evening' ? '2' : '00';
+          dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
         });
       },
       items: <String>['Morning', 'Afternoon', 'Evening']
@@ -345,7 +343,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     print('Message : ' + msgController.text);
     Message msg = new Message(
         dId: widget.user.email,
-        dHelper: widget.user.email +'_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot,
+        dHelperFull: widget.user.email +'_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot+'_pending',
         date: DateTime.now().toString(),
         msg: msgController.text);
 
@@ -376,14 +374,23 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> doneAppointment(String appointmentId, int index) async {
-    await appointmentsRef
-        .child(appointmentId)
-        .child('flag')
-        .set('done')
-        .then((_) {
-      print("Done appointment $appointmentId successful");
-      setState(() {});
-    });
+    if(slotState == 'notStarted'){showToast('Please start the appointment slot first'); return;}
+    try {
+      await appointmentsRef.child(appointmentId).child('flag').set('done').then((_) {
+        print("Done appointment $appointmentId successful");
+        setState(() {});
+      });
+
+      await appointmentsRef.child(appointmentId).child('dHelperFull').set(dHelper+'_done').then((_) {
+        print("Update dHelperFull of appointment $appointmentId successful");
+      });
+
+      print('slotKey: $slotKey');
+      await runningSlotsRef.child(slotKey).child('currentSerial').set((index+2).toString());
+    }catch (e) {
+      print(e.message);
+      showToast('Couldn\'t update current serial');
+    }
   }
 
   Future<void> undoneAppointment(String appointmentId, int index) async {
@@ -395,27 +402,33 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       print("Undone appointment $appointmentId successful");
       setState(() {});
     });
+
+    await appointmentsRef.child(appointmentId).child('dHelperFull').set(dHelper+'_pending').then((_) {
+      print("Update dHelperFull of appointment $appointmentId successful");
+    });
   }
 
   Future<void> setSlotState(String mSlotState) async{
-    if(appointments.isEmpty){return;}
+    if(slotStateLoading){return;}
+    if(appointments.isEmpty){showToast('There\'s no patient in this slot'); return;}
     print('slotState : '+mSlotState);
+    setState(() {slotStateLoading = true;});
     try {
-      String dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
       String appointmentDate = selectedDate.toString().split(' ')[0];
       String msgToSend = '';
-      DatabaseReference runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
 
       runningSlotsRef.orderByChild('dHelper').equalTo(dHelper).once().then((DataSnapshot snapshot) async {
         Map<dynamic, dynamic> values = snapshot.value;
         if(values == null){
           RunningSlot newRunningSlot = new RunningSlot(
-              currentSerial: 0,
+              currentSerial: '1',
               dHelper: dHelper,
-              currentState: 'running'
+              currentState: 'running',
+              dId: widget.user.email
           );
           await runningSlotsRef.push().set(newRunningSlot.toMap());
           msgToSend = 'Patient checking of $appointmentDate has been started';
+          checkForCurrentSlotState();
         }
         else {
           String key = '';
@@ -424,7 +437,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
           if (mSlotState == 'ended') {
             await runningSlotsRef.child(key).remove();
-            msgToSend = 'Patient checking of $appointmentDate has been ended';
+            msgToSend = 'Sorry, patient checking of $appointmentDate has ended for now';
           }
           else {
             await runningSlotsRef.child(key).child('currentState').set(mSlotState);
@@ -434,7 +447,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
         Message msg = new Message(
             dId: widget.user.email,
-            dHelper: dHelper,
+            dHelperFull: dHelper+'_pending',
             date: DateTime.now().toString(),
             msg: msgToSend);
         DatabaseReference msgRef = FirebaseDatabase.instance.reference().child("messages");
@@ -442,6 +455,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
         setState(() {
           slotState = mSlotState;
+          slotStateLoading = false;
         });
         Fluttertoast.showToast(
             msg: 'Slot state updated successfully',
@@ -454,6 +468,9 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       });
     } catch (e) {
       print(e.message);
+      setState(() {
+        slotStateLoading = false;
+      });
       Fluttertoast.showToast(
           msg: 'Slot state updating error',
           toastLength: Toast.LENGTH_SHORT,
@@ -468,7 +485,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   void presentDatePicker() {
     showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: selectedDate,
       firstDate: DateTime.now().subtract(
         new Duration(days: 30),
       ),
@@ -482,7 +499,10 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
       setState(() {
         selectedDate = value;
+        dHelper = widget.user.email + '_' + value.toString().split(' ')[0] + '_' + timeSlot;
       });
+
+      checkForCurrentSlotState();
     });
   }
 
@@ -491,17 +511,40 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       appointments = [];
       keys = [];
       msgController.clear();
-      slotState = 'notStarted';
+      // slotState = 'notStarted';
+    });
+
+    checkForCurrentSlotState();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
+    appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
+    runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
+    checkForCurrentSlotState();
+  }
+
+  Future<void> checkForCurrentSlotState() async{
+    runningSlotsRef.orderByChild('dHelper').equalTo(dHelper).once().then((DataSnapshot snapshot) async {
+      Map<dynamic, dynamic> values = snapshot.value;
+      if(values == null){ setState(() { slotState = 'notStarted'; }); return;}
+      values.forEach((key, value) {
+        print('slotKey: $key, currentState: '+value['currentState']);
+        setState(() {slotKey = key; slotState = value['currentState'];});
+      });
     });
   }
 
-  Future<bool> firebaseRefExists(DatabaseReference databaseReference) async{
-    DataSnapshot snapshot = await databaseReference.once();
-    if( snapshot.value == null ){
-      print("Item doesn't exist in the db");
-    }else{
-      print("Item exists in the db");
-    }
-    return snapshot.value != null;
+  void showToast(String msg){
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.teal,
+        textColor: Colors.white,
+        fontSize: 14.0);
   }
 }
