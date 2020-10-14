@@ -6,6 +6,144 @@ admin.initializeApp()
 const db = admin.database()
 const fcm = admin.messaging()
 
+
+export const sendDoneMessage = functions.database.ref('/appointments/{apptId}/flag')
+    .onUpdate((change, context) => {
+        // Exit when the data is deleted.
+        if (!change.after.exists()) {
+            return null;
+        }
+        // Grab the current value of what was written to the Realtime Database.
+        const original = change.after.val()
+        console.log('flag: '+original)
+        if(original != 'done'){ return null; }
+        //console.log('dHelper: '+original.dHelper)
+        console.log('Flag value of key', context.params.apptId, original)
+        
+        const appointmentsRef = db.ref('appointments').child(context.params.apptId).child('patientId')
+        return appointmentsRef.once('value').then( patientId => {
+            console.log('patientId: '+patientId.val())
+
+            const patientsRef = db.ref('users').child('patients').orderByChild('email').equalTo(patientId.val())
+            return patientsRef.once('value');             
+        }).then( patientSnap => {
+            const patient = patientSnap.val()
+            const dKey = Object.keys(patient)[0]
+            const fcmToken = patient[dKey].fcmToken
+            console.log('fcmToken: '+fcmToken)
+
+            if(fcmToken != "" && fcmToken != null){
+                const payload : admin.messaging.MessagingPayload = {
+                    notification: {
+                        title: `Congratulations`,
+                        body: `Your Doctor\'s App appointment has successfully ended`,
+                        icon: 'https://drive.google.com/file/d/1BUlK63xeTV6cP7SLPvWVhh7GfjreBOMy/view?usp=sharing',
+                        clickAction: 'FLUTTER_NOTIFICATION_CLICK'
+                    }
+                }
+    
+                return fcm.sendToDevice(fcmToken, payload)
+
+            }else{ return null; }
+        }).then((response) => {
+            console.log('Successfully sent message:', response);
+        }).catch(error => {
+            console.log('error msg: '+error)
+        })
+
+})    
+
+
+export const checkForSerialUpdt = functions.database.ref('/running-slots/{rsId}')
+    .onWrite((change, context) => {
+        // Exit when the data is deleted.
+        if (!change.after.exists()) {
+            return null;
+        }
+        // Grab the current value of what was written to the Realtime Database.
+        const original = change.after.val()
+        console.log('CurrentSerial: '+original.currentSerial)
+        console.log('dHelper: '+original.dHelper)
+        //console.log('CurrentSerial value of key', context.params.rsId, original)    
+        
+        const dHelperFull = original.dHelper + '_pending'
+
+        /*
+         * Get the doctor's 'name' from the doctor's 'id'
+         */
+        let docName;
+        const doctorsRef = db.ref('users').child('doctors').orderByChild('email').equalTo(original.dId)
+        return doctorsRef.once('value').then( doctorSnap => {
+            const doctor = doctorSnap.val()
+            const dKey = Object.keys(doctor)[0]
+            docName = doctor[dKey].name
+            console.log('docName: '+docName)
+            
+            /*
+             * Got the doctor's/sender's name, now get the unique 'appointments' list of the 'slot' that this message is targeted to  
+             */
+            const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull)
+            return appointmentsRef.once('value')
+
+        }).then(snap => {
+            const promises = []
+
+            const appointments = snap.val()
+            const keys = Object.keys(appointments)
+            for(const key of keys){
+                const patientId = appointments[key].patientId 
+                console.log('Patient id: '+patientId)
+                
+                /*
+                 * Got the 'appointments', have the 'patientIds' from that, now get the 'fcmToken' of those 'patientIds' 
+                 */
+                const promise = db.ref('users').child('patients').orderByChild('email').equalTo(patientId).once('value')
+                promises.push(promise)
+            }
+            
+            return Promise.all(promises)
+    
+        }).then(results => {     
+            const fcmTokens : string[] = []
+            results.forEach(result => {
+                const patient = result.val()
+                const pKey = Object.keys(patient)[0]
+                const fcmToken = patient[pKey].fcmToken
+                if(fcmToken != "" && fcmToken != null){
+                    fcmTokens.push(fcmToken)
+                    //console.log('fcmToken: '+fcmToken)
+                }
+            })
+
+            /*
+             * Got the 'fcmTokens' of those 'patients', now create the notification/message payload
+             */
+            console.log(`fcmTokens are - `+fcmTokens.toString())
+            const payload : admin.messaging.MessagingPayload = {
+                notification: {
+                    title: `Doctor ${docName}`,
+                    body: `Current serial: ${original.currentSerial}`,
+                    icon: 'https://drive.google.com/file/d/1BUlK63xeTV6cP7SLPvWVhh7GfjreBOMy/view?usp=sharing',
+                    clickAction: 'FLUTTER_NOTIFICATION_CLICK'
+                }
+            }
+
+            /*
+             * Message is ready, now send to the targeted devices
+             */
+            return fcm.sendToDevice(fcmTokens, payload)
+
+        }).then((response) => {
+            console.log('Successfully sent message:', response);
+        }).catch(error => {
+            console.log('error msg: '+error)
+        })
+
+
+})
+
+
+
 export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageId}')
     .onCreate((snapshot, context) => {
         // Grab the current value of what was written to the Realtime Database.
@@ -34,7 +172,7 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
             /*
              * Got the doctor's/sender's name, now get the unique 'appointments' list of the 'slot' that this message is targeted to  
              */
-            const appointmentsRef = db.ref('appointments').orderByChild('dHelper').equalTo(original.dHelper)
+            const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(original.dHelperFull)
             return appointmentsRef.once('value')
 
         }).then(snap => {
@@ -94,7 +232,7 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
         // This registration token comes from the client FCM SDKs.
         //const registrationToken = 'cvuRXgaASISaXi55IZ-35p:APA91bFsrZQF7h-3xKd48X7DooDbf7dNi5HysjOpkSTgl37yC0hFXlrs-MsaZofT6d5MCk-d0XTWXNk3BqDWI44PQo7wjgvZzfO-97XQrbp52I3VZgXo6vmjufV0ohC5iKkE80dgktIW';
 
-        // fetchApptPatients(original.dHelper).
+        // fetchApptPatients(original.dHelperFull).
         //     catch(error => console.error("fetchApptPatients error: ", { error }));
 
         // var message = {
@@ -125,11 +263,13 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
 })
 
 
+
+
 /*
-async function fetchApptPatients(dHelper:string) : Promise<void>{
+async function fetchApptPatients(dHelperFull:string) : Promise<void>{
     const patientIds : string[] = [];
 
-    const appointmentsRef = db.ref('appointments').orderByChild('dHelper').equalTo(dHelper);
+    const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull);
     const snapshot = await appointmentsRef.once('value');
     if(snapshot.exists()){
         const appointments = snapshot.val();
