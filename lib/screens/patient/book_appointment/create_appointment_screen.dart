@@ -214,10 +214,10 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
             ],
           ),
           const SizedBox(
-            height: 140,
+            height: 40,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 30, 5),
@@ -274,8 +274,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     try {
       User user = FirebaseAuth.instance.currentUser;
       Appointment appointment = Appointment(
-          patientId: user.email, doctorId: widget.categoryId,
-          time: selectedIndex.toString(), date: selectedDate.toString(), flag:'pending',
+          pId: user.email, dId: widget.categoryId,
+          timeSlot: selectedIndex.toString(),
+          date: selectedDate.toString().split(' ')[0],
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          flag:'pending',
           dHelper: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
           pHelper: user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
           dHelperFull: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString()+'_'+'pending'

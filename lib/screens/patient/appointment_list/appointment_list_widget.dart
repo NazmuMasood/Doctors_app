@@ -39,7 +39,7 @@ class AppointmentListWidget extends StatelessWidget {
                       height: 8,
                     ),
                     Text(
-                      appointment.doctorId,
+                      appointment.dId,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -52,11 +52,11 @@ class AppointmentListWidget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      appointment.time == '0'
+                      appointment.timeSlot == '0'
                           ? 'Slot: Morning'
-                          : appointment.time == '1'
+                          : appointment.timeSlot == '1'
                               ? 'Slot: Afternoon'
-                              : appointment.time == '2'
+                              : appointment.timeSlot == '2'
                                   ? 'Slot: Evening'
                                   : 'Slot: Unknown',
                       style: TextStyle(
@@ -72,7 +72,7 @@ class AppointmentListWidget extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '01',
+                          '00',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -92,8 +92,18 @@ class AppointmentListWidget extends StatelessWidget {
                         style:
                             TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                     Text(
+                      appointment.date.substring(5, 7)=='01' ? 'JAN' :
+                      appointment.date.substring(5, 7)=='02' ? 'FEB' :
+                      appointment.date.substring(5, 7)=='03' ? 'MAR' :
+                      appointment.date.substring(5, 7)=='04' ? 'APR' :
+                      appointment.date.substring(5, 7)=='05' ? 'MAY' :
+                      appointment.date.substring(5, 7)=='06' ? 'JUN' :
+                      appointment.date.substring(5, 7)=='07' ? 'JUL' :
                       appointment.date.substring(5, 7)=='08' ? 'AUG' :
                       appointment.date.substring(5, 7)=='09' ? 'SEP' :
+                      appointment.date.substring(5, 7)=='10' ? 'OCT' :
+                      appointment.date.substring(5, 7)=='11' ? 'NOV' :
+                      appointment.date.substring(5, 7)=='12' ? 'DEC' :
                       'Unknown',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                     ),

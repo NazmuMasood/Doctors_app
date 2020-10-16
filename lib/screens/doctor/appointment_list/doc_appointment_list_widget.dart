@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 class DocAppointmentListWidget extends StatelessWidget {
   final Appointment appointment;
   final Function onDonePressed, onUndonePressed;
+  final int serial;
 
-  DocAppointmentListWidget({this.appointment, this.onDonePressed, this.onUndonePressed});
+  DocAppointmentListWidget({this.appointment, this.onDonePressed, this.onUndonePressed, this.serial});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class DocAppointmentListWidget extends StatelessWidget {
                       height: 8,
                     ),
                     Text(
-                      appointment.patientId,
+                      appointment.pId,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -52,11 +53,11 @@ class DocAppointmentListWidget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      appointment.time == '0'
+                      appointment.timeSlot == '0'
                           ? 'Slot: Morning'
-                          : appointment.time == '1'
+                          : appointment.timeSlot == '1'
                           ? 'Slot: Afternoon'
-                          : appointment.time == '2'
+                          : appointment.timeSlot == '2'
                           ? 'Slot: Evening'
                           : 'Slot: Unknown',
                       style: TextStyle(
@@ -72,7 +73,7 @@ class DocAppointmentListWidget extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '01',
+                          serial.toString() ?? '00',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

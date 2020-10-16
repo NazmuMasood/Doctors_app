@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:doctors_app/models/message.dart';
 import 'package:doctors_app/models/running_slot.dart';
 import 'package:doctors_app/screens/doctor/appointment_list/doc_appointment_list_widget.dart';
@@ -24,9 +25,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   List<dynamic> keys = [];
   DatabaseReference appointmentsRef;
   DatabaseReference runningSlotsRef;
-  DateTime selectedDate = DateTime.now().subtract(
-    new Duration(days: 4),
-  );
+  DateTime selectedDate = DateTime.now();
   String dropdownValue = 'Morning';
   String timeSlot = '0';
   String dHelper = '';
@@ -35,6 +34,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   bool slotStateLoading = false;
   String slotState = 'notStarted';
   String slotKey = '';
+  var apptSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -249,6 +249,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
           if (snapshot.hasData) {
             appointments.clear();
             keys.clear();
+
             Map<dynamic, dynamic> values = snapshot.data.value;
             //print('Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
@@ -260,19 +261,15 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                 ),
               );
             }
+
+            if(values.length>1){values = sortListMap(values);}
+
             values.forEach((key, values) {
               keys.add(key);
               appointments.add(Appointment.fromMap(values));
             });
-            print('Appointments list length -> ' +
-                appointments.length.toString());
-            /*var appointmentsJson = json.decode(snapshot.data.value);
-                if (appointmentsJson == null) {
-                  return Center(child: Text("No results found"));
-                }
-                for(var appointmentJson in appointmentsJson){
-                  appointments.add(Appointment.fromJson(appointmentJson));
-                }*/
+            print('Appointments list length -> ' + appointments.length.toString());
+
             return getAppointmentsUi(appointments);
           }
           return Center(child: CircularProgressIndicator());
@@ -285,10 +282,9 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       itemCount: appointments.length,
       itemBuilder: (context, index) => DocAppointmentListWidget(
             appointment: appointments[index],
+            serial: index+1,
             onDonePressed: () {
-              print('Appointment Done with - ' +
-                  keys[index].toString() +
-                  "on index $index");
+              print('Appointment Done with - '+keys[index].toString()+"on index $index");
               doneAppointment(keys[index].toString(), index);
               //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
             },
@@ -546,5 +542,19 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         backgroundColor: Colors.teal,
         textColor: Colors.white,
         fontSize: 14.0);
+  }
+
+  LinkedHashMap sortListMap(LinkedHashMap map) {
+    List mapKeys = map.keys.toList(growable : false);
+    mapKeys.sort((k1, k2) {
+      int timestamp1 = map[k1]['createdAt'];
+      int timestamp2 = map[k2]['createdAt'];
+      return timestamp1.compareTo(timestamp2);
+    });
+    LinkedHashMap resMap = new LinkedHashMap();
+    mapKeys.forEach((k1) { resMap[k1] = map[k1] ; }) ;
+    print('before sorting: '+map.toString());
+    print('after sorting: '+resMap.toString());
+    return resMap;
   }
 }

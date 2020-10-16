@@ -2,27 +2,31 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 
 class Appointment {
-  String patientId;
-  String doctorId;
+  String pId;
+  String dId;
   String date;
-  String time;
+  String timeSlot;
   String flag;
   String dHelper;
   String pHelper;
   String dHelperFull;
+  int createdAt;
 
-  Appointment({this.patientId, this.doctorId, this.time, this.date, this.flag, this.dHelper, this.pHelper, this.dHelperFull});
+  Appointment({this.pId, this.dId, this.timeSlot, this.date, this.flag, this.dHelper, this.pHelper, this.dHelperFull,
+    this.createdAt
+  });
 
   Map<String, dynamic> toMap() {
     return {
-      'patientId': patientId,
-      'doctorId': doctorId,
+      'pId': pId,
+      'dId': dId,
       'date': date,
-      'time': time,
+      'timeSlot': timeSlot,
       'flag' : flag,
       'dHelper': dHelper,
       'pHelper': pHelper,
       'dHelperFull': dHelperFull,
+      'createdAt' : createdAt,
     };
   }
 
@@ -31,22 +35,23 @@ class Appointment {
       return null;
     }
     return Appointment(
-        patientId: map['patientId'],
-        doctorId: map['doctorId'],
+        pId: map['pId'],
+        dId: map['dId'],
         date: map['date'],
-        time: map['time'],
+        timeSlot: map['timeSlot'],
         flag: map['flag'],
         dHelper: map['dHelper'],
         pHelper: map['pHelper'],
         dHelperFull: map['dHelperFull'],
+        createdAt: map['createdAt'],
     );
   }
 
   Appointment.fromJson(Map<dynamic, dynamic> json){
-    patientId = json['patientId'];
-    doctorId = json['doctorId'];
+    pId = json['pId'];
+    dId = json['dId'];
     date = json['date'];
-    time = json['time'];
+    timeSlot = json['timeSlot'];
     flag = json['flag'];
     dHelper = json['dHelper'];
     pHelper = json['pHelper'];

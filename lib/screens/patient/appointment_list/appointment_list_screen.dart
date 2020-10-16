@@ -197,6 +197,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentListWidget(
             appointment: appointments[index],
+            //serial: 00,
             onCancelPressed: () {
               print('Appointment Cancelled with - ' +
                   keys[index].toString() +
@@ -251,10 +252,12 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   void presentDatePicker() {
     showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: selectedDate,
+      firstDate: DateTime.now().subtract(
+      new Duration(days: 30),
+      ),
       lastDate: DateTime.now().add(
-        new Duration(days: 10),
+        new Duration(days: 30),
       ),
     ).then((value) {
       if (value == null) {

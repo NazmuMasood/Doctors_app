@@ -17,6 +17,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Patient patient;  List<dynamic> keys = [];
   Patient updatePatient;
   bool isLoading = false;
+  String fcmToken = '';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DatabaseReference patientsRef =
@@ -78,7 +79,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.hasData) {
             keys.clear();
-            Map<dynamic, dynamic> values = snapshot.data.value;
+            var values = snapshot.data.value;
             print('Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
               return RefreshIndicator(
@@ -276,6 +277,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ageController.text = patient.age!=null ? patient.age : '';
       weightController.text = patient.weight!=null ? patient.weight : '';
       bloodgroupController.text = patient.bloodgroup!=null ? patient.bloodgroup : '';
+      updatePatient.fcmToken = patient.fcmToken;
   }
 
   Future<void> updateProfile() async {

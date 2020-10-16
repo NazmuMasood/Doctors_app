@@ -4,8 +4,9 @@ class Patient {
   String age;
   String bloodgroup;
   String weight;
+  String fcmToken;
 
-  Patient({this.email, this.name, this.age, this.bloodgroup, this.weight});
+  Patient({this.email, this.name, this.age, this.bloodgroup, this.weight, this.fcmToken});
 
   Map<String, dynamic> toMap() {
     return {
@@ -13,7 +14,8 @@ class Patient {
       'name': name,
       'age': age,
       'bloodgroup': bloodgroup,
-      'weight': weight
+      'weight': weight,
+      'fcmToken' : fcmToken
     };
   }
 
@@ -26,7 +28,9 @@ class Patient {
         name: map['name'],
         age: map['age'],
         bloodgroup: map['bloodgroup'],
-        weight: map['weight']);
+        weight: map['weight'],
+        fcmToken: map['fcmToken']
+    );
   }
 
   toJson(){
