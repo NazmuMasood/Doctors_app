@@ -4,6 +4,7 @@ import 'package:doctors_app/models/running_slot.dart';
 import 'package:doctors_app/screens/doctor/appointment_list/doc_appointment_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_list.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/models/appointment.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -270,6 +271,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             });
             print('Appointments list length -> ' + appointments.length.toString());
 
+            checkForNewAppt = true;
             return getAppointmentsUi(appointments);
           }
           return Center(child: CircularProgressIndicator());
@@ -513,6 +515,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     checkForCurrentSlotState();
   }
 
+  List appts = []; bool checkForNewAppt = false;
   @override
   void initState() {
     super.initState();
@@ -520,6 +523,23 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
     runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
     checkForCurrentSlotState();
+    appts = FirebaseList(
+      query: appointmentsRef.orderByChild("dHelper").equalTo(dHelper),
+      onChildAdded: (pos, snapshot) {
+        Map<dynamic, dynamic> values = snapshot.value;
+        if(values != null && checkForNewAppt){
+          print('New appointment: '+values.toString());
+          refresh();
+        }
+      },
+      ///TODO: remove the sortedAppointments futureBuilder
+        ///instead use this onValue to load data
+      onValue: (snapshot) {
+        /*for (var i=0; i < this.appts.length; i++) {
+          print('hmmm $i: ${appts[i].value}');
+        }*/
+      }
+    );
   }
 
   Future<void> checkForCurrentSlotState() async{
