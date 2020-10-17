@@ -372,7 +372,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> doneAppointment(String appointmentId, int index) async {
-    if(slotState == 'notStarted' || slotState == 'paused'){showToast('Please start the appointment slot first'); return;}
+    if(slotState != 'running'){showToast('Please start the appointment slot first'); return;}
     try {
       await appointmentsRef.child(appointmentId).child('flag').set('done').then((_) {
         print("Done appointment $appointmentId successful");
@@ -435,11 +435,11 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
           if (mSlotState == 'ended') {
             await runningSlotsRef.child(key).remove();
-            msgToSend = 'Sorry, patient checking of $appointmentDate has ended for now';
+            msgToSend = 'Sorry, patient checking of $appointmentDate ended for now';
           }
           else {
             await runningSlotsRef.child(key).child('slotState').set(mSlotState);
-            msgToSend = 'Patient checking of $appointmentDate has been paused';
+            msgToSend = 'Patient checking of $appointmentDate is paused';
           }
         }
 
@@ -529,6 +529,13 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         Map<dynamic, dynamic> values = snapshot.value;
         if(values != null && checkForNewAppt){
           print('New appointment: '+values.toString());
+          refresh();
+        }
+      },
+      onChildRemoved: (pos, snapshot) {
+        Map<dynamic, dynamic> values = snapshot.value;
+        if(values != null && checkForNewAppt){
+          print('Canceled appointment: '+values.toString());
           refresh();
         }
       },
