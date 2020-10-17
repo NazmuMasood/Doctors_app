@@ -109,7 +109,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   Widget allAppointments() {
     return FutureBuilder(
         future: appointmentsRef
-            .orderByChild("patientId")
+            .orderByChild("pId")
             .equalTo(widget.user.email)
             .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {

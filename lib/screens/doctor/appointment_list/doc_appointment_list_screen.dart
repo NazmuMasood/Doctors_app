@@ -208,7 +208,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   Widget allAppointments() {
     return FutureBuilder(
         future: appointmentsRef
-            .orderByChild("doctorId")
+            .orderByChild("dId")
             .equalTo(widget.user.email)
             .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
@@ -372,7 +372,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> doneAppointment(String appointmentId, int index) async {
-    if(slotState == 'notStarted'){showToast('Please start the appointment slot first'); return;}
+    if(slotState == 'notStarted' || slotState == 'paused'){showToast('Please start the appointment slot first'); return;}
     try {
       await appointmentsRef.child(appointmentId).child('flag').set('done').then((_) {
         print("Done appointment $appointmentId successful");
@@ -421,7 +421,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
           RunningSlot newRunningSlot = new RunningSlot(
               currentSerial: '1',
               dHelper: dHelper,
-              currentState: 'running',
+              slotState: 'running',
               dId: widget.user.email
           );
           await runningSlotsRef.push().set(newRunningSlot.toMap());
@@ -438,7 +438,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             msgToSend = 'Sorry, patient checking of $appointmentDate has ended for now';
           }
           else {
-            await runningSlotsRef.child(key).child('currentState').set(mSlotState);
+            await runningSlotsRef.child(key).child('slotState').set(mSlotState);
             msgToSend = 'Patient checking of $appointmentDate has been paused';
           }
         }
@@ -547,8 +547,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       Map<dynamic, dynamic> values = snapshot.value;
       if(values == null){ setState(() { slotState = 'notStarted'; }); return;}
       values.forEach((key, value) {
-        print('slotKey: $key, currentState: '+value['currentState']);
-        setState(() {slotKey = key; slotState = value['currentState'];});
+        print('slotKey: $key, slotState: '+value['slotState']);
+        setState(() {slotKey = key; slotState = value['slotState'];});
       });
     });
   }
@@ -573,8 +573,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     });
     LinkedHashMap resMap = new LinkedHashMap();
     mapKeys.forEach((k1) { resMap[k1] = map[k1] ; }) ;
-    print('before sorting: '+map.toString());
-    print('after sorting: '+resMap.toString());
+    // print('before sorting: '+map.toString());
+    // print('after sorting: '+resMap.toString());
     return resMap;
   }
 }

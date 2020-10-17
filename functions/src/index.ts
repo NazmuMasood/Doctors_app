@@ -20,11 +20,11 @@ export const sendDoneMessage = functions.database.ref('/appointments/{apptId}/fl
         //console.log('dHelper: '+original.dHelper)
         console.log('Flag value of key', context.params.apptId, original)
         
-        const appointmentsRef = db.ref('appointments').child(context.params.apptId).child('patientId')
-        return appointmentsRef.once('value').then( patientId => {
-            console.log('patientId: '+patientId.val())
+        const appointmentsRef = db.ref('appointments').child(context.params.apptId).child('pId')
+        return appointmentsRef.once('value').then( pId => {
+            console.log('pId: '+pId.val())
 
-            const patientsRef = db.ref('users').child('patients').orderByChild('email').equalTo(patientId.val())
+            const patientsRef = db.ref('users').child('patients').orderByChild('email').equalTo(pId.val())
             return patientsRef.once('value');             
         }).then( patientSnap => {
             const patient = patientSnap.val()
@@ -62,6 +62,9 @@ export const checkForSerialUpdt = functions.database.ref('/running-slots/{rsId}'
         }
         // Grab the current value of what was written to the Realtime Database.
         const original = change.after.val()
+        // if(original.slotState == 'paused' || original.slotState == 'running'){ 
+        //     return null; 
+        // }
         console.log('CurrentSerial: '+original.currentSerial)
         console.log('dHelper: '+original.dHelper)
         //console.log('CurrentSerial value of key', context.params.rsId, original)    
@@ -82,7 +85,7 @@ export const checkForSerialUpdt = functions.database.ref('/running-slots/{rsId}'
             /*
              * Got the doctor's/sender's name, now get the unique 'appointments' list of the 'slot' that this message is targeted to  
              */
-            const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull)
+            const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull).limitToFirst(3)
             return appointmentsRef.once('value')
 
         }).then(snap => {
@@ -91,13 +94,13 @@ export const checkForSerialUpdt = functions.database.ref('/running-slots/{rsId}'
             const appointments = snap.val()
             const keys = Object.keys(appointments)
             for(const key of keys){
-                const patientId = appointments[key].patientId 
-                console.log('Patient id: '+patientId)
+                const pId = appointments[key].pId 
+                console.log('Patient id: '+pId)
                 
                 /*
-                 * Got the 'appointments', have the 'patientIds' from that, now get the 'fcmToken' of those 'patientIds' 
+                 * Got the 'appointments', have the 'pIds' from that, now get the 'fcmToken' of those 'pIds' 
                  */
-                const promise = db.ref('users').child('patients').orderByChild('email').equalTo(patientId).once('value')
+                const promise = db.ref('users').child('patients').orderByChild('email').equalTo(pId).once('value')
                 promises.push(promise)
             }
             
@@ -181,13 +184,13 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
             const appointments = snap.val()
             const keys = Object.keys(appointments)
             for(const key of keys){
-                const patientId = appointments[key].patientId 
-                console.log('Patient id: '+patientId)
+                const pId = appointments[key].pId 
+                console.log('Patient id: '+pId)
                 
                 /*
-                 * Got the 'appointments', have the 'patientIds' from that, now get the 'fcmToken' of those 'patientIds' 
+                 * Got the 'appointments', have the 'pIds' from that, now get the 'fcmToken' of those 'pIds' 
                  */
-                const promise = db.ref('users').child('patients').orderByChild('email').equalTo(patientId).once('value')
+                const promise = db.ref('users').child('patients').orderByChild('email').equalTo(pId).once('value')
                 promises.push(promise)
             }
             
@@ -267,7 +270,7 @@ export const sendToPatientsOfASlot = functions.database.ref('/messages/{messageI
 
 /*
 async function fetchApptPatients(dHelperFull:string) : Promise<void>{
-    const patientIds : string[] = [];
+    const pIds : string[] = [];
 
     const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull);
     const snapshot = await appointmentsRef.once('value');
@@ -275,22 +278,22 @@ async function fetchApptPatients(dHelperFull:string) : Promise<void>{
         const appointments = snapshot.val();
         const keys = Object.keys(appointments);
         for(const key of keys){
-            patientIds.push(appointments[key].patientId);
-            console.log('Patient id: '+appointments[key].patientId);
+            pIds.push(appointments[key].pId);
+            console.log('Patient id: '+appointments[key].pId);
         }
         
-        console.log('Length of patientIds[] : '+patientIds.length);
-        fetchUsers(patientIds).catch(error => console.error("root fetchUsers error: ", { error }));;
+        console.log('Length of pIds[] : '+pIds.length);
+        fetchUsers(pIds).catch(error => console.error("root fetchUsers error: ", { error }));;
     }
 
 }
 
-async function fetchUsers(patientIds:string[]){
+async function fetchUsers(pIds:string[]){
     const promises = [];
     const fcmTokens : string[] = [];
 
-    for (const patientId of patientIds) {
-        const usersRef = db.ref('users').child('patients').orderByChild('email').equalTo(patientId);
+    for (const pId of pIds) {
+        const usersRef = db.ref('users').child('patients').orderByChild('email').equalTo(pId);
 
         // const userSnapshot = await usersRef.once('value');
         // if(userSnapshot.exists()){
@@ -326,7 +329,7 @@ async function fetchUsers(patientIds:string[]){
         //                 const userKeys = Object.keys(users);
         //                 for(const key of userKeys){
         //                     fcmTokens.push(users[key].fcmToken);
-        //                     console.log('FCM token of '+patientId+': '+users[key].fcmToken);
+        //                     console.log('FCM token of '+pId+': '+users[key].fcmToken);
         //                 }
         //             } 
         //         // console.log('snapshotUser : '+snapshotUser.val.toString);

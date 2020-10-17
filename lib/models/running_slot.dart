@@ -2,17 +2,17 @@ class RunningSlot{
   String currentSerial;
   List missingSerials;
   String dHelper;
-  String currentState;
+  String slotState;
   String dId;
 
-  RunningSlot({this.currentSerial, this.missingSerials, this.dHelper, this.currentState, this.dId});
+  RunningSlot({this.currentSerial, this.missingSerials, this.dHelper, this.slotState, this.dId});
 
   Map<String, dynamic> toMap() {
     return {
       'currentSerial': currentSerial,
       'missingSerials': missingSerials,
       'dHelper': dHelper,
-      'currentState': currentState,
+      'slotState': slotState,
       'dId': dId
     };
   }
@@ -25,7 +25,7 @@ class RunningSlot{
         currentSerial: map['currentSerial'],
         missingSerials: map['missingSerials'],
         dHelper: map['dHelper'],
-        currentState: map['currentState'],
+        slotState: map['slotState '],
         dId: map['dId']
     );
   }
