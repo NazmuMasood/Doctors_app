@@ -62,9 +62,9 @@ export const checkForSerialUpdt = functions.database.ref('/running-slots/{rsId}'
         }
         // Grab the current value of what was written to the Realtime Database.
         const original = change.after.val()
-        // if(original.slotState == 'paused' || original.slotState == 'running'){ 
-        //     return null; 
-        // }
+        if(original.slotState == 'paused'){ 
+            return null; 
+        }
         console.log('CurrentSerial: '+original.currentSerial)
         console.log('dHelper: '+original.dHelper)
         //console.log('CurrentSerial value of key', context.params.rsId, original)    
@@ -85,7 +85,8 @@ export const checkForSerialUpdt = functions.database.ref('/running-slots/{rsId}'
             /*
              * Got the doctor's/sender's name, now get the unique 'appointments' list of the 'slot' that this message is targeted to  
              */
-            const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull).limitToFirst(3)
+            const appointmentsRef = db.ref('appointments').orderByChild('dHelperFull').equalTo(dHelperFull)
+                .limitToFirst(3) // if your serial is '5', start getting msg when serial is '3','4','5'
             return appointmentsRef.once('value')
 
         }).then(snap => {
