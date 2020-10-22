@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class AppointmentListWidget extends StatelessWidget {
   final Appointment appointment;
   final Function onCancelPressed;
+  final int serial;
 
-  AppointmentListWidget({this.appointment, this.onCancelPressed});
+  AppointmentListWidget({this.appointment, this.onCancelPressed, this.serial});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,7 @@ class AppointmentListWidget extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '00',
+                          serial.toString() ?? '00',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

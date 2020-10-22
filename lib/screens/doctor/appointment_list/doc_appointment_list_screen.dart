@@ -26,7 +26,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   List<dynamic> keys = [];
   DatabaseReference appointmentsRef;
   DatabaseReference runningSlotsRef;
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().subtract(new Duration(days: 1));
   String dropdownValue = 'Morning';
   String timeSlot = '0';
   String dHelper = '';
@@ -519,6 +519,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   @override
   void initState() {
     super.initState();
+    print('~~~ initState doc_appt_list_screen');
     dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
     appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
     runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");

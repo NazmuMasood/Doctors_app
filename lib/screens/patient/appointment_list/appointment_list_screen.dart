@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:doctors_app/screens/patient/appointment_list/appointment_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -18,12 +20,15 @@ class AppointmentListScreen extends StatefulWidget {
 class _AppointmentListScreenState extends State<AppointmentListScreen> {
   List<Appointment> appointments = [];
   List<dynamic> keys = [];
+  List<int> serials = [];
   DatabaseReference appointmentsRef =
       FirebaseDatabase.instance.reference().child("appointments");
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().subtract(new Duration(days: 2));
   String dropdownValue = 'Morning';
   String timeSlot = '0';
   bool pressAll = false;
+  bool gotSerials = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -178,14 +183,15 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
             });
             print('Appointments list length -> ' +
                 appointments.length.toString());
-            /*var appointmentsJson = json.decode(snapshot.data.value);
-                if (appointmentsJson == null) {
-                  return Center(child: Text("No results found"));
-                }
-                for(var appointmentJson in appointmentsJson){
-                  appointments.add(Appointment.fromJson(appointmentJson));
-                }*/
-            return getAppointmentsUi(appointments);
+
+            gotSerials = false;
+            getSerials();
+
+            if(gotSerials) {
+              print('hmm serials: ${serials[0]} ' + serials.toString());
+
+              return getAppointmentsUi(appointments);
+            }
           }
           return Center(child: CircularProgressIndicator());
         });
@@ -197,7 +203,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentListWidget(
             appointment: appointments[index],
-            //serial: 00,
+            serial: serials[0],
             onCancelPressed: () {
               print('Appointment Cancelled with - ' +
                   keys[index].toString() +
@@ -242,6 +248,33 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
     );
   }
 
+  Future<void> getSerials() async{
+    for(var appointment in appointments){
+      print('dId: '+appointment.dId);
+      String dHelper = appointment.dId+'_'+appointment.date+'_'+appointment.timeSlot;
+      DataSnapshot snapshot = await appointmentsRef.orderByChild("dHelper").equalTo(dHelper).once();
+      if(snapshot.value != null){
+        Map values = snapshot.value;
+        if(values.length == 1){ serials.add(1); }
+        else{
+          values = sortListMap(values);
+          int count = 1;
+          values.forEach((key, value) {
+            if(value['pId'] == appointment.pId){
+              print('Serial of ${value['pId']}: $count');
+              serials.add(count);
+              print('serial length ${serials[0]} '+serials.length.toString());
+            }
+            count++;
+          });
+        }
+      }
+    }
+    setState(() {
+      gotSerials = true;
+    });
+  }
+
   Future<void> refresh() async {
     setState(() {
       appointments = [];
@@ -277,5 +310,25 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
         keys.removeAt(index);
       });
     });
+  }
+
+  LinkedHashMap sortListMap(LinkedHashMap map) {
+    List mapKeys = map.keys.toList(growable : false);
+    mapKeys.sort((k1, k2) {
+      int timestamp1 = map[k1]['createdAt'];
+      int timestamp2 = map[k2]['createdAt'];
+      return timestamp1.compareTo(timestamp2);
+    });
+    LinkedHashMap resMap = new LinkedHashMap();
+    mapKeys.forEach((k1) { resMap[k1] = map[k1] ; }) ;
+    print('-------- before sorting --------- ');
+    map.forEach((key, value) {
+      print('pId: '+value['pId']);
+    });
+    print('-------- after sorting ---------- ');
+    resMap.forEach((key, value) {
+      print('pId: '+value['pId']);
+    });
+    return resMap;
   }
 }
