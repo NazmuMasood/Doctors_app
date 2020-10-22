@@ -1,13 +1,24 @@
 
+import 'dart:collection';
+
 import 'package:doctors_app/models/appointment.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AppointmentListWidget extends StatelessWidget {
+class AppointmentListWidget extends StatefulWidget {
   final Appointment appointment;
   final Function onCancelPressed;
 
   AppointmentListWidget({this.appointment, this.onCancelPressed});
+
+  @override
+  _AppointmentListWidgetState createState() => _AppointmentListWidgetState();
+}
+
+class _AppointmentListWidgetState extends State<AppointmentListWidget> {
+  DatabaseReference appointmentsRef;
+  int serial = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +51,7 @@ class AppointmentListWidget extends StatelessWidget {
                       height: 8,
                     ),
                     Text(
-                      appointment.dId,
+                      widget.appointment.dId,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 19,
@@ -53,11 +64,11 @@ class AppointmentListWidget extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      appointment.timeSlot == '0'
+                      widget.appointment.timeSlot == '0'
                           ? 'Slot: Morning'
-                          : appointment.timeSlot == '1'
+                          : widget.appointment.timeSlot == '1'
                               ? 'Slot: Afternoon'
-                              : appointment.timeSlot == '2'
+                              : widget.appointment.timeSlot == '2'
                                   ? 'Slot: Evening'
                                   : 'Slot: Unknown',
                       style: TextStyle(
@@ -72,13 +83,14 @@ class AppointmentListWidget extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-                        Text(
+                        /*Text(
                           '00',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        ),*/
+                        serialFB(),
                       ],
                     ),
                   ],
@@ -89,22 +101,22 @@ class AppointmentListWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(appointment.date.substring(8, 10),
+                    Text(widget.appointment.date.substring(8, 10),
                         style:
                             TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                     Text(
-                      appointment.date.substring(5, 7)=='01' ? 'JAN' :
-                      appointment.date.substring(5, 7)=='02' ? 'FEB' :
-                      appointment.date.substring(5, 7)=='03' ? 'MAR' :
-                      appointment.date.substring(5, 7)=='04' ? 'APR' :
-                      appointment.date.substring(5, 7)=='05' ? 'MAY' :
-                      appointment.date.substring(5, 7)=='06' ? 'JUN' :
-                      appointment.date.substring(5, 7)=='07' ? 'JUL' :
-                      appointment.date.substring(5, 7)=='08' ? 'AUG' :
-                      appointment.date.substring(5, 7)=='09' ? 'SEP' :
-                      appointment.date.substring(5, 7)=='10' ? 'OCT' :
-                      appointment.date.substring(5, 7)=='11' ? 'NOV' :
-                      appointment.date.substring(5, 7)=='12' ? 'DEC' :
+                      widget.appointment.date.substring(5, 7)=='01' ? 'JAN' :
+                      widget.appointment.date.substring(5, 7)=='02' ? 'FEB' :
+                      widget.appointment.date.substring(5, 7)=='03' ? 'MAR' :
+                      widget.appointment.date.substring(5, 7)=='04' ? 'APR' :
+                      widget.appointment.date.substring(5, 7)=='05' ? 'MAY' :
+                      widget.appointment.date.substring(5, 7)=='06' ? 'JUN' :
+                      widget.appointment.date.substring(5, 7)=='07' ? 'JUL' :
+                      widget.appointment.date.substring(5, 7)=='08' ? 'AUG' :
+                      widget.appointment.date.substring(5, 7)=='09' ? 'SEP' :
+                      widget.appointment.date.substring(5, 7)=='10' ? 'OCT' :
+                      widget.appointment.date.substring(5, 7)=='11' ? 'NOV' :
+                      widget.appointment.date.substring(5, 7)=='12' ? 'DEC' :
                       'Unknown',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                     ),
@@ -118,15 +130,15 @@ class AppointmentListWidget extends StatelessWidget {
                 width: MediaQuery.of(context).size.width*.80,
                 height: 35,
                 child: RaisedButton(
-                  onPressed: appointment.flag=='pending'?onCancelPressed : (){},
+                  onPressed: widget.appointment.flag=='pending'? widget.onCancelPressed : (){},
                   child: Text(
-                    appointment.flag=='pending'?'Cancel Appointment' : 'FINISHED',
+                    widget.appointment.flag=='pending'?'Cancel Appointment' : 'FINISHED',
                     style: TextStyle(
                         color: Colors.white,
                         letterSpacing: 3.5,
                         fontWeight: FontWeight.w800),
                   ),
-                  color: appointment.flag=='pending'?Colors.teal[400] : Colors.white12,
+                  color: widget.appointment.flag=='pending'?Colors.teal[400] : Colors.white12,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -138,6 +150,57 @@ class AppointmentListWidget extends StatelessWidget {
       ),
     );
   }
+
+  Widget serialFB(){
+    return FutureBuilder(
+        future: appointmentsRef.orderByChild("dHelper").equalTo(widget.appointment.dHelper).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          print('card dHelper-> ' + widget.appointment.dHelper);
+          if (snapshot.hasData) {
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            print('card Downloaded snapshot -> ' + snapshot.data.value.toString());
+            if (values == null) {
+              return Text('Can\'t get serial',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,),
+              );
+            }
+
+            if(values.length>1){values = sortListMap(values);}
+
+            int count = 1;
+            values.forEach((key, value) {
+              if(value['pId'] == widget.appointment.pId){
+                serial = count;
+              }
+              count++;
+            });
+
+            return Text(serial.toString() ?? 'Serial unavailable',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,),
+            );
+          }
+          return Center(child: CircularProgressIndicator());
+        });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
+  }
+
+  LinkedHashMap sortListMap(LinkedHashMap map) {
+    List mapKeys = map.keys.toList(growable : false);
+    mapKeys.sort((k1, k2) {
+      int timestamp1 = map[k1]['createdAt'];
+      int timestamp2 = map[k2]['createdAt'];
+      return timestamp1.compareTo(timestamp2);
+    });
+    LinkedHashMap resMap = new LinkedHashMap();
+    mapKeys.forEach((k1) { resMap[k1] = map[k1] ; }) ;
+    return resMap;
+  }
+
 }
 
 

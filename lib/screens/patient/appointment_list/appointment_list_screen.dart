@@ -181,13 +181,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
             });
             print('Appointments list length -> ' +
                 appointments.length.toString());
-            /*var appointmentsJson = json.decode(snapshot.data.value);
-                if (appointmentsJson == null) {
-                  return Center(child: Text("No results found"));
-                }
-                for(var appointmentJson in appointmentsJson){
-                  appointments.add(Appointment.fromJson(appointmentJson));
-                }*/
+
             return getAppointmentsUi(appointments);
           }
           return Center(child: CircularProgressIndicator());
