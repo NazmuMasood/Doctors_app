@@ -33,6 +33,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   final DatabaseReference database =
       FirebaseDatabase.instance.reference().child('appointments');
 
+
   void presentDatePicker() {
     showDatePicker(
       context: context,
@@ -213,24 +214,24 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 40,
-          ),
+           Flexible(child: FractionallySizedBox(
+             heightFactor: 0.9,
+           ),),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 30, 5),
+                padding: const EdgeInsets.fromLTRB(20, 0, 35, 0),
                 child: Container(
-                  height: 75,
-                  width: 65,
+                  height: 85,
+                  width: 75,
                   child: FloatingActionButton(
                     onPressed: () {
                       _pushOn();
                     },
                     child: Icon(
                       Icons.check,
-                      size: 32,
+                      size: 42,
                     ),
                   ),
                 ),

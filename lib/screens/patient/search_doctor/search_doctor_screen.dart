@@ -18,7 +18,7 @@ class SearchDoctorScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),*/
-      body:  categoryTitle=='Doctors'?DoctorInfoCardViewWidget():Center(child: Container( child: Text('Nothing to show'),)),
+      body:  categoryTitle=='Doctors'?DoctorInfoCardViewWidget():Center(child: Container( child: Text('Available Soon'),)),
     );
   }
 }

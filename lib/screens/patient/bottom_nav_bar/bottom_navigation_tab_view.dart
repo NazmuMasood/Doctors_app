@@ -21,17 +21,17 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.home),
+        icon: Icon(Icons.home,size: 31),
         activeColor: Colors.teal,
         inactiveColor: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(MdiIcons.calendar),
+        icon: Icon(MdiIcons.calendar,size: 29),
         activeColor: Colors.teal,
         inactiveColor: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.account_circle),
+        icon: Icon(Icons.account_circle,size: 29),
         activeColor: Colors.teal,
         inactiveColor: CupertinoColors.systemGrey,
       ),
@@ -48,11 +48,12 @@ class _BottomNavigationTabViewState extends State<BottomNavigationTabView> {
   @override
   Widget build(BuildContext context) {
     return PersistentTabView(
+      navBarHeight: 60,
       controller: _controller,
       screens: _buildScreens(),
       items: _navBarsItems(),
       confineInSafeArea: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white60,
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears.
       stateManagement: true,

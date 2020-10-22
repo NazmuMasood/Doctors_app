@@ -271,7 +271,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                 name,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 20,
                                 ),
                               ),
                               SizedBox(
@@ -338,7 +338,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                   ),),
                                 Container(
                                   height: 35,
-                                  width: 185,
+                                  width: 240,
                                   padding: EdgeInsets.fromLTRB(3, 0, 0, 5),
                                   child: RaisedButton(
                                     onPressed: () {

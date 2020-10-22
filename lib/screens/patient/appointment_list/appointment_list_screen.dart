@@ -43,6 +43,9 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
                   'Appointments',
                   style: TextStyle(fontSize: 25),
                 ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width*.12,
+                ),
                 Container(
                   margin: const EdgeInsets.only(left: 120.0),
                   child: new RaisedButton(

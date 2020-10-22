@@ -1,3 +1,4 @@
+
 import 'package:doctors_app/models/appointment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +11,10 @@ class AppointmentListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return appointmentHistoryCard();
+    return appointmentHistoryCard(context);
   }
 
-  Widget appointmentHistoryCard() {
+  Widget appointmentHistoryCard(context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 15,14,8),
       child: Card(
@@ -42,7 +43,7 @@ class AppointmentListWidget extends StatelessWidget {
                       appointment.dId,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 19,
                       ),
                     ),
                     Text(
@@ -83,7 +84,7 @@ class AppointmentListWidget extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 40,
+                  width: MediaQuery.of(context).size.width*0.29,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,9 +113,9 @@ class AppointmentListWidget extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 11, top: 17),
+              padding: const EdgeInsets.only(bottom: 15, top: 17),
               child: Container(
-                width: 332,
+                width: MediaQuery.of(context).size.width*.80,
                 height: 35,
                 child: RaisedButton(
                   onPressed: appointment.flag=='pending'?onCancelPressed : (){},

@@ -33,30 +33,33 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(2, 8, 0, 0),
+              padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
               child: Text(
                 widget.user.email,
                 style: TextStyle(
                     color: Colors.teal,
                     fontWeight: FontWeight.w300,
-                    fontSize: 15),
+                    fontSize: 17),
               ),
             ),
-            Row(
-              children: <Widget>[
-                Icon(
-                  Icons.location_on,
-                  size: 13,
-                  color: Colors.teal,
-                ),
-                Text(
-                  '329 Momin Road',
-                  style: TextStyle(
-                      color: Colors.teal,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(left: 7),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.location_on,
+                    size: 14,
+                    color: Colors.teal,
+                  ),
+                  Text(
+                    '329 Momin Road',
+                    style: TextStyle(
+                        color: Colors.teal,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
             )
           ],
         ),
@@ -64,44 +67,48 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0.0,
         actions: <Widget>[
           Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+              padding: const EdgeInsets.fromLTRB(0, 20, 8, 0),
               child: Row(children: <Widget>[
                 ButtonTheme(
-                  height: 28,
-                  minWidth: 50,
+                  height: 32,
+                  minWidth: 53,
                   child: RaisedButton(
                     onPressed: _logout,
                     child: Text(
                       'Logout',
-                      style: TextStyle(color: Colors.redAccent),
+                      style: TextStyle(color: Colors.redAccent,fontSize: 16),
                     ),
                     color: Colors.white,
                     elevation: 1,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(22)),
                   ),
                 ),
                 IconButton(
                     icon: Icon(
                       Icons.notifications_none,
                       color: Colors.redAccent,
+                      size: 28,
                     ),
                     onPressed: () => null),
               ])),
         ],
       ),
-      body: GridView(
-        children: DUMMY_CATEGORIES
-            .map(
-              (catData) => CategoryItemWidget(
-                  catData.id, catData.title, catData.avatar, catData.text),
-            )
-            .toList(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 300,
-          childAspectRatio: 1.3,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 5,
+      body: Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: GridView(
+          children: DUMMY_CATEGORIES
+              .map(
+                (catData) => CategoryItemWidget(
+                    catData.id, catData.title, catData.avatar, catData.text),
+              )
+              .toList(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 300,
+            childAspectRatio: 1.3,
+            crossAxisSpacing: 0,
+            mainAxisSpacing: 5,
+          ),
         ),
       ),
 //       bottomNavigationBar: BottomNavigationBar(

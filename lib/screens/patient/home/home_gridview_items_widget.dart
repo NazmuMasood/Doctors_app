@@ -24,7 +24,7 @@ class CategoryItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:const EdgeInsets.fromLTRB(18, 20, 18, 0),
+      padding:const EdgeInsets.fromLTRB(19, 20, 19, 1.5),
       child: InkWell(
         onTap: () {
           pushNewScreenWithRouteSettings(
@@ -52,20 +52,20 @@ class CategoryItemWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  height: 45,
-                  width: 45,
+                  height: 52,
+                  width: 52,
                   child: avatar,
                 ),
                 SizedBox(
                   height: 10,
                 ),
-                Text(title,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.teal,fontSize: 18),),
+                Text(title,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.teal,fontSize: 23),),
                 SizedBox(
-                  height: 3,
+                  height: 4,
                 ),
                 Text(text,style: TextStyle(
                   fontWeight: FontWeight.w400,
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Colors.blueGrey,
                 ),),
               ],

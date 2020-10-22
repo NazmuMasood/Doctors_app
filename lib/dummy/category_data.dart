@@ -1,6 +1,7 @@
 
 import 'package:doctors_app/models/category.dart';
 import 'package:flutter/material.dart';
+String sampleText = 'Lorem ipsum dolor sit';
 
 final DUMMY_CATEGORIES = [
   Category(
@@ -10,7 +11,7 @@ final DUMMY_CATEGORIES = [
       radius: 40,
       backgroundImage: AssetImage('assets/images/doctor.png'),
     ),
-    text: 'Lorem ipsum dolor sit',
+    text: sampleText,
   ),
   Category(
     id: 'c2',
@@ -19,7 +20,7 @@ final DUMMY_CATEGORIES = [
       radius: 40,
       backgroundImage: AssetImage('assets/images/medicine.png'),
     ),
-    text: 'Lorem ipsum dolor sit',
+    text: sampleText,
   ),
   Category(
     id: 'c3',
@@ -28,7 +29,7 @@ final DUMMY_CATEGORIES = [
       radius: 40,
       backgroundImage: AssetImage('assets/images/labtest.png'),
     ),
-    text: 'Lorem ipsum dolor sit',
+    text: sampleText,
   ),
   Category(
     id: 'c4',
@@ -37,7 +38,7 @@ final DUMMY_CATEGORIES = [
       radius: 40,
       backgroundImage: AssetImage('assets/images/blood.png'),
     ),
-    text: 'Lorem ipsum dolor sit',
+    text: sampleText,
   ),
   Category(
     id: 'c5',
@@ -46,7 +47,7 @@ final DUMMY_CATEGORIES = [
       radius: 40,
       backgroundImage: AssetImage('assets/images/phone.png'),
     ),
-    text: 'Lorem ipsum dolor sit',
+    text: sampleText,
   ),
   Category(
     id: 'c6',
@@ -55,6 +56,6 @@ final DUMMY_CATEGORIES = [
       radius: 40,
       backgroundImage: AssetImage('assets/images/health.png'),
     ),
-    text: 'Lorem ipsum dolor sit',
+    text: sampleText,
   ),
 ];

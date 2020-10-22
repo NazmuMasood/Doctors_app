@@ -13,11 +13,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(DevicePreview(enabled: false, builder: (context) => MyApp()));
+  runApp(DevicePreview(enabled:false, builder: (context) => MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -27,8 +28,13 @@ class MyApp extends StatelessWidget {
     return OverlaySupport(
       child: MaterialApp(
         locale: DevicePreview.of(context).locale,
-        builder: DevicePreview.appBuilder,
-        initialRoute: '/',
+        // builder: DevicePreview.appBuilder,
+        // initialRoute: '/',
+        builder: (context, _ ) =>ResponsiveWrapper.builder(_,maxWidth: 1200,minWidth: 480,defaultScale: true,breakpoints:[
+          ResponsiveBreakpoint.resize(480, name: MOBILE),
+          ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          ResponsiveBreakpoint.resize(1000, name: DESKTOP),
+        ],background: Container(color: Color(0xFFF5F5F5))),
         routes: {
           '/': (context) => AuthenticatorScreen(),
           '/login': (context) => LoginScreen(),
