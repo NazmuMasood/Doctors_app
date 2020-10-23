@@ -1,5 +1,4 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
-import 'package:doctors_app/services/dialog_manager.dart';
 import 'package:doctors_app/services/messaging_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';

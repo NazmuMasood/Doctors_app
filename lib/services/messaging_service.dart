@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:doctors_app/services/dialog_manager.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -20,7 +20,7 @@ class MessagingService {
         if(message['data']['showDialog'] != 'true') {
           showTopNotification(message);
         }else{
-          showRecommendationDialog();
+          showRecommendationDialog(message['data']['apptKey']);
           print('apptKey ${message['data']['apptKey']}');
         }
         //DialogManager.handleNotificationMsg(message);
@@ -28,11 +28,11 @@ class MessagingService {
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-        showRecommendationDialog();
+        showRecommendationDialog(message['data']['apptKey']);
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-        showRecommendationDialog();
+        showRecommendationDialog(message['data']['apptKey']);
       },
     );
   }
@@ -51,35 +51,6 @@ class MessagingService {
     }
 
     // Or do other work.
-  }
-
-  //show 'doctor recommendation' dialog
-  void showRecommendationDialog() {
-    showOverlayNotification((context) {
-      return AlertDialog(
-        title: Text("Appointment Finished"),
-        content: Text("Would like to recommend the Doctor?"),
-        actions: [
-          FlatButton(
-            child: Text("Not really"),
-            onPressed: () {
-              print('Don\'t recommend');
-              OverlaySupportEntry.of(context).dismiss();                },
-          ),
-          FlatButton(
-            child: Text("Yes!"),
-            onPressed: () {
-              print('Recommend');
-              OverlaySupportEntry.of(context).dismiss();                },
-          )
-        ],
-        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.red)),
-        elevation: 5,
-      );
-    },
-        position: NotificationPosition.bottom,
-        duration: Duration(minutes: 5)
-    );
   }
 
   void showTopNotification(Map<String, dynamic> message) {
@@ -106,6 +77,47 @@ class MessagingService {
         ),
       );
     }, duration: Duration(milliseconds: 5000));
+  }
+
+  //show 'doctor recommendation' dialog
+  void showRecommendationDialog(String apptKey) {
+    showOverlayNotification((context) {
+      return AlertDialog(
+        title: Text("Appointment Finished"),
+        content: Text("Would like to recommend the Doctor?"),
+        actions: [
+          FlatButton(
+            child: Text("Not really"),
+            onPressed: () {
+              print('Don\'t recommend');
+              uploadRating(apptKey: apptKey, awesome: 'n');
+              OverlaySupportEntry.of(context).dismiss();                },
+          ),
+          FlatButton(
+            child: Text("Yes!"),
+            onPressed: () {
+              print('Recommend');
+              uploadRating(apptKey: apptKey, awesome: 'y');
+              OverlaySupportEntry.of(context).dismiss();                },
+          )
+        ],
+        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.red)),
+        elevation: 5,
+      );
+    },
+        position: NotificationPosition.bottom,
+        duration: Duration(minutes: 5)
+    );
+  }
+
+  void uploadRating({String apptKey, String awesome}){
+    DatabaseReference appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
+    try {
+      appointmentsRef.child(apptKey).child('r').set(awesome).then((_) {
+        print("Rating upload successful");
+      });
+    }catch (e) {
+      print('Rating upload error ->' + e.message);}
   }
 
   //show 'doctor recommendation' dialog
