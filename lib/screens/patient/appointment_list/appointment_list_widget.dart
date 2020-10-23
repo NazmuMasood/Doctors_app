@@ -160,7 +160,7 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
             Map<dynamic, dynamic> values = snapshot.data.value;
             print('card Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
-              return Text('Can\'t get serial',
+              return Text('Serial error',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,),
               );
             }
@@ -169,17 +169,20 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
 
             int count = 1;
             values.forEach((key, value) {
-              if(value['pId'] == widget.appointment.pId){
+              if(value['pId'] == widget.appointment.pId && value['createdAt'] == widget.appointment.createdAt){
                 serial = count;
               }
               count++;
             });
 
-            return Text(serial.toString() ?? 'Serial unavailable',
+            return Text(serial.toString() ?? 'Serial error',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,),
             );
           }
-          return Center(child: CircularProgressIndicator());
+
+          return SizedBox(child: CircularProgressIndicator(),
+            height: MediaQuery.of(context).size.width*.025,
+            width: MediaQuery.of(context).size.width*.025,);
         });
   }
 
