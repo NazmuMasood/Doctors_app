@@ -20,19 +20,18 @@ class MessagingService {
         if(message['data']['showDialog'] != 'true') {
           showTopNotification(message);
         }else{
-          showRecommendationDialog(message['data']['apptKey']);
-          print('apptKey ${message['data']['apptKey']}');
+          showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
         }
         //DialogManager.handleNotificationMsg(message);
       }, //onMessage
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-        showRecommendationDialog(message['data']['apptKey']);
+        showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-        showRecommendationDialog(message['data']['apptKey']);
+        showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
       },
     );
   }
@@ -80,7 +79,7 @@ class MessagingService {
   }
 
   //show 'doctor recommendation' dialog
-  void showRecommendationDialog(String apptKey) {
+  void showRecommendationDialog({String apptKey, String pKey}) {
     showOverlayNotification((context) {
       return AlertDialog(
         title: Text("Appointment Finished"),
@@ -90,14 +89,14 @@ class MessagingService {
             child: Text("Not really"),
             onPressed: () {
               print('Don\'t recommend');
-              uploadRating(apptKey: apptKey, awesome: 'n');
+              uploadRating(apptKey: apptKey, awesome: 'n', pKey: pKey);
               OverlaySupportEntry.of(context).dismiss();                },
           ),
           FlatButton(
             child: Text("Yes!"),
             onPressed: () {
               print('Recommend');
-              uploadRating(apptKey: apptKey, awesome: 'y');
+              uploadRating(apptKey: apptKey, awesome: 'y', pKey: pKey);
               OverlaySupportEntry.of(context).dismiss();                },
           )
         ],
@@ -110,14 +109,20 @@ class MessagingService {
     );
   }
 
-  void uploadRating({String apptKey, String awesome}){
+  void uploadRating({String apptKey, String awesome, String pKey}){
     DatabaseReference appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
     try {
       appointmentsRef.child(apptKey).child('r').set(awesome).then((_) {
         print("Rating upload successful");
+
+        DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
+        patientsRef.child(pKey).child('rDue').remove().then((_){
+          print('rDue removed from pKey- $pKey');
+        });
+
       });
     }catch (e) {
-      print('Rating upload error ->' + e.message);}
+      print('Rating upload or rDue remove error ->' + e.message);}
   }
 
   //show 'doctor recommendation' dialog

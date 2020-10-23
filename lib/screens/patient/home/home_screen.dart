@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/patient/home/home_gridview_items_widget.dart';
 import 'package:doctors_app/dummy/category_data.dart';
 import 'package:doctors_app/screens/auth/login_screen.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, @required this.user}) : super(key: key);
@@ -168,6 +170,68 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _messagingService.initialise();
+    checkIfRatingDue();
+  }
+
+  Future<void> checkIfRatingDue() async{
+    DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
+    patientsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
+      Map values = snap.value;
+      //print('ratingDueChecker: values- '+values.toString());
+      values.forEach((key, value) {
+        if(value['rDue'] != null){
+          print('!!! rating koro !!!');
+          showRecommendationDialog(apptKey: value['rDue'], pKey: key);
+        }
+      });
+    });
+  }
+
+  //show 'doctor recommendation' dialog
+  void showRecommendationDialog({String apptKey, String pKey}) {
+    showOverlayNotification((context) {
+      return AlertDialog(
+        title: Text("Appointment Finished"),
+        content: Text("Would like to recommend the Doctor?"),
+        actions: [
+          FlatButton(
+            child: Text("Not really"),
+            onPressed: () {
+              print('Don\'t recommend');
+              uploadRating(apptKey: apptKey, awesome: 'n', pKey: pKey);
+              OverlaySupportEntry.of(context).dismiss();
+            }),
+          FlatButton(
+            child: Text("Yes!"),
+            onPressed: () {
+              print('Recommend');
+              uploadRating(apptKey: apptKey, awesome: 'y', pKey: pKey);
+              OverlaySupportEntry.of(context).dismiss();
+            })
+        ],
+        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.red)),
+        elevation: 5,
+      );
+    },
+        position: NotificationPosition.bottom,
+        duration: Duration(minutes: 5)
+    );
+  }
+
+  void uploadRating({String apptKey, String awesome, String pKey}){
+    DatabaseReference appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
+    try {
+      appointmentsRef.child(apptKey).child('r').set(awesome).then((_) {
+        print("Rating upload successful");
+
+        DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
+        patientsRef.child(pKey).child('rDue').remove().then((_){
+          print('rDue removed from pKey- $pKey');
+        });
+
+      });
+    }catch (e) {
+      print('Rating upload or rDue remove error ->' + e.message);}
   }
 
 //  void _onItemTapped(int index) {

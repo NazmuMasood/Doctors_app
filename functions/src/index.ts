@@ -29,9 +29,13 @@ export const sendDoneMessage = functions.database.ref('/appointments/{apptId}/fl
         }).then( patientSnap => {
             const patient = patientSnap.val()
             const pKey = Object.keys(patient)[0]
+
+            const promises = []
+            const pr1 = db.ref('users').child('patients').child(pKey).child('rDue').set(context.params.apptId)
+            promises.push(pr1)
+
             const fcmToken = patient[pKey].fcmToken
             console.log('fcmToken: '+fcmToken)
-
             if(fcmToken != "" && fcmToken != null){
                 const payload : admin.messaging.MessagingPayload = {
                     notification: {
@@ -43,14 +47,18 @@ export const sendDoneMessage = functions.database.ref('/appointments/{apptId}/fl
                     data: {
                         'apptKey' : context.params.apptId,
                         'showDialog': 'true',
+                        'pKey': pKey
                     }
                 }
     
-                return fcm.sendToDevice(fcmToken, payload)
+                const pr2 = fcm.sendToDevice(fcmToken, payload)
+                promises.push(pr2)
 
             }else{ return null; }
+
+            return Promise.all(promises)
         }).then((response) => {
-            console.log('Successfully sent message:', response);
+            console.log('rDue flag updated & successfully sent message:', response);
         }).catch(error => {
             console.log('error msg: '+error)
         })
