@@ -22,11 +22,15 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+
+  final navigatorKey = GlobalKey<NavigatorState>();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return OverlaySupport(
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         locale: DevicePreview.of(context).locale,
         // builder: DevicePreview.appBuilder,
         // initialRoute: '/',

@@ -28,17 +28,21 @@ export const sendDoneMessage = functions.database.ref('/appointments/{apptId}/fl
             return patientsRef.once('value');             
         }).then( patientSnap => {
             const patient = patientSnap.val()
-            const dKey = Object.keys(patient)[0]
-            const fcmToken = patient[dKey].fcmToken
+            const pKey = Object.keys(patient)[0]
+            const fcmToken = patient[pKey].fcmToken
             console.log('fcmToken: '+fcmToken)
 
             if(fcmToken != "" && fcmToken != null){
                 const payload : admin.messaging.MessagingPayload = {
                     notification: {
                         title: `Congratulations`,
-                        body: `Your Doctor\'s App appointment has successfully ended`,
+                        body: `Your Doctor\'s App appointment successfully ended`,
                         icon: 'https://drive.google.com/file/d/1BUlK63xeTV6cP7SLPvWVhh7GfjreBOMy/view?usp=sharing',
                         clickAction: 'FLUTTER_NOTIFICATION_CLICK'
+                    },
+                    data: {
+                        'apptKey' : context.params.apptId,
+                        'showDialog': 'true',
                     }
                 }
     

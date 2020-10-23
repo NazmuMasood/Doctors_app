@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
+import 'package:doctors_app/services/dialog_manager.dart';
 import 'package:doctors_app/services/messaging_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -19,13 +20,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   //Messaging service for receiving push notification
   final MessagingService _messagingService = MessagingService();
-
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 //    int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       resizeToAvoidBottomPadding: true,
       appBar: AppBar(
@@ -165,8 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _messagingService.initialise();
     super.initState();
+    _messagingService.initialise();
   }
 
 //  void _onItemTapped(int index) {

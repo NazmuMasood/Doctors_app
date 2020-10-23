@@ -515,7 +515,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     checkForCurrentSlotState();
   }
 
-  List appts = []; bool checkForNewAppt = false;
   @override
   void initState() {
     super.initState();
@@ -523,29 +522,36 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
     runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
     checkForCurrentSlotState();
+    handleListener();
+  }
+
+
+  List appts = []; bool checkForNewAppt = false;
+  void handleListener(){
+    appts = [];
     appts = FirebaseList(
-      query: appointmentsRef.orderByChild("dHelper").equalTo(dHelper),
-      onChildAdded: (pos, snapshot) {
-        Map<dynamic, dynamic> values = snapshot.value;
-        if(values != null && checkForNewAppt){
-          print('New appointment: '+values.toString());
-          refresh();
-        }
-      },
-      onChildRemoved: (pos, snapshot) {
-        Map<dynamic, dynamic> values = snapshot.value;
-        if(values != null && checkForNewAppt){
-          print('Canceled appointment: '+values.toString());
-          refresh();
-        }
-      },
-      ///TODO: remove the sortedAppointments futureBuilder
+        query: appointmentsRef.orderByChild("dHelper").equalTo(dHelper),
+        onChildAdded: (pos, snapshot) {
+          Map<dynamic, dynamic> values = snapshot.value;
+          if(values != null && checkForNewAppt){
+            print('New appointment: '+values.toString());
+            refresh();
+          }
+        },
+        onChildRemoved: (pos, snapshot) {
+          Map<dynamic, dynamic> values = snapshot.value;
+          if(values != null && checkForNewAppt){
+            print('Canceled appointment: '+values.toString());
+            refresh();
+          }
+        },
+        ///TODO: remove the sortedAppointments futureBuilder
         ///instead use this onValue to load data
-      onValue: (snapshot) {
-        /*for (var i=0; i < this.appts.length; i++) {
+        onValue: (snapshot) {
+          /*for (var i=0; i < this.appts.length; i++) {
           print('hmmm $i: ${appts[i].value}');
         }*/
-      }
+        }
     );
   }
 
