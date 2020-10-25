@@ -95,8 +95,10 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width*0.29,
+                Flexible(
+                  child: FractionallySizedBox(
+                    widthFactor: 0.80,
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

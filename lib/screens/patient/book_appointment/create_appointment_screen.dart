@@ -1,4 +1,5 @@
 import 'package:doctors_app/models/appointment.dart';
+import 'package:doctors_app/models/patient.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,6 +26,21 @@ class CreateAppointmentScreen extends StatefulWidget {
 }
 
 class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  DatabaseReference patientsRef =
+      FirebaseDatabase.instance.reference().child("users").child("patients");
+
+  final ageCont = TextEditingController();
+  final weigtCont = TextEditingController();
+  final bloodgroupCont = TextEditingController();
+
+  Patient patient;
+  List<dynamic> keys = [];
+  Patient updatePatient;
+  bool isLoading = false;
+  String pKey = '';
+
   DateTime selectedDate = DateTime.now();
 //  CreateAppointmentModel appointment = CreateAppointmentModel();
   List<String> lst = ['Morning', 'Afternoon', 'Evening'];
@@ -33,13 +49,12 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   final DatabaseReference database =
       FirebaseDatabase.instance.reference().child('appointments');
 
-
   void presentDatePicker() {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now().subtract(
-      new Duration(days: 30),
+        new Duration(days: 30),
       ),
       lastDate: DateTime.now().add(
         new Duration(days: 30),
@@ -214,9 +229,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               ),
             ],
           ),
-           Flexible(child: FractionallySizedBox(
-             heightFactor: 0.9,
-           ),),
+          Flexible(
+            child: FractionallySizedBox(
+              heightFactor: 0.9,
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -227,7 +244,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                   width: 75,
                   child: FloatingActionButton(
                     onPressed: () {
-                      _pushOn();
+                      checkIfProfileUpdated();
                     },
                     child: Icon(
                       Icons.check,
@@ -271,19 +288,159 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     );
   }
 
+  Future<void> checkIfProfileUpdated() async {
+    User user = FirebaseAuth.instance.currentUser;
+
+    DatabaseReference patientsRef =
+        FirebaseDatabase.instance.reference().child("users").child('patients');
+    patientsRef
+        .orderByChild('email')
+        .equalTo(user.email)
+        .once()
+        .then((DataSnapshot snap) {
+      Map values = snap.value;
+      print('profile view: values- '+values.toString());
+      values.forEach((key, value) {
+        if (value['age'] != null &&
+            value['weight'] != null &&
+            value['bloodgroup'] != null) {
+          _pushOn();
+        }
+        else{
+          showModelBottomSheet(value: value, pKey: key);
+        }
+      });
+    });
+  }
+
+  void showModelBottomSheet({var value, String pKey}) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                if (value['age'] == null)
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'Age'),
+                    controller: ageCont,
+                    validator: (input) {
+                      if (input.isEmpty) {
+                        return 'Please Input Age';
+                      }
+                      return null;
+                    },
+                      onSaved: (input) => ageCont.text = input.trim(),
+                  ),
+                if (value['weight'] == null)
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'Weight'),
+                    controller: weigtCont,
+                    validator: (input) {
+                      if (input.isEmpty) {
+                        return 'Please Input Weight';
+                      }
+                      return null;
+                    },
+                    onSaved: (input) => weigtCont.text = input.trim(),
+                  ),
+                if (value['bloodgroup'] == null)
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'bloodgroup'),
+                    controller: bloodgroupCont,
+                    validator: (input) {
+                      if (input.isEmpty) {
+                        return 'Please Input BloodGroup';
+                      }
+                      return null;
+                    },
+                    onSaved: (input) => bloodgroupCont.text = input.trim(),
+                  ),
+                SizedBox(height: 5.0),
+                FlatButton(
+                    onPressed: () => updateProfile(value: value, pKey: pKey),
+                    color: Colors.teal,
+                    child: Container(
+                      child: Text(
+                        'Update',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ))
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> updateProfile({var value, String pKey}) async {
+    final formState = _formKey.currentState;
+    if (formState.validate()) {
+      formState.save();
+      try {
+        if (value['age'] == null) {
+          await patientsRef.child(pKey).child('age').set(ageCont.text);
+        }
+        if (value['weight'] == null) {
+          await patientsRef.child(pKey).child('weight').set(weigtCont.text);
+        }
+        if (value['bloodgroup'] == null) {
+          await patientsRef
+              .child(pKey)
+              .child('bloodgroup')
+              .set(bloodgroupCont.text);
+        }
+        Fluttertoast.showToast(
+            msg: 'Profile Updated',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
+        Navigator.of(context).pop();
+      }
+      catch (e) {
+        print(e.message);
+        Fluttertoast.showToast(
+            msg: 'Update Unsuccessful',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal,
+            textColor: Colors.white,
+            fontSize: 14.0);
+      }
+    }
+  }
+
   Future<void> _pushOn() async {
     try {
       User user = FirebaseAuth.instance.currentUser;
       Appointment appointment = Appointment(
-          pId: user.email, dId: widget.categoryId,
+          pId: user.email,
+          dId: widget.categoryId,
           timeSlot: selectedIndex.toString(),
           date: selectedDate.toString().split(' ')[0],
           createdAt: DateTime.now().millisecondsSinceEpoch,
-          flag:'pending',
-          dHelper: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
-          pHelper: user.email+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString(),
-          dHelperFull: widget.categoryId+'_'+selectedDate.toString().split(' ')[0]+'_'+selectedIndex.toString()+'_'+'pending'
-      );
+          flag: 'pending',
+          dHelper: widget.categoryId +
+              '_' +
+              selectedDate.toString().split(' ')[0] +
+              '_' +
+              selectedIndex.toString(),
+          pHelper: user.email +
+              '_' +
+              selectedDate.toString().split(' ')[0] +
+              '_' +
+              selectedIndex.toString(),
+          dHelperFull: widget.categoryId +
+              '_' +
+              selectedDate.toString().split(' ')[0] +
+              '_' +
+              selectedIndex.toString() +
+              '_' +
+              'pending');
 
       await database.push().set(appointment.toMap());
       Fluttertoast.showToast(
