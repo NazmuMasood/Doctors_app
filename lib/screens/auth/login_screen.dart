@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     borderSide:
                                         BorderSide(color: Colors.green))),
                             validator: (input) {
-                              if (input.isEmpty|| !input.contains('@')) {
+                              if (input.isEmpty || !input.contains('@')) {
                                 return 'Please type an valid email';
                               }
                               FocusScope.of(context).nextFocus();
@@ -258,10 +258,17 @@ class _LoginScreenState extends State<LoginScreen> {
         _showProgress();
 
         //Firstly, check if patient exists with that email
-        DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
-        patientsRef.orderByChild('email').equalTo(_email).once().then((DataSnapshot snap) {
+        DatabaseReference patientsRef = FirebaseDatabase.instance
+            .reference()
+            .child('users')
+            .child('patients');
+        patientsRef
+            .orderByChild('email')
+            .equalTo(_email)
+            .once()
+            .then((DataSnapshot snap) {
           var values = snap.value;
-          if (values == null){
+          if (values == null) {
             _hideProgress();
             print('No patient with that email');
             Fluttertoast.showToast(
@@ -274,9 +281,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 fontSize: 14.0);
           }
           //Secondly, authenticate
-          else {_authenticate();}
+          else {
+            _authenticate();
+          }
         });
-
       } catch (e) {
         print(e.message);
         _hideProgress();
@@ -292,44 +300,60 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _authenticate() async{
+  Future<void> _authenticate() async {
     try {
-    //Authenticate
-    User user = (await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: _email, password: _password))
-        .user;
-    _hideProgress();
-    //saves user info in shared preferences
-    SharedPreferencesHelper.addStringToSF('user_type', 'patient');
+      //Authenticate
+      User user = (await FirebaseAuth.instance
+              .signInWithEmailAndPassword(email: _email, password: _password))
+          .user;
+      _hideProgress();
+      //saves user info in shared preferences
+      SharedPreferencesHelper.addStringToSF('user_type', 'patient');
 
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-    String fcmToken = await firebaseMessaging.getToken();
-    print('fcmToken -> '+fcmToken);
+      FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+      String fcmToken = await firebaseMessaging.getToken();
+      print('fcmToken -> ' + fcmToken);
 
-    DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
-    patientsRef.orderByChild('email').equalTo(user.email).once().then((DataSnapshot snap) {
-    var keys = snap.value.keys;
-    var values = snap.value;
-    for (var key in keys){
-    print("Logging in user successful : "+key.toString()+" | "+values[key]['email'].toString());
-    patientsRef.child(key).child('fcmToken').set(fcmToken).then((_){
-    print("Updated fcmToken of "+values[key]['email'].toString()+" successful");
-    });
-    }
-    });
+      DatabaseReference patientsRef = FirebaseDatabase.instance
+          .reference()
+          .child('users')
+          .child('patients');
+      patientsRef
+          .orderByChild('email')
+          .equalTo(user.email)
+          .once()
+          .then((DataSnapshot snap) {
+        var keys = snap.value.keys;
+        var values = snap.value;
+        for (var key in keys) {
+          print("Logging in user successful : " +
+              key.toString() +
+              " | " +
+              values[key]['email'].toString());
+          patientsRef.child(key).child('fcmToken').set(fcmToken).then((_) {
+            print("Updated fcmToken of " +
+                values[key]['email'].toString() +
+                " successful");
+          });
+        }
+      });
 
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavigationTabView(user)), (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => BottomNavigationTabView(user)),
+          (Route<dynamic> route) => false);
     } catch (e) {
-    print('Login error ->' + e.message);
-    _hideProgress();
-    Fluttertoast.showToast(
-        msg: 'Login Error',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.teal,
-        textColor: Colors.white,
-        fontSize: 14.0);
+      print('Login error ->' + e.message);
+      _hideProgress();
+      Fluttertoast.showToast(
+          msg: 'Login Error',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
     }
   }
 

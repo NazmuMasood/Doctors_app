@@ -481,7 +481,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   void presentDatePicker() {
-    showDatePicker(
+    Navigator.of(context).pop();
+    /*showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime.now().subtract(
@@ -501,7 +502,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       });
 
       checkForCurrentSlotState();
-    });
+    });*/
   }
 
   Future<void> refresh() async {
