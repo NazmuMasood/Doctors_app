@@ -27,73 +27,105 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 60,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 26, bottom: 3),
-            child: Row(
-              children: [
-                Text(
-                  'Appointments',
-                  style: TextStyle(fontSize: 25),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width*.12,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 120.0),
-                  child: new RaisedButton(
-                    child: new Text('All'),
-                    textColor: pressAll ? Colors.white : Colors.black,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0),
-                    ),
-                    color: pressAll ? Colors.grey : Colors.white30,
-                    onPressed: () => setState(() => pressAll = !pressAll),
-                  ),
-                ),
+    return DefaultTabController(
+
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            bottom: TabBar(
+              tabs: [
+                Tab(child: Text('Upcoming',style: TextStyle(color: Colors.black,fontSize: 16),),),
+                Tab(child: Text('Previous',style: TextStyle(color: Colors.black,fontSize: 16),),),
+
               ],
             ),
+            title: Padding(
+              padding: const EdgeInsets.only(left: 6,top: 40,bottom: 40),
+              child: Text('Appointments',style: TextStyle(fontSize: 26.5,color: Colors.black,fontWeight: FontWeight.w400),),
+            ),
           ),
-          !pressAll
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      FlatButton.icon(
-                        onPressed: presentDatePicker,
-                        icon: Icon(Icons.date_range),
-                        label: Text(
-                          DateFormat('E, dd MMM').format(selectedDate),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 0,
-                      ),
-                      FlatButton(
-                        child: dropDownList(),
-                        onPressed: null,
-                      )
-                    ],
-                  ),
-                )
-              : Container(),
-          Expanded(child: appointmentsFutureBuilder()),
-          SizedBox(
-            height: 20,
+          body: TabBarView(
+            children: [
+            Center(child: Text('Upcoming Appointments')),
+              Center(child: Text('Previous Appointments')),
+            ],
           ),
-        ],
-      ),
+        ),
     );
   }
+
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     backgroundColor: Colors.white,
+  //     body: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         SizedBox(
+  //           height: 60,
+  //         ),
+  //         Padding(
+  //           padding: const EdgeInsets.only(left: 26, bottom: 3),
+  //           child: Row(
+  //             children: [
+  //               Text(
+  //                 'Appointments',
+  //                 style: TextStyle(fontSize: 25),
+  //               ),
+  //               SizedBox(
+  //                 width: MediaQuery.of(context).size.width*.12,
+  //               ),
+  //               Container(
+  //                 margin: const EdgeInsets.only(left: 120.0),
+  //                 child: new RaisedButton(
+  //                   child: new Text('All'),
+  //                   textColor: pressAll ? Colors.white : Colors.black,
+  //                   shape: new RoundedRectangleBorder(
+  //                     borderRadius: new BorderRadius.circular(30.0),
+  //                   ),
+  //                   color: pressAll ? Colors.grey : Colors.white30,
+  //                   onPressed: () => setState(() => pressAll = !pressAll),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         !pressAll
+  //             ? Padding(
+  //                 padding: const EdgeInsets.only(left: 10),
+  //                 child: Row(
+  //                   children: [
+  //                     FlatButton.icon(
+  //                       onPressed: presentDatePicker,
+  //                       icon: Icon(Icons.date_range),
+  //                       label: Text(
+  //                         DateFormat('E, dd MMM').format(selectedDate),
+  //                         style: TextStyle(
+  //                             fontWeight: FontWeight.bold, fontSize: 17),
+  //                       ),
+  //                     ),
+  //                     SizedBox(
+  //                       width: 0,
+  //                     ),
+  //                     FlatButton(
+  //                       child: dropDownList(),
+  //                       onPressed: null,
+  //                     )
+  //                   ],
+  //                 ),
+  //               )
+  //             : Container(),
+  //         Expanded(child: appointmentsFutureBuilder()),
+  //         SizedBox(
+  //           height: 20,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget appointmentsFutureBuilder() {
     return RefreshIndicator(

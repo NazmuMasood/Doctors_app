@@ -317,57 +317,74 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                if (value['age'] == null)
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'Age'),
-                    controller: ageCont,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return 'Please Input Age';
-                      }
-                      return null;
-                    },
-                      onSaved: (input) => ageCont.text = input.trim(),
-                  ),
-                if (value['weight'] == null)
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'Weight'),
-                    controller: weigtCont,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return 'Please Input Weight';
-                      }
-                      return null;
-                    },
-                    onSaved: (input) => weigtCont.text = input.trim(),
-                  ),
-                if (value['bloodgroup'] == null)
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'bloodgroup'),
-                    controller: bloodgroupCont,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return 'Please Input BloodGroup';
-                      }
-                      return null;
-                    },
-                    onSaved: (input) => bloodgroupCont.text = input.trim(),
-                  ),
-                SizedBox(height: 5.0),
-                FlatButton(
-                    onPressed: () => updateProfile(value: value, pKey: pKey),
-                    color: Colors.teal,
-                    child: Container(
-                      child: Text(
-                        'Update',
-                        style: TextStyle(color: Colors.white),
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (value['age'] == null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        decoration: InputDecoration(labelText: 'Age'),
+                        controller: ageCont,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'Please Input Age';
+                          }
+                          return null;
+                        },
+                          onSaved: (input) => ageCont.text = input.trim(),
                       ),
-                    ))
-              ],
+                    ),
+                  if (value['weight'] == null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        decoration: InputDecoration(labelText: 'Weight'),
+                        controller: weigtCont,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'Please Input Weight';
+                          }
+                          return null;
+                        },
+                        onSaved: (input) => weigtCont.text = input.trim(),
+                      ),
+                    ),
+                  if (value['bloodgroup'] == null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        decoration: InputDecoration(labelText: 'BloodGroup'),
+                        controller: bloodgroupCont,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'Please Input BloodGroup';
+                          }
+                          return null;
+                        },
+                        onSaved: (input) => bloodgroupCont.text = input.trim(),
+                      ),
+                    ),
+                  SizedBox(height: 5.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: FlatButton(
+                      height: 30,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        onPressed: () => updateProfile(value: value, pKey: pKey),
+                        color: Colors.teal,
+                        child: Container(
+                          child: Text(
+                            'Update',
+                            style: TextStyle(color: Colors.white,fontSize: 18),
+                          ),
+                        )),
+                  )
+                ],
+              ),
             ),
           );
         });
