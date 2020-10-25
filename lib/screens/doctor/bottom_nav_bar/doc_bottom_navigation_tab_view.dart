@@ -1,3 +1,4 @@
+import 'file:///C:/Users/Nazmu%20Masood/AndroidStudioProjects/Doctors_app/lib/screens/doctor/calendar_view/calender_month_view_screen.dart';
 import 'package:doctors_app/screens/doctor/appointment_list/doc_appointment_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,8 @@ class _DocBottomNavigationTabViewState extends State<DocBottomNavigationTabView>
   List<Widget> _buildScreens() {
     return [
       DocHomeScreen(user: widget.user),
-      DocAppointmentListScreen(user: widget.user),
+      // DocAppointmentListScreen(user: widget.user),
+      MonthViewScreen(user: widget.user),
       Scaffold(body: Center(child: Text("Doctor Profile"))),
     ];
   }// this is your user instance
