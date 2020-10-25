@@ -1,5 +1,6 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:doctors_app/screens/doctor/bottom_nav_bar/doc_bottom_navigation_tab_view.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -241,21 +242,36 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
       formState.save();
       try {
         _showProgress();
-        User user = (await FirebaseAuth.instance
-                .signInWithEmailAndPassword(email: _email, password: _password))
-            .user;
-        _hideProgress();
-        //saves user info in shared preferences
-        SharedPreferencesHelper.addStringToSF('user_type', 'doctor');
 
-        FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-        String fcmToken = await firebaseMessaging.getToken();
-        print('fcmToken -> '+fcmToken);
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => DocBottomNavigationTabView(user)),
-            (Route<dynamic> route) => false);
+        //Firstly, check if patient exists with that email
+        DatabaseReference doctorsRef = FirebaseDatabase.instance
+            .reference()
+            .child('users')
+            .child('doctors');
+        doctorsRef
+            .orderByChild('email')
+            .equalTo(_email)
+            .once()
+            .then((DataSnapshot snap) {
+          var values = snap.value;
+          if (values == null) {
+            _hideProgress();
+            print('No doctor with that email');
+            Fluttertoast.showToast(
+                msg: 'Login Error',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.teal,
+                textColor: Colors.white,
+                fontSize: 14.0);
+          }
+          //Secondly, authenticate
+          else {
+            _authenticate();
+          }
+        });
+        
       } catch (e) {
         print(e.message);
         _hideProgress();
@@ -268,6 +284,37 @@ class _DocLoginScreenState extends State<DocLoginScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
       }
+    }
+  }
+
+  Future<void> _authenticate() async{
+    try{
+      User user = (await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password))
+          .user;
+      _hideProgress();
+      //saves user info in shared preferences
+      SharedPreferencesHelper.addStringToSF('user_type', 'doctor');
+
+      FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+      String fcmToken = await firebaseMessaging.getToken();
+      print('fcmToken -> '+fcmToken);
+
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => DocBottomNavigationTabView(user)),
+              (Route<dynamic> route) => false);
+    }catch (e) {
+      print(e.message);
+      _hideProgress();
+      Fluttertoast.showToast(
+          msg: 'Login Error',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.teal,
+          textColor: Colors.white,
+          fontSize: 14.0);
     }
   }
 

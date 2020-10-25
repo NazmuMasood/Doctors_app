@@ -18,7 +18,7 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-          margin: const EdgeInsets.only(top: 50, bottom: 20),
+          padding: const EdgeInsets.only(top: 60, bottom: 20),
           child: SfCalendar(
             view: CalendarView.month,
             onTap: (CalendarTapDetails calendarTapDetails){
