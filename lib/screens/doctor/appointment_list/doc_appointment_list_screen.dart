@@ -12,9 +12,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class DocAppointmentListScreen extends StatefulWidget {
-  const DocAppointmentListScreen({Key key, @required this.user})
+  const DocAppointmentListScreen({Key key, @required this.user, @required this.selectedDate})
       : super(key: key);
-  final User user;
+  final User user; final DateTime selectedDate;
 
   @override
   _DocAppointmentListScreenState createState() =>
@@ -518,10 +518,12 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   @override
   void initState() {
     super.initState();
+    selectedDate = widget.selectedDate;
     dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
     appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
     runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
     checkForCurrentSlotState();
+    ///TODO
     handleListener();
   }
 

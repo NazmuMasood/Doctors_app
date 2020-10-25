@@ -40,6 +40,7 @@ dependencies:
   overlay_support: ^1.0.5
   flip_panel: ^1.0.1
   responsive_framework: ^0.0.9
+  syncfusion_flutter_calendar: ^18.3.42
 
 
   # The following adds the Cupertino Icons font to your application.
