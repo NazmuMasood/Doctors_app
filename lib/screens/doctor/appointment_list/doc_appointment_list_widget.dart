@@ -1,4 +1,5 @@
 import 'package:doctors_app/models/appointment.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,17 +8,18 @@ class DocAppointmentListWidget extends StatelessWidget {
   final Appointment appointment;
   final Function onDonePressed, onUndonePressed;
   final int serial;
+  final DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
 
   DocAppointmentListWidget({this.appointment, this.onDonePressed, this.onUndonePressed, this.serial});
 
   @override
   Widget build(BuildContext context) {
-    return appointmentHistoryCard();
+    return appointmentHistoryCard(context);
   }
 
-  Widget appointmentHistoryCard() {
+  Widget appointmentHistoryCard(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 15,14,8),
+      padding: const EdgeInsets.fromLTRB(20, 15,14,8),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
@@ -39,13 +41,7 @@ class DocAppointmentListWidget extends StatelessWidget {
                     SizedBox(
                       height: 8,
                     ),
-                    Text(
-                      appointment.pId,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
+                    pNameFB(),
                     Text(
                       'ParkView Hospital',
                       style: TextStyle(
@@ -83,8 +79,10 @@ class DocAppointmentListWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 40,
+                Flexible(
+                  child: FractionallySizedBox(
+                    widthFactor: 0.80,
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,12 +113,12 @@ class DocAppointmentListWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 11, top: 17),
               child: Container(
-                width: 332,
+                width: MediaQuery.of(context).size.width*0.85,
                 height: 35,
                 child: RaisedButton(
                   onPressed: appointment.flag=='pending'?onDonePressed : onUndonePressed,
                   child: Text(
-                    appointment.flag=='pending' ? 'FINISH' : 'FINISHED',
+                    appointment.flag=='pending' ? 'PENDING' : 'FINISHED',
                     style: TextStyle(
                         color: Colors.white,
                         letterSpacing: 3.5,
@@ -137,6 +135,33 @@ class DocAppointmentListWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget pNameFB(){
+    return FutureBuilder(
+        future: patientsRef.orderByChild("email").equalTo(appointment.pId).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            if (values == null) {
+              return Text(appointment.pId,
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold,),
+              );
+            }
+            String pName;
+            values.forEach((key, value) {
+              pName = value['name'];
+            });
+
+            return Text(pName ?? appointment.pId,
+              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold,),
+            );
+          }
+
+          return SizedBox(child: CircularProgressIndicator(),
+            height: MediaQuery.of(context).size.width*.035,
+            width: MediaQuery.of(context).size.width*.035,);
+        });
   }
 }
 

@@ -34,8 +34,9 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   bool pressAll = false;
   bool slotStateLoading = false;
   String slotState = 'notStarted';
-  String slotKey = '';
+  String runningSlotKey = '';
   var apptSubscription;
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +56,9 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   'Appointments',
                   style: TextStyle(fontSize: 25),
                 ),
-                SizedBox(width: slotStateLoading? 80: 110,),
+                SizedBox(width: slotStateLoading? MediaQuery.of(context).size.width*0.475: 0,),
                 slotStateLoading? CircularProgressIndicator(): Container(),
-                Container(
+                /*Container(
                   margin: const EdgeInsets.only(left: 10.0),
                   child: new RaisedButton(
                     child: new Text('All'),
@@ -68,7 +69,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                     color: pressAll ? Colors.grey : Colors.white30,
                     onPressed: () => setState(() => pressAll = !pressAll),
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -94,58 +95,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                         child: dropDownList(),
                         onPressed: null,
                       ),
-                      SizedBox(
-                        width: slotState=='notStarted' || slotState == 'ended'? 60 : slotState == 'paused' || slotState=='running'? 10
-                            : 0,
-                      ),
-                      slotState=='notStarted' || slotState=='paused' || slotState == 'ended' ? Expanded(
-                        child: Container(
-                          child:  FlatButton(
-                            child: Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                            onPressed: () => setSlotState('running'),
-                            color: Colors.blue,
-                            shape: CircleBorder(),
-                            //height: 40,
-                          ),
-                        ),
-                        flex: 2,
-                      ): Container(),
-                      slotState=='running' ? Expanded(
-                        child: Container(
-                          child:  FlatButton(
-                            child: Icon(
-                              Icons.pause,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            onPressed: () => setSlotState('paused'),
-                            color: Colors.blue,
-                            shape: CircleBorder(),
-                            //height: 40,
-                          ),
-                        ),
-                        flex: 2,
-                      ): Container(),
-                      slotState=='running' || slotState=='paused' ? Expanded(
-                        child: Container(
-                          child:  FlatButton(
-                            child: Icon(
-                              Icons.stop,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            onPressed: () => setSlotState('ended'),
-                            color: Colors.blue,
-                            shape: CircleBorder(),
-                            //height: 40,
-                          ),
-                        ),
-                        flex: 2,
-                      ): Container(),
                     ],
                   ),
                 )
@@ -156,7 +105,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   child: Stack(
                     children: [
                       Container(
-                        width: 365,
+                        width: MediaQuery.of(context).size.width*0.90,
                         height: 65,
                         child: TextFormField(
                           decoration: InputDecoration(labelText: 'Message'),
@@ -164,7 +113,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                         ),
                       ),
                       Positioned(
-                        left: 300,
+                        left: MediaQuery.of(context).size.width*0.90-65,
                         top: 9,
                         child: FlatButton(
                           child: Icon(
@@ -183,6 +132,98 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                 )
               : Container(),
           Expanded(child: appointmentsFutureBuilder()),
+          SizedBox(
+            height: 5,
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 5.0, right: 5.0),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.blueAccent)
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 30),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text('Slot state: ', style: TextStyle(fontSize: 16,)),
+                  Text(
+                    slotState=='notStarted' ? 'Not started' : slotState,
+                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)
+                  ),
+                  SizedBox(
+                    width: slotState=='notStarted' || slotState == 'ended'? 170 : slotState == 'paused' || slotState=='running'? 120
+                        : 0,
+                  ),
+                  slotState=='notStarted' || slotState=='paused' || slotState == 'ended' ? Expanded(
+                    child: Container(
+                      child:  FlatButton(
+                        child: Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                        onPressed: () => setSlotState('running'),
+                        color: Colors.blue,
+                        shape: CircleBorder(),
+                        //height: 40,
+                      ),
+                    ),
+                    flex: 2,
+                  ): Container(),
+                  slotState=='running' ? Expanded(
+                    child: Container(
+                      child:  FlatButton(
+                        child: Icon(
+                          Icons.navigate_next,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        onPressed: (){
+                          doneAppointment(/*keys[currentIndex].toString(), */ currentIndex);
+                        },
+                        color: Colors.blue,
+                        shape: CircleBorder(),
+                        //height: 40,
+                      ),
+                    ),
+                    flex: 2,
+                  ): Container(),
+                  slotState=='running' ? Expanded(
+                    child: Container(
+                      child:  FlatButton(
+                        child: Icon(
+                          Icons.pause,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        onPressed: () => setSlotState('paused'),
+                        color: Colors.blue,
+                        shape: CircleBorder(),
+                        //height: 40,
+                      ),
+                    ),
+                    flex: 2,
+                  ): Container(),
+                  slotState=='running' || slotState=='paused' ? Expanded(
+                    child: Container(
+                      child:  FlatButton(
+                        child: Icon(
+                          Icons.stop,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        onPressed: () => setSlotState('ended'),
+                        color: Colors.blue,
+                        shape: CircleBorder(),
+                        //height: 40,
+                      ),
+                    ),
+                    flex: 2,
+                  ): Container(),
+                ],
+              ),
+            ),
+          ),
           SizedBox(
             height: 20,
           ),
@@ -222,8 +263,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               return SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
                 child: Container(
-                  child: Center(child: Text('No results found')),
-                  height: MediaQuery.of(context).size.height - 165,
+                  child: Center(child: Text('No results found', style: TextStyle(fontSize: 16),)),
+                  height: MediaQuery.of(context).size.height - 185,
                 ),
               );
             }
@@ -257,8 +298,8 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               return SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
                 child: Container(
-                  child: Center(child: Text('No results found')),
-                  height: MediaQuery.of(context).size.height - 165,
+                  child: Center(child: Text('No results found',style: TextStyle(fontSize: 16))),
+                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height*0.40,
                 ),
               );
             }
@@ -286,15 +327,17 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
             appointment: appointments[index],
             serial: index+1,
             onDonePressed: () {
-              print('Appointment Done with - '+keys[index].toString()+"on index $index");
-              doneAppointment(keys[index].toString(), index);
+              // print('Appointment Done with - '+keys[index].toString()+"on index $index");
+              // doneAppointment(keys[index].toString(), index);
+
               //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
             },
             onUndonePressed: () {
-              print('Appointment Undone with - ' +
-                  keys[index].toString() +
-                  "on index $index");
-              undoneAppointment(keys[index].toString(), index);
+              // print('Appointment Undone with - ' +
+              //     keys[index].toString() +
+              //     "on index $index");
+              // undoneAppointment(keys[index].toString(), index);
+
               //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
             },
           ));
@@ -324,6 +367,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   : newValue == 'Evening' ? '2' : '00';
           dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
         });
+        checkForCurrentSlotState();
       },
       items: <String>['Morning', 'Afternoon', 'Evening']
           .map<DropdownMenuItem<String>>((String value) {
@@ -371,11 +415,14 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     }
   }
 
-  Future<void> doneAppointment(String appointmentId, int index) async {
+  Future<void> doneAppointment(int index) async {
+    if(index>=appointments.length || appointments.length==0){showToast('No appointment due'); return;}
+    setState(() {slotStateLoading = true;});
     if(slotState != 'running'){showToast('Please start the appointment slot first'); return;}
     try {
+      String appointmentId = keys[index].toString();
       await appointmentsRef.child(appointmentId).child('flag').set('done').then((_) {
-        print("Done appointment $appointmentId successful");
+        print("Done appointment $appointmentId successful0");
         setState(() {});
       });
 
@@ -397,8 +444,9 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       //   });
       // });
 
-      print('slotKey: $slotKey');
-      await runningSlotsRef.child(slotKey).child('currentSerial').set((index+2).toString());
+      print('slotKey: $runningSlotKey');
+      await runningSlotsRef.child(runningSlotKey).child('currentSerial').set((index+2).toString());
+      setState(() {currentIndex++; slotStateLoading = false;});
     }catch (e) {
       //print(e.message);
       print('Serial Updating error');
@@ -407,11 +455,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> undoneAppointment(String appointmentId, int index) async {
-    await appointmentsRef
-        .child(appointmentId)
-        .child('flag')
-        .set('pending')
-        .then((_) {
+    await appointmentsRef.child(appointmentId).child('flag').set('pending').then((_) {
       print("Undone appointment $appointmentId successful");
       setState(() {});
     });
@@ -427,7 +471,6 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> setSlotState(String mSlotState) async{
-    setState(() {});
     if(slotStateLoading){return;}
     if(appointments.isEmpty){showToast('There\'s no patient in this slot'); return;}
     print('slotState : '+mSlotState);
@@ -585,7 +628,12 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       if(values == null){ setState(() { slotState = 'notStarted'; }); return;}
       values.forEach((key, value) {
         print('slotKey: $key, slotState: '+value['slotState']);
-        setState(() {slotKey = key; slotState = value['slotState'];});
+        setState(() {
+          runningSlotKey = key;
+          slotState = value['slotState'];
+          currentIndex = int.parse(value['currentSerial'])-1;
+          print('currentIndex $currentIndex');
+        });
       });
     });
   }
