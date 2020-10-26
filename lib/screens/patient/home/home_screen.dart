@@ -1,4 +1,5 @@
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
+import 'package:doctors_app/services/helper_class.dart';
 import 'package:doctors_app/services/messaging_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -211,57 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
       values.forEach((key, value) {
         if(value['rDue'] != null){
           print('!!! rating koro !!!');
-          showRecommendationDialog(apptKey: value['rDue'], pKey: key);
+          HelperClass.showRecommendationDialog(apptKey: value['rDue'], pKey: key);
         }
       });
     });
-  }
-
-  //show 'doctor recommendation' dialog
-  void showRecommendationDialog({String apptKey, String pKey}) {
-    showOverlayNotification((context) {
-      return AlertDialog(
-        title: Text("Appointment Finished"),
-        content: Text("Would like to recommend the Doctor?"),
-        actions: [
-          FlatButton(
-            child: Text("Not really"),
-            onPressed: () {
-              print('Don\'t recommend');
-              uploadRating(apptKey: apptKey, awesome: 'n', pKey: pKey);
-              OverlaySupportEntry.of(context).dismiss();
-            }),
-          FlatButton(
-            child: Text("Yes!"),
-            onPressed: () {
-              print('Recommend');
-              uploadRating(apptKey: apptKey, awesome: 'y', pKey: pKey);
-              OverlaySupportEntry.of(context).dismiss();
-            })
-        ],
-        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.red)),
-        elevation: 5,
-      );
-    },
-        position: NotificationPosition.bottom,
-        duration: Duration(minutes: 5)
-    );
-  }
-
-  void uploadRating({String apptKey, String awesome, String pKey}){
-    DatabaseReference appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
-    try {
-      appointmentsRef.child(apptKey).child('r').set(awesome).then((_) {
-        print("Rating upload successful");
-
-        DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
-        patientsRef.child(pKey).child('rDue').remove().then((_){
-          print('rDue removed from pKey- $pKey');
-        });
-
-      });
-    }catch (e) {
-      print('Rating upload or rDue remove error ->' + e.message);}
   }
 
   @override

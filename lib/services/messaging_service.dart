@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:doctors_app/services/helper_class.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -20,18 +21,18 @@ class MessagingService {
         if(message['data']['showDialog'] != 'true') {
           showTopNotification(message);
         }else{
-          showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
+          HelperClass.showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
         }
         //DialogManager.handleNotificationMsg(message);
       }, //onMessage
       onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-        showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
+        HelperClass.showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-        showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
+        HelperClass.showRecommendationDialog(apptKey: message['data']['apptKey'], pKey: message['data']['pKey']);
       },
     );
   }
@@ -78,7 +79,7 @@ class MessagingService {
     }, duration: Duration(milliseconds: 5000));
   }
 
-  //show 'doctor recommendation' dialog
+  /*//show 'doctor recommendation' dialog
   void showRecommendationDialog({String apptKey, String pKey}) {
     showOverlayNotification((context) {
       return AlertDialog(
@@ -107,9 +108,9 @@ class MessagingService {
         position: NotificationPosition.bottom,
         duration: Duration(minutes: 5)
     );
-  }
+  }*/
 
-  void uploadRating({String apptKey, String awesome, String pKey}){
+  /*void uploadRating({String apptKey, String awesome, String pKey}){
     DatabaseReference appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
     try {
       appointmentsRef.child(apptKey).child('r').set(awesome).then((_) {
@@ -123,7 +124,7 @@ class MessagingService {
       });
     }catch (e) {
       print('Rating upload or rDue remove error ->' + e.message);}
-  }
+  }*/
 
   //show 'doctor recommendation' dialog
   /*static showAlertDialog(BuildContext context) {
