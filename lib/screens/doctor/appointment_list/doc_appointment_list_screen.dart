@@ -383,10 +383,25 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         print("Update dHelperFull of appointment $appointmentId successful");
       });
 
+
+      // await appointmentsRef.orderByKey().equalTo(appointmentId).once().then((DataSnapshot snap) {
+      //   print("Fetching of pId of appointment $appointmentId successful");
+      //   Map values = snap.value;
+      //   print('!!! pId values: '+values.toString());
+      //   values.forEach((key, value) async {
+      //     String pId = value['pId'];
+          String pId = appointments[index].pId;
+          await appointmentsRef.child(appointmentId).child('pHelper').set(pId+'_done').then((_) {
+            print("Update pHelper of appointment $appointmentId successful");
+          });
+      //   });
+      // });
+
       print('slotKey: $slotKey');
       await runningSlotsRef.child(slotKey).child('currentSerial').set((index+2).toString());
     }catch (e) {
-      print(e.message);
+      //print(e.message);
+      print('Serial Updating error');
       showToast('Couldn\'t update current serial');
     }
   }
@@ -404,9 +419,15 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     await appointmentsRef.child(appointmentId).child('dHelperFull').set(dHelper+'_pending').then((_) {
       print("Update dHelperFull of appointment $appointmentId successful");
     });
+
+    String pId = appointments[index].pId;
+    await appointmentsRef.child(appointmentId).child('pHelper').set(pId+'_pending').then((_) {
+      print("Update pHelper of appointment $appointmentId successful");
+    });
   }
 
   Future<void> setSlotState(String mSlotState) async{
+    setState(() {});
     if(slotStateLoading){return;}
     if(appointments.isEmpty){showToast('There\'s no patient in this slot'); return;}
     print('slotState : '+mSlotState);
@@ -532,7 +553,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   List appts = []; bool checkForNewAppt = false;
   void handleListener(){
     appts = [];
-    appts = FirebaseList(
+    /*appts = FirebaseList(
         query: appointmentsRef.orderByChild("dHelper").equalTo(dHelper),
         onChildAdded: (pos, snapshot) {
           Map<dynamic, dynamic> values = snapshot.value;
@@ -551,11 +572,11 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         ///TODO: remove the sortedAppointments futureBuilder
         ///instead use this onValue to load data
         onValue: (snapshot) {
-          /*for (var i=0; i < this.appts.length; i++) {
+          *//*for (var i=0; i < this.appts.length; i++) {
           print('hmmm $i: ${appts[i].value}');
-        }*/
+        }*//*
         }
-    );
+    );*/
   }
 
   Future<void> checkForCurrentSlotState() async{

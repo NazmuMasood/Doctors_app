@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final MessagingService _messagingService = MessagingService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  DatabaseReference patientsRef;
 
 //    int _selectedIndex = 0;
   @override
@@ -36,14 +37,15 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
-              child: Text(
+              padding: const EdgeInsets.fromLTRB(8, 20, 0, 0),
+              child: pNameFB(),
+              /*Text(
                 widget.user.email,
                 style: TextStyle(
                     color: Colors.teal,
                     fontWeight: FontWeight.w300,
                     fontSize: 17),
-              ),
+              ),*/
             ),
             Padding(
               padding: const EdgeInsets.only(left: 7),
@@ -133,6 +135,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget pNameFB(){
+    return FutureBuilder(
+        future: patientsRef.orderByChild("email").equalTo(widget.user.email).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            if (values == null) {
+              return Text(widget.user.email,
+                style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w300, fontSize: 17),
+              );
+            }
+            String pName;
+            values.forEach((key, value) {
+              pName = value['name'];
+            });
+
+            return Text(
+              pName ?? widget.user.email,
+              style: TextStyle(
+                  color: Colors.teal,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 17),
+            );
+          }
+
+          return Text(
+            widget.user.email,
+            style: TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.w300,
+                fontSize: 17),
+          );
+        });
+  }
+
   _logout() async {
     DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
     await patientsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
@@ -164,13 +201,6 @@ class _HomeScreenState extends State<HomeScreen> {
         print('Shared preferences logout error ->' + e.message);
       }
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _messagingService.initialise();
-    checkIfRatingDue();
   }
 
   Future<void> checkIfRatingDue() async{
@@ -232,6 +262,14 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }catch (e) {
       print('Rating upload or rDue remove error ->' + e.message);}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _messagingService.initialise();
+    checkIfRatingDue();
+    patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
   }
 
 //  void _onItemTapped(int index) {

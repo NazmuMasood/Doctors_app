@@ -11,9 +11,10 @@ class Appointment {
   String pHelper;
   String dHelperFull;
   int createdAt;
+  String apptId;
 
   Appointment({this.pId, this.dId, this.timeSlot, this.date, this.flag, this.dHelper, this.pHelper, this.dHelperFull,
-    this.createdAt
+    this.createdAt, this.apptId
   });
 
   Map<String, dynamic> toMap() {
@@ -27,6 +28,7 @@ class Appointment {
       'pHelper': pHelper,
       'dHelperFull': dHelperFull,
       'createdAt' : createdAt,
+      'apptId': this.apptId
     };
   }
 
@@ -44,10 +46,11 @@ class Appointment {
         pHelper: map['pHelper'],
         dHelperFull: map['dHelperFull'],
         createdAt: map['createdAt'],
+        apptId: map['apptId']
     );
   }
 
-  Appointment.fromJson(Map<dynamic, dynamic> json){
+  /*Appointment.fromJson(Map<dynamic, dynamic> json){
     pId = json['pId'];
     dId = json['dId'];
     date = json['date'];
@@ -55,5 +58,5 @@ class Appointment {
     flag = json['flag'];
     dHelper = json['dHelper'];
     pHelper = json['pHelper'];
-  }
+  }*/
 }

@@ -46,7 +46,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   List<String> lst = ['Morning', 'Afternoon', 'Evening'];
   int selectedIndex = 0;
 
-  final DatabaseReference database =
+  final DatabaseReference appointmentsRef =
       FirebaseDatabase.instance.reference().child('appointments');
 
   void presentDatePicker() {
@@ -434,6 +434,9 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   Future<void> _pushOn() async {
     try {
       User user = FirebaseAuth.instance.currentUser;
+
+      String apptId = appointmentsRef.push().key;
+
       Appointment appointment = Appointment(
           pId: user.email,
           dId: widget.categoryId,
@@ -448,18 +451,18 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               selectedIndex.toString(),
           pHelper: user.email +
               '_' +
-              selectedDate.toString().split(' ')[0] +
-              '_' +
-              selectedIndex.toString(),
+              'pending',
           dHelperFull: widget.categoryId +
               '_' +
               selectedDate.toString().split(' ')[0] +
               '_' +
               selectedIndex.toString() +
               '_' +
-              'pending');
+              'pending',
+          apptId: apptId
+      );
 
-      await database.push().set(appointment.toMap());
+      await appointmentsRef.child(apptId).set(appointment.toMap());
       Fluttertoast.showToast(
           msg: 'Appointment successful',
           toastLength: Toast.LENGTH_LONG,

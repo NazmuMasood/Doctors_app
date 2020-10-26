@@ -18,6 +18,7 @@ class AppointmentListWidget extends StatefulWidget {
 
 class _AppointmentListWidgetState extends State<AppointmentListWidget> {
   DatabaseReference appointmentsRef;
+  DatabaseReference doctorsRef;
   int serial = 0;
 
   @override
@@ -50,13 +51,7 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
                     SizedBox(
                       height: 8,
                     ),
-                    Text(
-                      widget.appointment.dId,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 19,
-                      ),
-                    ),
+                    docNameFB(),
                     Text(
                       'ParkView Hospital',
                       style: TextStyle(
@@ -83,13 +78,6 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
                             fontSize: 14,
                           ),
                         ),
-                        /*Text(
-                          '00',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),*/
                         serialFB(),
                       ],
                     ),
@@ -126,7 +114,7 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
                 ),
               ],
             ),
-            Padding(
+            widget.appointment.flag=='pending'? Padding(
               padding: const EdgeInsets.only(bottom: 15, top: 17),
               child: Container(
                 width: MediaQuery.of(context).size.width*.80,
@@ -146,7 +134,7 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
                   ),
                 ),
               ),
-            ),
+            ) : SizedBox(height: 10,),
           ],
         ),
       ),
@@ -157,12 +145,10 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
     return FutureBuilder(
         future: appointmentsRef.orderByChild("dHelper").equalTo(widget.appointment.dHelper).once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-          print('card dHelper-> ' + widget.appointment.dHelper);
           if (snapshot.hasData) {
             Map<dynamic, dynamic> values = snapshot.data.value;
-            print('card Downloaded snapshot -> ' + snapshot.data.value.toString());
             if (values == null) {
-              return Text('Serial error',
+              return Text('error',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,),
               );
             }
@@ -177,7 +163,7 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
               count++;
             });
 
-            return Text(serial.toString() ?? 'Serial error',
+            return Text(serial.toString() ?? 'error',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,),
             );
           }
@@ -188,10 +174,31 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
         });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
+  Widget docNameFB(){
+    return FutureBuilder(
+        future: doctorsRef.orderByChild("email").equalTo(widget.appointment.dId).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            if (values == null) {
+              return Text(widget.appointment.dId,
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold,),
+              );
+            }
+            String docName;
+            values.forEach((key, value) {
+              docName = value['name'];
+            });
+
+            return Text(docName ?? widget.appointment.dId,
+              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold,),
+            );
+          }
+
+          return SizedBox(child: CircularProgressIndicator(),
+            height: MediaQuery.of(context).size.width*.035,
+            width: MediaQuery.of(context).size.width*.035,);
+        });
   }
 
   LinkedHashMap sortListMap(LinkedHashMap map) {
@@ -206,139 +213,10 @@ class _AppointmentListWidgetState extends State<AppointmentListWidget> {
     return resMap;
   }
 
-}
-
-
-/*class AppointmentHistory extends StatefulWidget {
   @override
-  _AppointmentHistoryState createState() => _AppointmentHistoryState();
+  void initState() {
+    super.initState();
+    appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
+    doctorsRef = FirebaseDatabase.instance.reference().child("users").child('doctors');
+  }
 }
-
-class _AppointmentHistoryState extends State<AppointmentHistory> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: appointmentHistoryCard(),
-    );
-  }
-
-  Widget appointmentHistoryCard()
-  {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 60,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 26, bottom: 3),
-          child: Text(
-            'Appointments',
-            style: TextStyle(fontSize: 25),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            height: 165,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          radius: 37,
-                          backgroundImage:
-                          AssetImage('assets/images/doctor.png'),
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            'Dr.Obayed Hasan',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-
-                          Text(
-                            'ParkView Hospital',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'Slot: Evening',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'Serial: ',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '01',
-                                style: TextStyle(
-                                  fontSize: 14,fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 80,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('30',
-                              style: TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold)),
-                          Text(
-                            'Aug',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 18),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 11,top: 17),
-                    child: Container(width: 332,
-                      height: 35,
-                      child: RaisedButton(
-                        onPressed: () => print('Appointment Cancelled'),
-                        child: Text('Cancel Appointment',style: TextStyle(color: Colors.white,letterSpacing: 3.5,fontWeight: FontWeight.w800),),
-                        color: Colors.teal[400],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}*/

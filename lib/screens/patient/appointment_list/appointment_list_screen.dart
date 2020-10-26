@@ -1,4 +1,6 @@
 import 'package:doctors_app/screens/patient/appointment_list/appointment_list_widget.dart';
+import 'package:doctors_app/screens/patient/appointment_list/previous_appt_list_screen.dart';
+import 'package:doctors_app/screens/patient/appointment_list/upcoming_appt_list_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,34 +30,48 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            bottom: TabBar(
-              tabs: [
-                Tab(child: Text('Upcoming',style: TextStyle(color: Colors.black,fontSize: 16),),),
-                Tab(child: Text('Previous',style: TextStyle(color: Colors.black,fontSize: 16),),),
-
-              ],
-            ),
-            title: Padding(
-              padding: const EdgeInsets.only(left: 6,top: 40,bottom: 40),
-              child: Text('Appointments',style: TextStyle(fontSize: 26.5,color: Colors.black,fontWeight: FontWeight.w400),),
-            ),
-          ),
-          body: TabBarView(
-            children: [
-            Center(child: Text('Upcoming Appointments')),
-              Center(child: Text('Previous Appointments')),
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                child: Text(
+                  'Upcoming',
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
+              Tab(
+                child: Text(
+                  'Previous',
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
             ],
           ),
+          title: Padding(
+            padding: const EdgeInsets.only(left: 6, top: 40, bottom: 40),
+            child: Text(
+              'Appointments',
+              style: TextStyle(
+                  fontSize: 26.5,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400),
+            ),
+          ),
         ),
+        body: TabBarView(
+          children: [
+            UpcomingApptListScreen(user: widget.user),
+            PreviousApptListScreen(user: widget.user),
+            // Center(child: Text('Upcoming Appointments')),
+            // Center(child: Text('Previous Appointments')),
+          ],
+        ),
+      ),
     );
   }
-
-
 
   // @override
   // Widget build(BuildContext context) {
@@ -148,8 +164,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
             .equalTo(widget.user.email)
             .once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
-          print('patientId-> ' +
-              widget.user.email);
+          print('patientId-> ' + widget.user.email);
           if (snapshot.hasData) {
             appointments.clear();
             keys.clear();
@@ -283,7 +298,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime.now().subtract(
-      new Duration(days: 30),
+        new Duration(days: 30),
       ),
       lastDate: DateTime.now().add(
         new Duration(days: 30),
