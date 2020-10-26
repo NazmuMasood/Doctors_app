@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> checkIfRatingDue() async{
+  void checkIfRatingDue() async{
     DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
     patientsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
       Map values = snap.value;

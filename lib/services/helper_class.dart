@@ -164,7 +164,7 @@ class HelperClass{
           ));
     },
         position: NotificationPosition.bottom,
-        duration: Duration(seconds: 120)
+        duration: Duration(seconds: 60)
     );
   }
 
