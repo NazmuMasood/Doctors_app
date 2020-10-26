@@ -1,6 +1,7 @@
 import 'package:doctors_app/screens/auth/doc_login_screen.dart';
 import 'package:doctors_app/screens/auth/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class DocHomeScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class DocHomeScreen extends StatefulWidget {
 
 class _DocHomeScreenState extends State<DocHomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  String dName;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class _DocHomeScreenState extends State<DocHomeScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(3, 8, 0, 0),
               child: Text(
-                widget.user.email,
+                dName ?? widget.user.email,
                 style: TextStyle(
                     color: Colors.teal,
                     fontWeight: FontWeight.w300,
@@ -97,6 +99,22 @@ class _DocHomeScreenState extends State<DocHomeScreen> {
       } catch (e) {
         print('Shared preferences logout error ->' + e.message);
       }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName();
+  }
+
+  Future<void> fetchUserName() async{
+    DatabaseReference doctorsRef = FirebaseDatabase.instance.reference().child("users").child('doctors');
+    doctorsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
+      Map values = snap.value;
+      values.forEach((key, value) {
+        setState(() {dName = value['name'];});
+      });
     });
   }
 }

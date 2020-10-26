@@ -333,10 +333,10 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
             },
             onUndonePressed: () {
-              // print('Appointment Undone with - ' +
-              //     keys[index].toString() +
-              //     "on index $index");
-              // undoneAppointment(keys[index].toString(), index);
+              print('Appointment Undone with - ' +
+                  keys[index].toString() +
+                  "on index $index");
+              undoneAppointment(keys[index].toString(), index);
 
               //Navigator.pushNamed(context, 'post', arguments: appointments[index]);
             },
@@ -625,7 +625,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   Future<void> checkForCurrentSlotState() async{
     runningSlotsRef.orderByChild('dHelper').equalTo(dHelper).once().then((DataSnapshot snapshot) async {
       Map<dynamic, dynamic> values = snapshot.value;
-      if(values == null){ setState(() { slotState = 'notStarted'; }); return;}
+      if(values == null){ setState(() { slotState = 'notStarted'; currentIndex=0; }); return;}
       values.forEach((key, value) {
         print('slotKey: $key, slotState: '+value['slotState']);
         setState(() {

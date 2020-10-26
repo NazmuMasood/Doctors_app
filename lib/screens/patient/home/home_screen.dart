@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   DatabaseReference patientsRef;
+  String pName;
 
 //    int _selectedIndex = 0;
   @override
@@ -39,14 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 20, 0, 0),
-              child: pNameFB(),
-              /*Text(
-                widget.user.email,
+              child:
+              Text(
+                pName ?? widget.user.email,
                 style: TextStyle(
                     color: Colors.teal,
                     fontWeight: FontWeight.w300,
                     fontSize: 17),
-              ),*/
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 7),
@@ -136,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget pNameFB(){
+  /*Widget pNameFB(){
     return FutureBuilder(
         future: patientsRef.orderByChild("email").equalTo(widget.user.email).once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
@@ -162,14 +163,14 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           return Text(
-            widget.user.email,
+            this.pName ?? widget.user.email,
             style: TextStyle(
                 color: Colors.teal,
                 fontWeight: FontWeight.w300,
                 fontSize: 17),
           );
         });
-  }
+  }*/
 
   _logout() async {
     DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child('users').child('patients');
@@ -204,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void checkIfRatingDue(){
+  Future<void> checkIfRatingDue() async{
     DatabaseReference patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
     patientsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
       Map values = snap.value;
@@ -214,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
           print('!!! rating koro !!!');
           HelperClass.showRecommendationDialog(apptKey: value['rDue'], pKey: key);
         }
+        setState(() {pName = value['name'];});
       });
     });
   }

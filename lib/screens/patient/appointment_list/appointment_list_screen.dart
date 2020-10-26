@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class AppointmentListScreen extends StatefulWidget {
+  //TODO handle the tab redraw, every time switching tabs
   const AppointmentListScreen({Key key, @required this.user}) : super(key: key);
   final User user;
 
