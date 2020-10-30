@@ -20,6 +20,7 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
   List<Meeting> meetings;
   //List<mAppointment.Appointment> appts;
   Map<String, int> apptMap;
+  DateTime selectedDate = DateTime.now();
   bool apptDataAvailable = false;
   final DatabaseReference appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
 
@@ -29,6 +30,9 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
         body: Container(
           padding: const EdgeInsets.only(top: 60, bottom: 20),
           child: SfCalendar(
+            onViewChanged: (ViewChangedDetails viewChangedDetails){
+              onCalendarSwipe(viewChangedDetails);
+            },
             view: CalendarView.month,
             appointmentTextStyle: TextStyle(
                 fontSize: 18,
@@ -78,7 +82,7 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
   Future<void> _fetchAppointments() async {
     //appts = [];
     apptMap = new Map();
-    DateTime today = DateTime.now();
+    DateTime today = selectedDate;
     String calDHelper = widget.user.email + '_' + today.toString().split(' ')[0].substring(0, 7);
     try {
       await appointmentsRef.orderByChild('calDHelper').equalTo(calDHelper).once().then((DataSnapshot snap) {
@@ -109,12 +113,22 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
     apptMap[dateAndTimeSlot] = 1;
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void onCalendarSwipe(ViewChangedDetails viewChangedDetails) {
+    bool gotOne = false;
+    viewChangedDetails.visibleDates.forEach((element) {
+      String yearMonthDate = element.toString().split(' ')[0];
+      String date = yearMonthDate.substring(yearMonthDate.length-2, yearMonthDate.length);
+      if(date == '01' && !gotOne){selectedDate = element; gotOne = true;}
+    });
+    print('viewChangeDetails: '+selectedDate.toString());
     _fetchAppointments();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    //_fetchAppointments();
+  }
 
 }
 
