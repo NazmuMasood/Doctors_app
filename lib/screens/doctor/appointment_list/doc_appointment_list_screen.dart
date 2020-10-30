@@ -179,7 +179,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                           size: 18,
                         ),
                         onPressed: (){
-                          doneAppointment(/*keys[currentIndex].toString(), */ currentIndex);
+                          doneAppointment(/*keys[currentIndex].toString(), */currentIndex);
                         },
                         color: Colors.blue,
                         shape: CircleBorder(),
@@ -500,6 +500,9 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
           if (mSlotState == 'ended') {
             await runningSlotsRef.child(key).remove();
             msgToSend = 'Sorry, patient checking of $appointmentDate ended for now';
+            setState(() {
+              currentIndex = 0;
+            });
           }
           else {
             await runningSlotsRef.child(key).child('slotState').set(mSlotState);

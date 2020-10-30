@@ -1,5 +1,6 @@
 import 'package:doctors_app/models/appointment.dart';
 import 'package:doctors_app/models/patient.dart';
+import 'package:doctors_app/services/helper_class.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -459,31 +460,19 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               selectedIndex.toString() +
               '_' +
               'pending',
-          apptId: apptId
+          apptId: apptId,
+          calDHelper: widget.categoryId+'_'+selectedDate.toString().split(' ')[0].substring(0, 7),
+          calPHelper: user.email+'_'+selectedDate.toString().split(' ')[0].substring(0, 7)
       );
 
       await appointmentsRef.child(apptId).set(appointment.toMap());
-      Fluttertoast.showToast(
-          msg: 'Appointment successful',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.teal,
-          textColor: Colors.white,
-          fontSize: 14.0);
+      HelperClass.showToast('Appointment booking successful');
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
           (Route<dynamic> route) => false);
     } catch (e) {
       print(e.message);
-      Fluttertoast.showToast(
-          msg: 'Appointment Error',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.teal,
-          textColor: Colors.white,
-          fontSize: 14.0);
+      HelperClass.showToast('Appointment booking error. Please try again...');
     }
   }
 }

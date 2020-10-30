@@ -4,18 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class DocHomeScreen extends StatefulWidget {
-  const DocHomeScreen({Key key, @required this.user}) : super(key: key);
+class DocHomeScreen extends StatelessWidget {
+
+  DocHomeScreen({@required this.user});
 
   final User user;
-
-  @override
-  _DocHomeScreenState createState() => _DocHomeScreenState();
-}
-
-class _DocHomeScreenState extends State<DocHomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  String dName;
+  final DatabaseReference doctorsRef = FirebaseDatabase.instance.reference().child("users").child('doctors');
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +23,7 @@ class _DocHomeScreenState extends State<DocHomeScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(3, 8, 0, 0),
-              child: Text(
-                dName ?? widget.user.email,
-                style: TextStyle(
-                    color: Colors.teal,
-                    fontWeight: FontWeight.w300,
-                    fontSize: 15),
-              ),
+              child: docNameFB(),
             ),
             Row(
               children: <Widget>[
@@ -63,7 +52,9 @@ class _DocHomeScreenState extends State<DocHomeScreen> {
                 ButtonTheme(
                   height: 28,
                   minWidth: 50,
-                  child: RaisedButton(onPressed: _logout,child: Text('Logout',style: TextStyle(color: Colors.redAccent),),color: Colors.white,elevation: 1,
+                  child: RaisedButton(
+                    onPressed: () => _logout(context),
+                    child: Text('Logout',style: TextStyle(color: Colors.redAccent),),color: Colors.white,elevation: 1,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)
                     ),),),
@@ -80,7 +71,34 @@ class _DocHomeScreenState extends State<DocHomeScreen> {
     );
   }
 
-  _logout() async {
+  Widget docNameFB(){
+    return FutureBuilder(
+        future: doctorsRef.orderByChild("email").equalTo(user.email).once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            if (values == null) {
+              return Text(user.email,
+                style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w300, fontSize: 15),
+              );
+            }
+            String docName;
+            values.forEach((key, value) {
+              docName = value['name'];
+            });
+
+            return Text(docName ?? user.email,
+              style: TextStyle(color: Colors.teal, fontWeight: FontWeight.w300, fontSize: 15),
+            );
+          }
+
+          return SizedBox(child: CircularProgressIndicator(),
+            height: MediaQuery.of(context).size.width*.035,
+            width: MediaQuery.of(context).size.width*.035,);
+        });
+  }
+
+  Future<void> _logout(BuildContext context) async {
     await _firebaseAuth.signOut().then((_) {
       try {
         SharedPreferencesHelper.addStringToSF('user_type', 'doctor_logout');
@@ -102,19 +120,4 @@ class _DocHomeScreenState extends State<DocHomeScreen> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchUserName();
-  }
-
-  Future<void> fetchUserName() async{
-    DatabaseReference doctorsRef = FirebaseDatabase.instance.reference().child("users").child('doctors');
-    doctorsRef.orderByChild('email').equalTo(widget.user.email).once().then((DataSnapshot snap) {
-      Map values = snap.value;
-      values.forEach((key, value) {
-        setState(() {dName = value['name'];});
-      });
-    });
-  }
 }

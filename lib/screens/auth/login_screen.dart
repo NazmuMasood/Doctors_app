@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Stack(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(0.0, 30.0, 6.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(0.0, 60.0, 6.0, 0.0),
                       alignment: Alignment.centerRight,
                       child: ToggleButtons(
                         children: <Widget>[

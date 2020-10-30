@@ -184,4 +184,9 @@ class HelperClass{
       print('Rating upload or rDue remove error ->' + e.message);}
   }
 
+  static Color colorFromHex(String hexColor) {
+    final hexCode = hexColor.replaceAll('#', '');
+    return Color(int.parse('FF$hexCode', radix: 16));
+  }
+
 }
