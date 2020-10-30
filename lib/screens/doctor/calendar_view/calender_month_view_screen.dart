@@ -30,9 +30,19 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
           padding: const EdgeInsets.only(top: 60, bottom: 20),
           child: SfCalendar(
             view: CalendarView.month,
+            appointmentTextStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Arial'),
+            todayTextStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Arial'),
             dataSource: apptDataAvailable && apptMap.length>0 ? MeetingDataSource(_getDataSource()) : null,
             monthViewSettings: MonthViewSettings(
-                appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
+                appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                dayFormat: 'EEE',
+            ),
             onTap: (CalendarTapDetails calendarTapDetails){
               print('calendar onTap date: '+calendarTapDetails.date.toString());
               pushNewScreen(context,
