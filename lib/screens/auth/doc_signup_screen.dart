@@ -388,7 +388,7 @@ class _DocSignupScreenState extends State<DocSignupScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
 
-        addToFirebaseDatabase();
+        addToFirebaseDatabase(user);
         addToAlgolia();
 
         _hideProgress();
@@ -415,20 +415,21 @@ class _DocSignupScreenState extends State<DocSignupScreen> {
     }
   }
 
-  Future<void> addToFirebaseDatabase() async {
+  Future<void> addToFirebaseDatabase(User user) async {
     try {
       FirebaseMessaging firebaseMessaging = FirebaseMessaging();
       String fcmToken = await firebaseMessaging.getToken();
       print('fcmToken -> '+fcmToken);
 
-      await database.push().set({
+      await database.child(user.uid).set({
         'name': signupModel.name,
         'email': signupModel.email,
         "degrees": signupModel.degree,
         "category": signupModel.category,
         "specialities": signupModel.speciality,
         "address": signupModel.address,
-        "fcmToken": fcmToken
+        "fcmToken": fcmToken,
+        "uId": user.uid
       });
       /* Fluttertoast.showToast(
           msg: 'Firebase Data Add Successful',

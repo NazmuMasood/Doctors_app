@@ -72,7 +72,7 @@ class _MonthViewScreenState extends State<MonthViewScreen> {
                   : timeSlot=='1'? HelperClass.colorFromHex('#ff9000')
                   : timeSlot=='2'? HelperClass.colorFromHex('#670067')
                   : const Color(0xFF0F8644),
-              false),//default green(int) : 0xFF0F8644
+              false),
       );
     });//forEach apptMap
 

@@ -16,7 +16,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Signupmodel signupModel = Signupmodel();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final DatabaseReference database =
+  final DatabaseReference patientsRef =
       FirebaseDatabase.instance.reference().child('users').child('patients');
   List<bool> isSelected = [true, false];
   bool _passwordVisible = false, _confirmPasswordVisible = false;
@@ -309,8 +309,8 @@ class _SignupScreenState extends State<SignupScreen> {
         FirebaseMessaging firebaseMessaging = FirebaseMessaging();
         String fcmToken = await firebaseMessaging.getToken();
 
-        Patient patient = new Patient(name: signupModel.name, email: signupModel.email, fcmToken: fcmToken);
-        database.push().set(patient.toMap());
+        Patient patient = new Patient(name: signupModel.name, email: signupModel.email, fcmToken: fcmToken, uId: user.uid);
+        patientsRef.child(user.uid).set(patient.toMap());
 
         Fluttertoast.showToast(
             msg: 'Signup Successful',
