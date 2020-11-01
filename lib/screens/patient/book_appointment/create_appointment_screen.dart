@@ -84,8 +84,8 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             child: Text(
-              'Select appointment time',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              'Book Appointment',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
             ),
           ),
           SizedBox(
@@ -116,7 +116,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                       Text(
                         widget.categoryTitle,
                         style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.bold),
+                            fontSize: 25, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                         height: 2,
