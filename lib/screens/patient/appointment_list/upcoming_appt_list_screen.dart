@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_list.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 
 import 'appointment_list_widget.dart';
 
@@ -21,26 +23,30 @@ class _UpcomingApptListScreenState extends State<UpcomingApptListScreen> {
   DatabaseReference appointmentsRef =
       FirebaseDatabase.instance.reference().child("appointments");
 
-  List appts = []; bool checkForUpdt = false;
+  List appts = [];
+  bool checkForUpdt = false;
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: appointments.length==0 ? Text('No upcoming appointments') : getAppointmentsUi(appointments)
-    );
+        child: appointments.length == 0
+            ? Text('No upcoming appointments')
+            : getAppointmentsUi(appointments));
   }
 
-  Widget getAppointmentsUi(List<Appointment> appointments) => ListView.builder(
-      padding: EdgeInsets.all(0),
-      physics: AlwaysScrollableScrollPhysics(),
-      itemCount: appointments.length,
-      itemBuilder: (context, index) => AppointmentListWidget(
-        appointment: appointments[index],
-        onCancelPressed: () {
-          print('Appointment Cancel pressed on index $index');
-          deleteAppointment(index);
-        },
-  ));
+  Widget getAppointmentsUi(List<Appointment> appointments) {
+    return ListView.builder(
+        padding: EdgeInsets.all(0),
+        // physics: AlwaysScrollableScrollPhysics(),
+        itemCount: appointments.length,
+        itemBuilder: (context, index) => AppointmentListWidget(
+              appointment: appointments[index],
+              onCancelPressed: () {
+                print('Appointment Cancel pressed on index $index');
+                deleteAppointment(index);
+              },
+            ));
+  }
 
   Future<void> deleteAppointment(int index) async {
     String apptId = appointments[index].apptId;
@@ -53,9 +59,13 @@ class _UpcomingApptListScreenState extends State<UpcomingApptListScreen> {
   void initState() {
     super.initState();
     appts = FirebaseList(
-        query: appointmentsRef.orderByChild("pHelper").equalTo(widget.user.email+'_pending'),
+        query: appointmentsRef
+            .orderByChild("pHelper")
+            .equalTo(widget.user.email + '_pending'),
         onChildAdded: (pos, snapshot) {
-          if(!checkForUpdt){return;}
+          if (!checkForUpdt) {
+            return;
+          }
           Map<dynamic, dynamic> values = snapshot.value;
           if (values != null) {
             print('onAdded appointment: ' + values.toString());
@@ -77,11 +87,10 @@ class _UpcomingApptListScreenState extends State<UpcomingApptListScreen> {
           checkForUpdt = true;
           setState(() {});
         },
-        onChildChanged: (pos, snapshot){},
-        onError: (error){
+        onChildChanged: (pos, snapshot) {},
+        onError: (error) {
           print('FirebaseList error upcomingAppts : ${error.message}');
           HelperClass.showToast('Error in fetching upcoming appointment');
-        }
-    );
+        });
   }
 }

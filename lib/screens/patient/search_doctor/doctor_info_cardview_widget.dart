@@ -18,7 +18,7 @@ class DoctorInfoCardViewWidget extends StatefulWidget {
 class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
   final _searchedDocController = TextEditingController();
   DatabaseReference dbRef =
-  FirebaseDatabase.instance.reference().child("users").child("doctors");
+      FirebaseDatabase.instance.reference().child("users").child("doctors");
   List<dynamic> lists = [];
   bool searchingFirebase = false;
   String searchedWord = "";
@@ -80,8 +80,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                   ),
                 ),
                 Expanded(
-                  child:
-                  Container(
+                  child: Container(
                     height: 43,
                     width: 10,
                     child: RaisedButton(
@@ -100,7 +99,8 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                         size: 27,
                       ),
                     ),
-                  ),),
+                  ),
+                ),
               ],
             ),
           ),
@@ -152,7 +152,8 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                       lists[index]["degrees"],
                       lists[index]["email"],
                       lists[index]["name"],
-                      lists[index]["specialities"]);
+                      lists[index]["specialities"],
+                    lists[index]["fee"],);
                 });
           }
           return Center(child: CircularProgressIndicator());
@@ -163,25 +164,26 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
     return Container(
       child: searchingAlgolia == true
           ? Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : resultsAlgolia.length == 0
-          ? Center(
-        child: Text("No results found."),
-      )
-          : ListView.builder(
-          padding: EdgeInsets.all(2),
-          shrinkWrap: true,
-          itemCount: resultsAlgolia.length,
-          itemBuilder: (_, index) {
-            return docListUI(
-                resultsAlgolia[index].data["address"],
-                resultsAlgolia[index].data["category"],
-                resultsAlgolia[index].data["degrees"],
-                resultsAlgolia[index].data["email"],
-                resultsAlgolia[index].data["name"],
-                resultsAlgolia[index].data["specialities"]);
-          }),
+              ? Center(
+                  child: Text("No results found."),
+                )
+              : ListView.builder(
+                  padding: EdgeInsets.all(2),
+                  shrinkWrap: true,
+                  itemCount: resultsAlgolia.length,
+                  itemBuilder: (_, index) {
+                    return docListUI(
+                        resultsAlgolia[index].data["address"],
+                        resultsAlgolia[index].data["category"],
+                        resultsAlgolia[index].data["degrees"],
+                        resultsAlgolia[index].data["email"],
+                        resultsAlgolia[index].data["name"],
+                        resultsAlgolia[index].data["specialities"],
+                      lists[index]["fee"],);
+                  }),
     );
   }
 
@@ -220,12 +222,14 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                 itemCount: lists.length,
                 itemBuilder: (_, index) {
                   return docListUI(
-                      lists[index]["address"],
-                      lists[index]["category"],
-                      lists[index]["degrees"],
-                      lists[index]["email"],
-                      lists[index]["name"],
-                      lists[index]["specialities"]);
+                    lists[index]["address"],
+                    lists[index]["category"],
+                    lists[index]["degrees"],
+                    lists[index]["email"],
+                    lists[index]["name"],
+                    lists[index]["specialities"],
+                    lists[index]["fee"],
+                  );
                 });
           }
           return Center(child: CircularProgressIndicator());
@@ -233,20 +237,20 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
   }
 
   Widget docListUI(String address, String category, String degrees,
-      String email, String name, String specialities) {
+      String email, String name, String specialities, String fee) {
     return Container(
       padding: EdgeInsets.fromLTRB(21, 0, 21, 0),
-      height: 165,
+      height: 215,
       child: Column(
         children: <Widget>[
           Card(
-              elevation: 1,
+              elevation: 3,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Container(
-                height: 146,
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                height: 192,
+                padding: EdgeInsets.fromLTRB(2, 2, 0, 0),
                 child: Column(
                   children: <Widget>[
                     Row(
@@ -273,9 +277,16 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
+                              ),SizedBox(
+                                height: 1,
+                              ),
+                              Text(
+                                category,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
-                                height: 5,
+                                height: 4,
                               ),
                               Text(
                                 degrees,
@@ -290,17 +301,30 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                 style: TextStyle(
                                     fontSize: 13, fontWeight: FontWeight.w400),
                               ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Icon(Icons.credit_card_rounded,size: 20,),
+                                  SizedBox(width: 2),
+                                  Text('Visiting Fee: ${fee!=null?fee:'N/A'}',
+                                    // fee!=null?fee:'N/A',
+                                    style: TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.w700,height: 1.3),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 8,
                     ),
                     Expanded(
-
-                      child:Column(
+                      child: Column(
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -308,8 +332,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 Expanded(
-                                  child:
-                                  Container(
+                                  child: Container(
                                     padding: EdgeInsets.fromLTRB(5, 0, 10, 4),
                                     width: 150,
                                     height: 35,
@@ -318,16 +341,19 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                         pushNewScreen(
                                           context,
                                           screen: DoctorProfileScreen(),
-                                          withNavBar: true, // OPTIONAL VALUE. True by default.
-                                          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                          withNavBar:
+                                              true, // OPTIONAL VALUE. True by default.
+                                          pageTransitionAnimation:
+                                              PageTransitionAnimation.cupertino,
                                         );
                                       },
                                       color: Colors.white,
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           side: BorderSide(
-                                              color:
-                                              Color.fromRGBO(28, 222, 187, 1))),
+                                              color: Color.fromRGBO(
+                                                  28, 222, 187, 1))),
                                       child: Text(
                                         'View Profile',
                                         style: TextStyle(
@@ -335,7 +361,8 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                         ),
                                       ),
                                     ),
-                                  ),),
+                                  ),
+                                ),
                                 Container(
                                   height: 35,
                                   width: 240,
@@ -344,7 +371,7 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                                     onPressed: () {
                                       print(email);
                                       bookAppointment(context, email, address,
-                                          specialities, name);
+                                          specialities, name,degrees,fee);
                                     },
                                     color: Colors.teal[400],
                                     //Color.fromRGBO(28, 222, 187, 1),
@@ -364,7 +391,8 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
                             ),
                           ),
                         ],
-                      ),),
+                      ),
+                    ),
                   ],
                 ),
               )),
@@ -393,13 +421,13 @@ class _DoctorInfoCardViewWidgetState extends State<DoctorInfoCardViewWidget> {
     });*/
   }
 
-  void bookAppointment(BuildContext ctx, id, address, specialities, name) {
+  void bookAppointment(BuildContext ctx, id, address, specialities, name,degrees,fee) {
     Navigator.of(ctx).push(MaterialPageRoute(builder: (_) {
       return CreateAppointmentScreen(
           categoryId: id,
           categoryAddress: address,
           categorySpecialities: specialities,
-          categoryTitle: name);
+          categoryTitle: name,categoryDegrees: degrees,categoryFee: fee);
     }));
   }
 

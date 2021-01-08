@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:doctors_app/screens/patient/home/home_screen.dart';
+import 'package:menu_button/menu_button.dart';
 
 class CreateAppointmentScreen extends StatefulWidget {
   String categoryId;
@@ -15,19 +16,21 @@ class CreateAppointmentScreen extends StatefulWidget {
   String categoryImageUrl;
   String categoryAddress;
   String categorySpecialities;
+  String categoryFee;
+  String categoryDegrees;
   CreateAppointmentScreen(
       {@required this.categoryId,
       this.categoryTitle,
       this.categoryAddress,
       this.categoryImageUrl,
-      this.categorySpecialities});
+      this.categorySpecialities,
+      this.categoryDegrees,this.categoryFee});
   @override
   _CreateAppointmentScreenState createState() =>
       _CreateAppointmentScreenState();
 }
 
 class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DatabaseReference patientsRef =
       FirebaseDatabase.instance.reference().child("users").child("patients");
@@ -41,6 +44,9 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   Patient updatePatient;
   bool isLoading = false;
   String pKey = '';
+  var selectedAddress;
+  var selectedProblem;
+  var selectedUser;
 
   DateTime selectedDate = DateTime.now();
 //  CreateAppointmentModel appointment = CreateAppointmentModel();
@@ -55,10 +61,10 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now().subtract(
-        new Duration(days: 30),
+        new Duration(days: 0),
       ),
       lastDate: DateTime.now().add(
-        new Duration(days: 30),
+        new Duration(days: 7),
       ),
     ).then((value) {
       if (value == null) {
@@ -73,190 +79,261 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   backgroundColor: Colors.white,
+      //   elevation: 0,
+      //
+      // ),
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-            child: Text(
-              'Book Appointment',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
-            ),
-          ),
-          SizedBox(
-            height: 0,
-          ),
-          Container(
-            height: 90,
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: .5,
-                color: Colors.grey[400],
-              ),
-            ),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 5, 5, 5),
-                  height: 58,
-                  width: 58,
-                  child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/doctor.png')),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.categoryTitle,
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        widget.categorySpecialities,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(widget.categoryAddress),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(34, 20, 0, 0),
-            child: Text(
-              'Pick a Date',
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17,
-                  letterSpacing: 1.2),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          const Divider(height: 10, thickness: 1),
-          Column(
+      body: Container(
+        height: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .08,
+              ),
               Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                child: Text(
+                  'Book Appointment',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 23,
+                      height: 1.2,
+                      color: Colors.grey[800]),
+                ),
+              ),
+              SizedBox(
+                height: 7,
+              ),
+              Container(
+                height: 125,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Colors.grey[400],
+                  ),
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    IconButton(
-                      onPressed: selectedDate.isBefore(DateTime.now())
-                          ? null
-                          : () {
-                              setState(() {
-                                selectedDate =
-                                    selectedDate.subtract(Duration(days: 1));
-                              });
-                            },
-                      icon: Icon(Icons.arrow_back),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 0, 5, 5),
+                      height: 65,
+                      width: 65,
+                      child: CircleAvatar(
+                          backgroundImage:
+                              AssetImage('assets/images/doctor.png')),
                     ),
-                    FlatButton.icon(
-                      onPressed: presentDatePicker,
-                      icon: Icon(Icons.date_range),
-                      label: Text(
-                        DateFormat('E, dd MMMM').format(selectedDate),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 17),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            widget.categoryTitle,
+                            style: TextStyle(
+                                fontSize: 22.5, fontWeight: FontWeight.w700),
+                          ),
+                          SizedBox(
+                            height: 3,
+                          ),
+                          Text(
+                            widget.categorySpecialities,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 3,
+                          ),
+                          Text(widget.categoryDegrees!=null?widget.categoryDegrees:'N/A'),
+                          SizedBox(
+                            height: 3,
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.credit_card_rounded,size: 20,),
+                              SizedBox(width: 4),
+                              Text(widget.categoryFee!=null?widget.categoryFee:'N/A',
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w700,height: 1.3),
+                              ),
+                            ],
+                          ),
+                          // Text(widget.categoryFee!=null?widget.categoryFee:'N/A',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700),),
+                        ],
                       ),
-                    ),
-                    IconButton(
-                      onPressed: selectedDate.isAfter(DateTime.now().add(
-                        new Duration(days: 9),
-                      ))
-                          ? null
-                          : () {
-                              setState(() {
-                                selectedDate =
-                                    selectedDate.add(Duration(days: 1));
-//                            appointment.date = selectedDate.toString();
-                              });
-                            },
-                      icon: Icon(Icons.arrow_forward),
-                    ),
+                    )
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(34, 5, 0, 0),
+                padding: const EdgeInsets.fromLTRB(48, 15, 0, 0),
                 child: Text(
-                  'Pick a time slot',
+                  'Pick a date & time slot',
                   style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 17,
-                      letterSpacing: 1.2),
+                      fontSize: 20,
+                      letterSpacing: 1.2,color: Colors.black87),
                 ),
               ),
               const SizedBox(
-                height: 6.5,
+                height: 15,
               ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    // RaisedButton(
-                    //   onPressed: _pushOn,
-                    //   child: Text('Book',style: TextStyle(color: Colors.white,letterSpacing: 3.5,fontWeight: FontWeight.w800),),
-                    //   color: Colors.teal[400],
-                    //   shape: RoundedRectangleBorder(
-                    //     borderRadius: BorderRadius.circular(5),
-                    //   ),
-                    // ),
-                    customRadio(lst[0], 0),
-                    customRadio(lst[1], 1),
-                    customRadio(lst[2], 2),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Flexible(
-            child: FractionallySizedBox(
-              heightFactor: 0.9,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 35, 0),
-                child: Container(
-                  height: 85,
-                  width: 75,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      checkIfProfileUpdated();
-                    },
-                    child: Icon(
-                      Icons.check,
-                      size: 42,
+              const Divider(height: 10, thickness: 1.5),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 12, 15, 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        IconButton(
+                          onPressed: selectedDate.isBefore(DateTime.now())
+                              ? null
+                              : () {
+                                  setState(() {
+                                    selectedDate = selectedDate
+                                        .subtract(Duration(days: 1));
+                                  });
+                                },
+                          icon: Icon(Icons.arrow_back),
+                        ),
+                        FlatButton.icon(
+                          onPressed: presentDatePicker,
+                          icon: Icon(Icons.date_range),
+                          label: Text(
+                            DateFormat('E, dd MMMM').format(selectedDate),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 19),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: selectedDate.isAfter(DateTime.now().add(
+                            new Duration(days: 9),
+                          ))
+                              ? null
+                              : () {
+                                  setState(() {
+                                    selectedDate =
+                                        selectedDate.add(Duration(days: 1));
+//                            appointment.date = selectedDate.toString();
+                                  });
+                                },
+                          icon: Icon(Icons.arrow_forward),
+                        ),
+                      ],
                     ),
+                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.fromLTRB(40, 5, 0, 0),
+                  //   child: Text(
+                  //     'Pick a time slot',
+                  //     style: TextStyle(
+                  //         fontWeight: FontWeight.w700,
+                  //         fontSize: 17,
+                  //         letterSpacing: 1.2),
+                  //   ),
+                  // ),
+                  const SizedBox(
+                    height: 0,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        // RaisedButton(
+                        //   onPressed: _pushOn,
+                        //   child: Text('Book',style: TextStyle(color: Colors.white,letterSpacing: 3.5,fontWeight: FontWeight.w800),),
+                        //   color: Colors.teal[400],
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(5),
+                        //   ),
+                        // ),
+                        customRadio(lst[0], 0),
+                        customRadio(lst[1], 1),
+                        customRadio(lst[2], 2),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height*.012),
+              Padding(
+                padding: const EdgeInsets.only(left: 40, top: 20),
+                child: dropDownUser(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 40, top: 20),
+                child: dropDownAddress(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 40, top: 20),
+                child: dropDownProblem(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 40, top: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[400])),
+                  height: 100,
+                  width: 400,
+                  child: Padding(
+                    padding: const EdgeInsets.all(9.0),
+                    child: TextField(
+                      strutStyle: StrutStyle.fromTextStyle(TextStyle()),
+                        maxLength: 200,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 4,
+                        autocorrect: false,
+                        decoration: InputDecoration.collapsed(
+                            hintText: 'Problem (optional)',
+                            hintStyle: TextStyle(color: Colors.teal[300],fontSize: 18))),
                   ),
                 ),
               ),
+              // SizedBox(
+              //   height: 60,
+              // ),
+              SizedBox(height: MediaQuery.of(context).size.height*.025),
+              // Flexible(
+              //   child: FractionallySizedBox(
+              //     heightFactor: 0.1,
+              //   ),
+              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 35, 0),
+                    child: Container(
+                      height: 86,
+                      width: 76,
+                      child: FloatingActionButton(
+                        elevation: 4,
+                        onPressed: () {
+                          checkIfProfileUpdated();
+                        },
+                        child: Icon(
+                          Icons.check,
+                          size: 42,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -289,6 +366,248 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     );
   }
 
+
+
+
+  Widget dropDownUser() {
+    return MenuButton(
+      child: dropDownUserButton(), // Widget displayed as the button
+      items: ['Myself', 'Mother', '+Add User'], //TODO: Sorted Problems
+      dontShowTheSameItemSelected: false,
+      topDivider: true,
+      popupHeight:
+      180, // This popupHeight is optional. The default height is the size of items
+      scrollPhysics:
+      AlwaysScrollableScrollPhysics(), // Change the physics of opened menu (example: you can remove or add scroll to menu)
+      itemBuilder: (value) => Container(
+          width: 93,
+          height: 55,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            value != null ? value : 'Appointment for',
+            style: TextStyle(fontSize: 18),
+          )), // Widget displayed for each item
+      toggledChild: Container(
+        color: Colors.white,
+        child: dropDownUserButton(), // Widget displayed as the button,
+      ),
+      divider: Container(
+        height: 1,
+        color: Colors.grey,
+      ),
+      onItemSelected: (value) {
+        setState(() {
+          selectedUser = value;
+        });
+        // Action when new item is selected
+      },
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]),
+          borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+          color: Colors.white),
+      onMenuButtonToggle: (isToggle) {
+        print(isToggle);
+      },
+    );
+  }
+
+  Widget dropDownUserButton() {
+    return SizedBox(
+      width: 400,
+      height: 45,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 11),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              child: Text(
+                selectedUser != null ? selectedUser : 'Appointment for',
+                style: TextStyle(color: Colors.teal[400], fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(
+                width: 14,
+                height: 19,
+                child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey,
+                      size: 13,
+                    ))),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+  Widget dropDownAddress() {
+    return MenuButton(
+      child: dropDownAddressButton(), // Widget displayed as the button
+      items: [
+        'Maternity Hospital',
+        'Chittagong Medical',
+      ], //TODO: Doctor Chambers
+      dontShowTheSameItemSelected: false,
+      topDivider: true,
+      popupHeight:
+          180, // This popupHeight is optional. The default height is the size of items
+      scrollPhysics:
+          AlwaysScrollableScrollPhysics(), // Change the physics of opened menu (example: you can remove or add scroll to menu)
+      itemBuilder: (value) => Container(
+          width: 93,
+          height: 55,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            value != null ? value : 'Select Chamber',
+            style: TextStyle(fontSize: 18),
+          )), // Widget displayed for each item
+      toggledChild: Container(
+        color: Colors.white,
+        child: dropDownAddressButton(), // Widget displayed as the button,
+      ),
+      divider: Container(
+        height: 1,
+        color: Colors.grey,
+      ),
+      onItemSelected: (value) {
+        setState(() {
+          selectedAddress = value;
+        });
+        // Action when new item is selected
+      },
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]),
+          borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+          color: Colors.white),
+      onMenuButtonToggle: (isToggle) {
+        print(isToggle);
+      },
+    );
+  }
+
+  Widget dropDownAddressButton() {
+    return SizedBox(
+      width: 400,
+      height: 45,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 11),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              child: Text(
+                selectedAddress != null ? selectedAddress : 'Select Chamber',
+                style: TextStyle(color: Colors.teal[400], fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(
+                width: 14,
+                height: 19,
+                child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey,
+                      size: 13,
+                    ))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget dropDownProblem() {
+    return MenuButton(
+      child: dropDownProblemButton(),// Widget displayed as the button
+      items: [
+        'Pelvic Pain',
+        'Menstrual Disorder',
+        'Urinary Incontinence',
+        'Cramp',
+        'Other'
+      ], //TODO: Sorted Problems
+      dontShowTheSameItemSelected: false,
+      topDivider: true,
+      popupHeight:
+          200, // This popupHeight is optional. The default height is the size of items
+      scrollPhysics:
+          AlwaysScrollableScrollPhysics(), // Change the physics of opened menu (example: you can remove or add scroll to menu)
+      itemBuilder: (value) => Container(
+          width: 93,
+          height: 55,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            value != null ? value : 'Select Problem',
+            style: TextStyle(fontSize: 18),
+          )), // Widget displayed for each item
+      toggledChild: Container(
+        color: Colors.white,
+        child: dropDownProblemButton(), // Widget displayed as the button,
+      ),
+      divider: Container(
+        height: 1,
+        color: Colors.grey,
+      ),
+      onItemSelected: (value) {
+        setState(() {
+          selectedProblem = value;
+        });
+        // Action when new item is selected
+      },
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]),
+          borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+          color: Colors.white),
+      onMenuButtonToggle: (isToggle) {
+        print(isToggle);
+      },
+    );
+  }
+
+  Widget dropDownProblemButton() {
+    return SizedBox(
+      width: 400,
+      height: 45,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 11),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              child: Text(
+                selectedProblem != null ? selectedProblem : 'Select Problem',
+                style: TextStyle(color: Colors.teal[400], fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(
+                width: 14,
+                height: 19,
+                child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey,
+                      size: 13,
+                    ))),
+          ],
+        ),
+      ),
+    );
+  }
+
+
   Future<void> checkIfProfileUpdated() async {
     User user = FirebaseAuth.instance.currentUser;
 
@@ -300,14 +619,13 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
         .once()
         .then((DataSnapshot snap) {
       Map values = snap.value;
-      print('profile view: values- '+values.toString());
+      print('profile view: values- ' + values.toString());
       values.forEach((key, value) {
         if (value['age'] != null &&
             value['weight'] != null &&
             value['bloodgroup'] != null) {
           _pushOn();
-        }
-        else{
+        } else {
           showModelBottomSheet(value: value, pKey: key);
         }
       });
@@ -336,7 +654,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           }
                           return null;
                         },
-                          onSaved: (input) => ageCont.text = input.trim(),
+                        onSaved: (input) => ageCont.text = input.trim(),
                       ),
                     ),
                   if (value['weight'] == null)
@@ -373,14 +691,16 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: FlatButton(
-                      height: 30,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                        onPressed: () => updateProfile(value: value, pKey: pKey),
+                        height: 30,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                        onPressed: () =>
+                            updateProfile(value: value, pKey: pKey),
                         color: Colors.teal,
                         child: Container(
                           child: Text(
                             'Update',
-                            style: TextStyle(color: Colors.white,fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         )),
                   )
@@ -417,8 +737,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
             textColor: Colors.white,
             fontSize: 14.0);
         Navigator.of(context).pop();
-      }
-      catch (e) {
+      } catch (e) {
         print(e.message);
         Fluttertoast.showToast(
             msg: 'Update Unsuccessful',
@@ -450,9 +769,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               selectedDate.toString().split(' ')[0] +
               '_' +
               selectedIndex.toString(),
-          pHelper: user.email +
-              '_' +
-              'pending',
+          pHelper: user.email + '_' + 'pending',
           dHelperFull: widget.categoryId +
               '_' +
               selectedDate.toString().split(' ')[0] +
@@ -461,9 +778,12 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               '_' +
               'pending',
           apptId: apptId,
-          calDHelper: widget.categoryId+'_'+selectedDate.toString().split(' ')[0].substring(0, 7),
-          calPHelper: user.email+'_'+selectedDate.toString().split(' ')[0].substring(0, 7)
-      );
+          calDHelper: widget.categoryId +
+              '_' +
+              selectedDate.toString().split(' ')[0].substring(0, 7),
+          calPHelper: user.email +
+              '_' +
+              selectedDate.toString().split(' ')[0].substring(0, 7));
 
       await appointmentsRef.child(apptId).set(appointment.toMap());
       HelperClass.showToast('Appointment booking successful');

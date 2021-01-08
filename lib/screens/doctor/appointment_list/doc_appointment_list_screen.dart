@@ -12,9 +12,11 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class DocAppointmentListScreen extends StatefulWidget {
-  const DocAppointmentListScreen({Key key, @required this.user, @required this.selectedDate})
+  const DocAppointmentListScreen(
+      {Key key, @required this.user, @required this.selectedDate})
       : super(key: key);
-  final User user; final DateTime selectedDate;
+  final User user;
+  final DateTime selectedDate;
 
   @override
   _DocAppointmentListScreenState createState() =>
@@ -37,6 +39,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   String runningSlotKey = '';
   var apptSubscription;
   int currentIndex = 0;
+  bool listLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +59,12 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   'Appointments',
                   style: TextStyle(fontSize: 25),
                 ),
-                SizedBox(width: slotStateLoading? MediaQuery.of(context).size.width*0.475: 0,),
-                slotStateLoading? CircularProgressIndicator(): Container(),
+                SizedBox(
+                  width: slotStateLoading
+                      ? MediaQuery.of(context).size.width * 0.475
+                      : 0,
+                ),
+                slotStateLoading ? CircularProgressIndicator() : Container(),
                 /*Container(
                   margin: const EdgeInsets.only(left: 10.0),
                   child: new RaisedButton(
@@ -105,7 +112,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                   child: Stack(
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width*0.90,
+                        width: MediaQuery.of(context).size.width * 0.90,
                         height: 65,
                         child: TextFormField(
                           decoration: InputDecoration(labelText: 'Message'),
@@ -113,7 +120,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
                         ),
                       ),
                       Positioned(
-                        left: MediaQuery.of(context).size.width*0.90-65,
+                        left: MediaQuery.of(context).size.width * 0.90 - 65,
                         top: 9,
                         child: FlatButton(
                           child: Icon(
@@ -137,89 +144,104 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
           ),
           Container(
             margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.blueAccent)
-            ),
+            decoration:
+                BoxDecoration(border: Border.all(color: Colors.blueAccent)),
             child: Padding(
               padding: const EdgeInsets.only(left: 30),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text('Slot state: ', style: TextStyle(fontSize: 16,)),
-                  Text(
-                    slotState=='notStarted' ? 'Not started' : slotState,
-                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)
-                  ),
+                  Text('Slot state: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                      )),
+                  Text(slotState == 'notStarted' ? 'Not started' : slotState,
+                      style:
+                          TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
                   SizedBox(
-                    width: slotState=='notStarted' || slotState == 'ended'? 170 : slotState == 'paused' || slotState=='running'? 120
-                        : 0,
+                    width: slotState == 'notStarted' || slotState == 'ended'
+                        ? 170
+                        : slotState == 'paused' || slotState == 'running'
+                            ? 120
+                            : 0,
                   ),
-                  slotState=='notStarted' || slotState=='paused' || slotState == 'ended' ? Expanded(
-                    child: Container(
-                      child:  FlatButton(
-                        child: Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                        onPressed: () => setSlotState('running'),
-                        color: Colors.blue,
-                        shape: CircleBorder(),
-                        //height: 40,
-                      ),
-                    ),
-                    flex: 2,
-                  ): Container(),
-                  slotState=='running' ? Expanded(
-                    child: Container(
-                      child:  FlatButton(
-                        child: Icon(
-                          Icons.navigate_next,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        onPressed: (){
-                          doneAppointment(/*keys[currentIndex].toString(), */currentIndex);
-                        },
-                        color: Colors.blue,
-                        shape: CircleBorder(),
-                        //height: 40,
-                      ),
-                    ),
-                    flex: 2,
-                  ): Container(),
-                  slotState=='running' ? Expanded(
-                    child: Container(
-                      child:  FlatButton(
-                        child: Icon(
-                          Icons.pause,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        onPressed: () => setSlotState('paused'),
-                        color: Colors.blue,
-                        shape: CircleBorder(),
-                        //height: 40,
-                      ),
-                    ),
-                    flex: 2,
-                  ): Container(),
-                  slotState=='running' || slotState=='paused' ? Expanded(
-                    child: Container(
-                      child:  FlatButton(
-                        child: Icon(
-                          Icons.stop,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        onPressed: () => setSlotState('ended'),
-                        color: Colors.blue,
-                        shape: CircleBorder(),
-                        //height: 40,
-                      ),
-                    ),
-                    flex: 2,
-                  ): Container(),
+                  slotState == 'notStarted' ||
+                          slotState == 'paused' ||
+                          slotState == 'ended'
+                      ? Expanded(
+                          child: Container(
+                            child: FlatButton(
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                              onPressed: () => setSlotState('running'),
+                              color: Colors.blue,
+                              shape: CircleBorder(),
+                              //height: 40,
+                            ),
+                          ),
+                          flex: 2,
+                        )
+                      : Container(),
+                  slotState == 'running'
+                      ? Expanded(
+                          child: Container(
+                            child: FlatButton(
+                              child: Icon(
+                                Icons.navigate_next,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              onPressed: () {
+                                doneAppointment(
+                                    /*keys[currentIndex].toString(), */ currentIndex);
+                              },
+                              color: Colors.blue,
+                              shape: CircleBorder(),
+                              //height: 40,
+                            ),
+                          ),
+                          flex: 2,
+                        )
+                      : Container(),
+                  slotState == 'running'
+                      ? Expanded(
+                          child: Container(
+                            child: FlatButton(
+                              child: Icon(
+                                Icons.pause,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              onPressed: () => setSlotState('paused'),
+                              color: Colors.blue,
+                              shape: CircleBorder(),
+                              //height: 40,
+                            ),
+                          ),
+                          flex: 2,
+                        )
+                      : Container(),
+                  slotState == 'running' || slotState == 'paused'
+                      ? Expanded(
+                          child: Container(
+                            child: FlatButton(
+                              child: Icon(
+                                Icons.stop,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              onPressed: () => setSlotState('ended'),
+                              color: Colors.blue,
+                              shape: CircleBorder(),
+                              //height: 40,
+                            ),
+                          ),
+                          flex: 2,
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -243,7 +265,10 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
     if (pressAll) {
       return allAppointments();
     }
-    return sortedAppointments();
+    if(listLoading){
+      return Center(child: CircularProgressIndicator());
+    }
+      return sortedAppointments();
   }
 
   Widget allAppointments() {
@@ -263,7 +288,11 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               return SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
                 child: Container(
-                  child: Center(child: Text('No results found', style: TextStyle(fontSize: 16),)),
+                  child: Center(
+                      child: Text(
+                    'No results found',
+                    style: TextStyle(fontSize: 16),
+                  )),
                   height: MediaQuery.of(context).size.height - 185,
                 ),
               );
@@ -282,10 +311,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
   Widget sortedAppointments() {
     return FutureBuilder(
-        future: appointmentsRef
-            .orderByChild("dHelper")
-            .equalTo(dHelper)
-            .once(),
+        future: appointmentsRef.orderByChild("dHelper").equalTo(dHelper).once(),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           print('dHelper-> ' + dHelper);
           if (snapshot.hasData) {
@@ -298,21 +324,25 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
               return SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
                 child: Container(
-                  child: Center(child: Text('No results found',style: TextStyle(fontSize: 16))),
-                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height*0.40,
+                  child: Center(
+                      child: Text('No results found',
+                          style: TextStyle(fontSize: 16))),
+                  height: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).size.height * 0.40,
                 ),
               );
             }
 
-            if(values.length>1){values = sortListMap(values);}
+            if (values.length > 1) {
+              values = sortListMap(values);
+            }
 
             values.forEach((key, values) {
               keys.add(key);
               appointments.add(Appointment.fromMap(values));
             });
-            print('Appointments list length -> ' + appointments.length.toString());
-
-            checkForNewAppt = true;
+            print('Appointments list length -> ' +
+                appointments.length.toString());
             return getAppointmentsUi(appointments);
           }
           return Center(child: CircularProgressIndicator());
@@ -325,7 +355,7 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       itemCount: appointments.length,
       itemBuilder: (context, index) => DocAppointmentListWidget(
             appointment: appointments[index],
-            serial: index+1,
+            serial: index + 1,
             onDonePressed: () {
               // print('Appointment Done with - '+keys[index].toString()+"on index $index");
               // doneAppointment(keys[index].toString(), index);
@@ -357,15 +387,27 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         height: 2,
         color: Colors.blue,
       ),
-      onChanged: (String newValue) {
+      onChanged: (String newValue) async {
         setState(() {
+          listLoading = true;
+        });
+        await Future.delayed(const Duration(milliseconds:200));
+        setState(() {
+          listLoading = false;
           dropdownValue = newValue;
           timeSlot = newValue == 'Morning'
               ? '0'
               : newValue == 'Afternoon'
                   ? '1'
-                  : newValue == 'Evening' ? '2' : '00';
-          dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
+                  : newValue == 'Evening'
+                      ? '2'
+                      : '00';
+
+          dHelper = widget.user.email +
+              '_' +
+              selectedDate.toString().split(' ')[0] +
+              '_' +
+              timeSlot;
         });
         checkForCurrentSlotState();
       },
@@ -381,16 +423,24 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
   Future<void> sendMessage() async {
     FocusScope.of(context).unfocus();
-    if(msgController.text.isEmpty || appointments.isEmpty){return;}
+    if (msgController.text.isEmpty || appointments.isEmpty) {
+      return;
+    }
     print('Message : ' + msgController.text);
     Message msg = new Message(
         dId: widget.user.email,
-        dHelperFull: widget.user.email +'_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot+'_pending',
+        dHelperFull: widget.user.email +
+            '_' +
+            selectedDate.toString().split(' ')[0] +
+            '_' +
+            timeSlot +
+            '_pending',
         date: DateTime.now().toString(),
         msg: msgController.text);
 
     try {
-      DatabaseReference msgRef = FirebaseDatabase.instance.reference().child("messages");
+      DatabaseReference msgRef =
+          FirebaseDatabase.instance.reference().child("messages");
       await msgRef.push().set(msg.toMap());
 
       msgController.clear();
@@ -416,20 +466,35 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> doneAppointment(int index) async {
-    if(index>=appointments.length || appointments.length==0){showToast('No appointment due'); return;}
-    setState(() {slotStateLoading = true;});
-    if(slotState != 'running'){showToast('Please start the appointment slot first'); return;}
+    if (index >= appointments.length || appointments.length == 0) {
+      showToast('No appointment due');
+      return;
+    }
+    setState(() {
+      slotStateLoading = true;
+    });
+    if (slotState != 'running') {
+      showToast('Please start the appointment slot first');
+      return;
+    }
     try {
       String appointmentId = keys[index].toString();
-      await appointmentsRef.child(appointmentId).child('flag').set('done').then((_) {
+      await appointmentsRef
+          .child(appointmentId)
+          .child('flag')
+          .set('done')
+          .then((_) {
         print("Done appointment $appointmentId successful0");
         setState(() {});
       });
 
-      await appointmentsRef.child(appointmentId).child('dHelperFull').set(dHelper+'_done').then((_) {
+      await appointmentsRef
+          .child(appointmentId)
+          .child('dHelperFull')
+          .set(dHelper + '_done')
+          .then((_) {
         print("Update dHelperFull of appointment $appointmentId successful");
       });
-
 
       // await appointmentsRef.orderByKey().equalTo(appointmentId).once().then((DataSnapshot snap) {
       //   print("Fetching of pId of appointment $appointmentId successful");
@@ -437,17 +502,27 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
       //   print('!!! pId values: '+values.toString());
       //   values.forEach((key, value) async {
       //     String pId = value['pId'];
-          String pId = appointments[index].pId;
-          await appointmentsRef.child(appointmentId).child('pHelper').set(pId+'_done').then((_) {
-            print("Update pHelper of appointment $appointmentId successful");
-          });
+      String pId = appointments[index].pId;
+      await appointmentsRef
+          .child(appointmentId)
+          .child('pHelper')
+          .set(pId + '_done')
+          .then((_) {
+        print("Update pHelper of appointment $appointmentId successful");
+      });
       //   });
       // });
 
       print('slotKey: $runningSlotKey');
-      await runningSlotsRef.child(runningSlotKey).child('currentSerial').set((index+2).toString());
-      setState(() {currentIndex++; slotStateLoading = false;});
-    }catch (e) {
+      await runningSlotsRef
+          .child(runningSlotKey)
+          .child('currentSerial')
+          .set((index + 2).toString());
+      setState(() {
+        currentIndex++;
+        slotStateLoading = false;
+      });
+    } catch (e) {
       //print(e.message);
       print('Serial Updating error');
       showToast('Couldn\'t update current serial');
@@ -455,56 +530,79 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   Future<void> undoneAppointment(String appointmentId, int index) async {
-    await appointmentsRef.child(appointmentId).child('flag').set('pending').then((_) {
+    await appointmentsRef
+        .child(appointmentId)
+        .child('flag')
+        .set('pending')
+        .then((_) {
       print("Undone appointment $appointmentId successful");
       setState(() {});
     });
 
-    await appointmentsRef.child(appointmentId).child('dHelperFull').set(dHelper+'_pending').then((_) {
+    await appointmentsRef
+        .child(appointmentId)
+        .child('dHelperFull')
+        .set(dHelper + '_pending')
+        .then((_) {
       print("Update dHelperFull of appointment $appointmentId successful");
     });
 
     String pId = appointments[index].pId;
-    await appointmentsRef.child(appointmentId).child('pHelper').set(pId+'_pending').then((_) {
+    await appointmentsRef
+        .child(appointmentId)
+        .child('pHelper')
+        .set(pId + '_pending')
+        .then((_) {
       print("Update pHelper of appointment $appointmentId successful");
     });
   }
 
-  Future<void> setSlotState(String mSlotState) async{
-    if(slotStateLoading){return;}
-    if(appointments.isEmpty){showToast('There\'s no patient in this slot'); return;}
-    print('slotState : '+mSlotState);
-    setState(() {slotStateLoading = true;});
+  Future<void> setSlotState(String mSlotState) async {
+    if (slotStateLoading) {
+      return;
+    }
+    if (appointments.isEmpty) {
+      showToast('There\'s no patient in this slot');
+      return;
+    }
+    print('slotState : ' + mSlotState);
+    setState(() {
+      slotStateLoading = true;
+    });
     try {
       String appointmentDate = selectedDate.toString().split(' ')[0];
       String msgToSend = '';
 
-      runningSlotsRef.orderByChild('dHelper').equalTo(dHelper).once().then((DataSnapshot snapshot) async {
+      runningSlotsRef
+          .orderByChild('dHelper')
+          .equalTo(dHelper)
+          .once()
+          .then((DataSnapshot snapshot) async {
         Map<dynamic, dynamic> values = snapshot.value;
-        if(values == null){
+        if (values == null) {
           RunningSlot newRunningSlot = new RunningSlot(
               currentSerial: '1',
               dHelper: dHelper,
               slotState: 'running',
-              dId: widget.user.email
-          );
+              dId: widget.user.email);
           await runningSlotsRef.push().set(newRunningSlot.toMap());
           msgToSend = 'Patient checking of $appointmentDate has been started';
           checkForCurrentSlotState();
-        }
-        else {
+        } else {
           String key = '';
-          values.forEach((mKey, value) {key = mKey;});
+          values.forEach((mKey, value) {
+            key = mKey;
+          });
           print('key: $key, snapshot: ${snapshot.value}');
 
           if (mSlotState == 'ended') {
             await runningSlotsRef.child(key).remove();
-            msgToSend = 'Sorry, patient checking of $appointmentDate ended for now';
+            msgToSend =
+                'Sorry, patient checking of $appointmentDate ended for now';
             setState(() {
               currentIndex = 0;
             });
-          }
-          else {
+          } else {
             await runningSlotsRef.child(key).child('slotState').set(mSlotState);
             msgToSend = 'Patient checking of $appointmentDate is paused';
           }
@@ -512,10 +610,11 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
 
         Message msg = new Message(
             dId: widget.user.email,
-            dHelperFull: dHelper+'_pending',
+            dHelperFull: dHelper + '_pending',
             date: DateTime.now().toString(),
             msg: msgToSend);
-        DatabaseReference msgRef = FirebaseDatabase.instance.reference().child("messages");
+        DatabaseReference msgRef =
+            FirebaseDatabase.instance.reference().child("messages");
         await msgRef.push().set(msg.toMap());
 
         setState(() {
@@ -587,17 +686,24 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   void initState() {
     super.initState();
     selectedDate = widget.selectedDate;
-    dHelper = widget.user.email + '_' + selectedDate.toString().split(' ')[0] + '_' + timeSlot;
-    appointmentsRef = FirebaseDatabase.instance.reference().child("appointments");
-    runningSlotsRef = FirebaseDatabase.instance.reference().child("running-slots");
+    dHelper = widget.user.email +
+        '_' +
+        selectedDate.toString().split(' ')[0] +
+        '_' +
+        timeSlot;
+    appointmentsRef =
+        FirebaseDatabase.instance.reference().child("appointments");
+    runningSlotsRef =
+        FirebaseDatabase.instance.reference().child("running-slots");
     checkForCurrentSlotState();
+
     ///TODO
     handleListener();
   }
 
-
-  List appts = []; bool checkForNewAppt = false;
-  void handleListener(){
+  List appts = [];
+  bool checkForNewAppt = false;
+  void handleListener() {
     appts = [];
     /*appts = FirebaseList(
         query: appointmentsRef.orderByChild("dHelper").equalTo(dHelper),
@@ -618,30 +724,40 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
         ///TODO: remove the sortedAppointments futureBuilder
         ///instead use this onValue to load data
         onValue: (snapshot) {
-          *//*for (var i=0; i < this.appts.length; i++) {
+          */ /*for (var i=0; i < this.appts.length; i++) {
           print('hmmm $i: ${appts[i].value}');
-        }*//*
+        }*/ /*
         }
     );*/
   }
 
-  Future<void> checkForCurrentSlotState() async{
-    runningSlotsRef.orderByChild('dHelper').equalTo(dHelper).once().then((DataSnapshot snapshot) async {
+  Future<void> checkForCurrentSlotState() async {
+    runningSlotsRef
+        .orderByChild('dHelper')
+        .equalTo(dHelper)
+        .once()
+        .then((DataSnapshot snapshot) async {
       Map<dynamic, dynamic> values = snapshot.value;
-      if(values == null){ setState(() { slotState = 'notStarted'; currentIndex=0; }); return;}
+      if (values == null) {
+        setState(() {
+          slotState = 'notStarted';
+          currentIndex = 0;
+        });
+        return;
+      }
       values.forEach((key, value) {
-        print('slotKey: $key, slotState: '+value['slotState']);
+        print('slotKey: $key, slotState: ' + value['slotState']);
         setState(() {
           runningSlotKey = key;
           slotState = value['slotState'];
-          currentIndex = int.parse(value['currentSerial'])-1;
+          currentIndex = int.parse(value['currentSerial']) - 1;
           print('currentIndex $currentIndex');
         });
       });
     });
   }
 
-  void showToast(String msg){
+  void showToast(String msg) {
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
@@ -653,14 +769,16 @@ class _DocAppointmentListScreenState extends State<DocAppointmentListScreen> {
   }
 
   LinkedHashMap sortListMap(LinkedHashMap map) {
-    List mapKeys = map.keys.toList(growable : false);
+    List mapKeys = map.keys.toList(growable: false);
     mapKeys.sort((k1, k2) {
       int timestamp1 = map[k1]['createdAt'];
       int timestamp2 = map[k2]['createdAt'];
       return timestamp1.compareTo(timestamp2);
     });
     LinkedHashMap resMap = new LinkedHashMap();
-    mapKeys.forEach((k1) { resMap[k1] = map[k1] ; }) ;
+    mapKeys.forEach((k1) {
+      resMap[k1] = map[k1];
+    });
     // print('before sorting: '+map.toString());
     // print('after sorting: '+resMap.toString());
     return resMap;

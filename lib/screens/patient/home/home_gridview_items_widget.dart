@@ -39,7 +39,16 @@ class _CategoryItemWidgetState extends State<CategoryItemWidget> {
       child: InkWell(
         onTap: () {
           print(widget.id);
-          checkIfRatingDue(context);
+          // checkIfRatingDue(context);
+          pushNewScreenWithRouteSettings(
+            context,
+            settings: RouteSettings(name: SearchDoctorScreen.routeName,arguments:{
+              'id' :widget.id,'title':widget.title,
+            }),
+            screen: SearchDoctorScreen(),
+            withNavBar: true,
+            pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          );
         },
         splashColor: Colors.tealAccent,
         borderRadius: BorderRadius.circular(9),

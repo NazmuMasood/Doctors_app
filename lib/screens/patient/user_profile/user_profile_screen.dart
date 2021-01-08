@@ -238,13 +238,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.green))),
                   ),
-                  SizedBox(height: 10.0),
+                  SizedBox(height: 30.0),
                   !isLoading ? Container(
                     height: 50.0,
                     child: RaisedButton(
                       onPressed: updateProfile,
-                      color: Colors.green,
-                      splashColor: Colors.blueAccent,
+                      color: Colors.teal[400],
+                      splashColor: Colors.teal[200],
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
                       child: Center(

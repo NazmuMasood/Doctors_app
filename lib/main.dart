@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/screens/auth/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'screens/patient/bottom_nav_bar/bottom_navigation_tab_view.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -18,11 +17,10 @@ import 'package:responsive_framework/responsive_framework.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(DevicePreview(enabled:false, builder: (context) => MyApp()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   final navigatorKey = GlobalKey<NavigatorState>();
 
   // This widget is the root of your application.
@@ -31,21 +29,27 @@ class MyApp extends StatelessWidget {
     return OverlaySupport(
       child: MaterialApp(
         navigatorKey: navigatorKey,
-        locale: DevicePreview.of(context).locale,
         // builder: DevicePreview.appBuilder,
         // initialRoute: '/',
-        builder: (context, _ ) =>ResponsiveWrapper.builder(_,maxWidth: 1200,minWidth: 480,defaultScale: true,breakpoints:[
-          ResponsiveBreakpoint.resize(480, name: MOBILE),
-          ResponsiveBreakpoint.autoScale(800, name: TABLET),
-          ResponsiveBreakpoint.resize(1000, name: DESKTOP),
-        ],background: Container(color: Color(0xFFF5F5F5))),
+        builder: (context, _) => ResponsiveWrapper.builder(_,
+            maxWidth: 1200,
+            minWidth: 480,
+            defaultScale: true,
+            breakpoints: [
+              ResponsiveBreakpoint.resize(480, name: MOBILE),
+              ResponsiveBreakpoint.autoScale(800, name: TABLET),
+              ResponsiveBreakpoint.resize(1000, name: DESKTOP),
+            ],
+            background: Container(color: Color(0xFFF5F5F5))),
         routes: {
           '/': (context) => AuthenticatorScreen(),
           '/login': (context) => LoginScreen(),
           '/signup': (context) => SignupScreen(),
           '/logindoc': (context) => DocLoginScreen(),
           '/signupdoc': (context) => DocSignupScreen(),
-          '/userprofile': (context) => UserProfileScreen(user: null,),
+          '/userprofile': (context) => UserProfileScreen(
+                user: null,
+              ),
 //        DoctorScreen.routeName:(ctx) => DoctorScreen(),
         },
         debugShowCheckedModeBanner: false,

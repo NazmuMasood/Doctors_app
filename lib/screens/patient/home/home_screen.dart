@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _messagingService.initialise();
-    checkIfRatingDue();
+    /*checkIfRatingDue();*/
     patientsRef = FirebaseDatabase.instance.reference().child("users").child('patients');
   }
 
