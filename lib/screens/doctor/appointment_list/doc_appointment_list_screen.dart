@@ -4,11 +4,9 @@ import 'package:doctors_app/models/running_slot.dart';
 import 'package:doctors_app/screens/doctor/appointment_list/doc_appointment_list_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_list.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_app/models/appointment.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class DocAppointmentListScreen extends StatefulWidget {

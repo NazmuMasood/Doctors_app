@@ -50,6 +50,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0-nullsafety.1"
+  cloud_firestore:
+    dependency: "direct main"
+    description:
+      name: cloud_firestore
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.14.4"
+  cloud_firestore_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_firestore_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.1"
+  cloud_firestore_web:
+    dependency: transitive
+    description:
+      name: cloud_firestore_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1+2"
   collection:
     dependency: transitive
     description:
@@ -120,55 +141,48 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.2.1"
-  firebase:
-    dependency: transitive
-    description:
-      name: firebase
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "7.3.2"
   firebase_auth:
     dependency: "direct main"
     description:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.18.2"
+    version: "0.18.4+1"
   firebase_auth_platform_interface:
     dependency: transitive
     description:
       name: firebase_auth_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.4"
   firebase_auth_web:
     dependency: transitive
     description:
       name: firebase_auth_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.1+2"
+    version: "0.3.2+3"
   firebase_core:
     dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.1"
+    version: "0.5.3"
   firebase_core_platform_interface:
     dependency: transitive
     description:
       name: firebase_core_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   firebase_core_web:
     dependency: transitive
     description:
       name: firebase_core_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.1+1"
   firebase_database:
     dependency: "direct main"
     description:
@@ -385,6 +399,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.4+1"
+  random_string:
+    dependency: "direct main"
+    description:
+      name: random_string
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   responsive_framework:
     dependency: "direct main"
     description:
