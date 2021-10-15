@@ -1,16 +1,30 @@
-# doctors_app
+<h1 align="center">
+-- DPR App --
+</h1>
 
-A new Flutter application.
+<!-- ## -- Screenshots -- -->
 
-## Getting Started
+* ## ___Patient Login, Register, Home___
+<p float="left">
+<img src="./dprss/login_patient.png" height="400">
+<img src="./dprss/Screenshot_1634225916.png" height="400">
+<img src="./dprss/patient_home.png" height="400">
+</ -->
 
-This project is a starting point for a Flutter application.
+* ## ___Patient- Doctor Search, Doctor Details, Make Appointment, Profile___
+<p float="left">
+<img src="./dprss/doctor_search.png" height="400">
+<img src="./dprss/doctor_details.png" height="400">
+</p>
+<p float="left">
+<img src="./dprss/pat_make_appt.png" height="400">
+<img src="./dprss/profile_patient.png" height="400">
+</p>
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* ## ___Doctor Login, Register, Appointment List, Monthly overview___
+<p float="left">
+<img src="./dprss/login_doc.png" height="400">
+<img src="./dprss/Screenshot_1634225904.png" height="400">
+<img src="./dprss/doc_appt_list.png" height="400">
+<img src="./dprss/monthly_overview.png" height="400">
+</p>
